@@ -10,10 +10,6 @@ For suggestions, feedback and queries please branch or and submit a Pull Request
 
 Lead Automation Architect [riaan.nolan@servian.com](mailto:riaan.nolan@servian.com) | Lead Security Architect [thomas.cockin@servian.com](mailto:thomas.cockin@servian.com)    
 
-#### Contributors and Special mentions
-A Very special mention to HashiQube's contributors, Thank You All for your help, suggestions and contributions no matter how small <3
- - Konstantin Vanyushov
- - Tristan Morgan
 
 #### License
 HashiQube is available as open-source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
