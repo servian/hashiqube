@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="stylesheet" href="/docsify/lib/vue.css">
+  <link rel="stylesheet" href="/docsify/lib/buble.css" disabled>
+  <link rel="stylesheet" href="/docsify/lib/dark.css" disabled>
+  <link rel="stylesheet" href="/docsify/lib/pure.css" disabled>
+  <link rel="stylesheet" href="/docsify/lib/mermaid.min.css">
+  <script src="/docsify/lib/mermaid.min.js"></script>
+  <style>
+    .markdown-section a {
+      color: var(--theme-color, #00a99c);
+    }
+    .markdown-section pre > code {
+      color: rgb(231, 90, 122);
+    }
+    .sidebar ul li.active > a {
+      color: var(--theme-color, #e75a7a);
+    }
+    .content {
+      padding-top: 10px;
+    }
+    .markdown-section {
+      padding-top: 10px;
+      max-width: 1050px;
+    }
+    .markdown-section code {
+      color: #e96e3c;
+    }
+    .header {
+      position: relative;
+      display: none;
+      text-align: center;
+    }
+    .footer {
+      position: relative;
+      display: none;
+      text-align: center;
+      bottom: 10px;
+    }
+    .app-name-link img {
+      width: 180px;
+    }
+    .anchor span {
+      color: #a7298b;
+    }
+    .markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4, .markdown-section strong {
+      color: #a7298b;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">header</div>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      alias: {
+        '/.*/SUMMARY.md': '/SUMMARY.md',
+        '/en/(.*)': 'https://raw.githubusercontent.com/docsifyjs/docs-en/master/$1'
+      },
+      logo: 'images/logo.png',
+      name: 'HashiQube',
+      search: 'auto',
+      auto2top: true,
+      relativePath: false,
+      homepage: 'README.md',
+      loadSidebar: 'SUMMARY.md',
+      subMaxLevel: 3,
+      formatUpdated: '{MM}/{DD} {HH}:{mm}',
+      plugins: [
+        function (hook, vm) {
+          hook.beforeEach(function (html) {
+            return html.replace(/{% *.* %}/mg, '')
+          })
+        }
+      ],
+      markdown: {
+        renderer: {
+          code: function(code, lang) {
+            if (lang === "mermaid") {
+              return (
+                '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + "</div>"
+              );
+            }
+            return this.origin.code.apply(this, arguments);
+          }
+        }
+      }
+    }
+
+    var num = 0;
+    mermaid.initialize({ logLevel:0, startOnLoad: false, themeCSS:'.label { font-family: Source Sans Pro,Helvetica Neue,Arial,sans-serif; }' });
+
+  </script>
+  <script src="/docsify/lib/docsify.min.js"></script>
+  <script src="/docsify/lib/search.js"></script>
+  <div class="footer">footer</div>
+</body>
+</html>

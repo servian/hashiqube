@@ -1,0 +1,9 @@
+---
+- name: A demo to run ansible in a docker container
+  hosts: all
+  tasks:
+    - name: Add a file to root's home dir
+      copy:
+        dest: /root/foo
+        content: Hello World!
+        owner: root
