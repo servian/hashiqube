@@ -7,4 +7,4 @@ sudo docker run -d -p 8088:8088 -e JENKINS_OPTS="--httpPort=8088" --restart alwa
 sleep 15
 echo -e '\e[38;5;198m'"++++ To use Jenkins please open in your browser"
 echo -e '\e[38;5;198m'"++++ http://localhost:8088"
-echo -e '\e[38;5;198m'"++++ Login with jenkins:jenkins"
+echo -e '\e[38;5;198m'"Login with `sudo cat /var/jenkins_home/secrets/initialAdminPassword`"

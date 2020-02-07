@@ -121,7 +121,6 @@ EOF
   sleep 20
   vault operator init > /etc/vault/init.file
 
-  echo -e '\e[38;5;198m'"++++ Vault http://localhost:8200/ui and enter the following codes displayed below"
   echo -e '\e[38;5;198m'"++++ Auto unseal vault"
   for i in $(cat /etc/vault/init.file | grep Unseal | cut -d " " -f4 | head -n 3); do vault operator unseal $i; done
   vault status
@@ -140,6 +139,8 @@ EOF
   else
     sed -i "s/VAULT_ADDR=.*/VAULT_ADDR=http://127.0.0.1:8200/g" /etc/environment
   fi
+  echo -e '\e[38;5;198m'"++++ Vault http://localhost:8200/ui and enter the following codes displayed below"
+  echo -e '\e[38;5;198m'"++++ Vault `sudo grep Token /etc/vault/init.file`"
 
 else
 
@@ -156,13 +157,14 @@ else
     sed -i "s/VAULT_ADDR=.*/VAULT_ADDR=http://127.0.0.1:8200/g" /etc/environment
   fi
   echo -e '\e[38;5;198m'"++++ Vault already installed and running"
-  echo -e '\e[38;5;198m'"++++ Vault http://localhost:8200/ui and enter the following codes displayed below"
   # check vault status
   # vault status
   echo -e '\e[38;5;198m'"++++ Auto unseal vault"
   for i in `cat /etc/vault/init.file | grep Unseal | cut -d " " -f4 | head -n 3`; do vault operator unseal $i; done
   vault status
   cat /etc/vault/init.file
+  echo -e '\e[38;5;198m'"++++ Vault http://localhost:8200/ui and enter the following codes displayed below"
+  echo -e '\e[38;5;198m'"++++ Vault `sudo grep Token /etc/vault/init.file`"
 fi
 # check vault status
 # vault status
