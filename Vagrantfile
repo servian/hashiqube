@@ -28,7 +28,8 @@ machines = [
     :disksize => '10GB',
     :vbox_config => vbox_config,
     :synced_folders => [
-      { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' }
+      { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
+      { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' }
     ],
   }
 ]
