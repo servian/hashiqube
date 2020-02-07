@@ -56,9 +56,6 @@ For Documentation please open http://localhost:3333 in your browser
 * Localstack http://localhost:8080
 * Terraform Enterprise (enterprise needs a licence) http://localhost:8800
 
-## HashiQube runs all HashiCorp's products
-![HashiQube](images/hashicorp_products.png?raw=true "HashiQube")
-
 ## Other
 * LDAP can be accessed on ldap://localhost:389
 * Localstack web http://localhost:8080
