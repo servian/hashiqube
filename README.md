@@ -20,6 +20,15 @@ Thanks to the flexibility of the HashiCorp products there is no need wonder how 
 * To run a specific service you want to use run the declarative command for it, for example, `vagrant up --provision-with minikube`
 * Open in your browser http://localhost:3333 for Documentation
 
+## Consul DNS
+__Local DNS via Consul__ <br />
+Add on our local Macbook a file __/etc/resolver/consul__ with below contents
+```
+nameserver 10.9.99.10
+port 8600
+```
+Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via Fabio Load Balancer <br />
+
 ## Pre-requisites
 * 10GB of disk space
 * 4GB RAM
