@@ -17,7 +17,7 @@ Thanks to the flexibility of the HashiCorp products there is no need wonder how 
 * Please download __Virtualbox__ from https://www.virtualbox.org/wiki/Downloads and __Vagrant__ from https://www.vagrantup.com/downloads.html and install
 * Using `git` - clone this repo `git clone $repo .` [__What is Git?__](git/#git)
 * Inside the local repo folder, do `vagrant up --provision` - This will setup, Vault, Nomad, Consul, Terraform, Localstack and Docker as well as giving you access the docsify website at http://localhost:3333
-* To run a specific service you want to use run the declarative command for it, for example, `vagrant up --provision-with minikube`
+* To run a specific service you want to use run the declarative command for it, for example, `vagrant up --provision-with nomad`
 * Open in your browser http://localhost:3333 for Documentation
 
 ## Consul DNS
