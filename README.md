@@ -3,13 +3,14 @@ HashiQube is a VM with a Docker daemon inside. It runs all HashiCorp products. _
 It also runs a host of other popular Open Source DevOps / DevSecOps applications showcasing how simple integration with HashiCorp products can result in tangible learnings and benefits for all its users
 Once the Qube is up an internet connection is no longer needed meaning sales pitches and demos for potential and existing customers is greatly aided.
 
-## HashiQube runs all HashiCorp's products
+## HashiQube runs all HashiCorp's products!
 ![HashiQube](images/thestack.png?raw=true "HashiQube")
 
 ## Purpose
-HashiQube has been created to enable anyone who is interested in secure automation pipelines the ability to run a suite of ‘best in class’ tools their local machines at the cost of a small amount of system resources.
-The Qube gives all interested parties the empowerment  to  deploy these tools in a way covers multiple use cases effectively providing a ‘concept to completion’ test bed using open source HashiCorp products.
-The original use case was born the desire to demystify DevSecOps utilising Terraform, Vault, Consul, Sentinel and Nomad as well as some other well know open source CI/CD tools by providing a ‘hands-on’ environment that demonstrates the value of secret and credential management in standard software development pipeline.
+HashiQube has been created to enable anyone interested in secure automation pipelines the ability to run a suite of 'best in class' tools their local machines at the cost of a small number of system resources. 
+The Qube gives all interested parties the empowerment to deploy these tools in a way covers multiple use cases effectively providing a 'concept to completion' testbed using open-source HashiCorp products. 
+
+The original use case was born the desire to demystify DevSecOps utilising Terraform, Vault, Consul, Sentinel and Nomad as well as some other well known open source CI/CD tools by providing a 'hands-on' environment that demonstrates the value of secret and credential management in a standard software development pipeline.
 
 Thanks to the flexibility of the HashiCorp products there is no need wonder how to achieve the goals of bringing software to market in a more secure and timely fashion, just Vagrant up!
 
