@@ -3,7 +3,7 @@
 
 # create local domain name e.g user.local.dev
 user = ENV["USER"].downcase
-fqdn = ENV["fqdn"] || "#{user}.local.dev"
+fqdn = ENV["fqdn"] || "service.consul"
 
 # https://www.virtualbox.org/manual/ch08.html
 vbox_config = [
@@ -22,17 +22,42 @@ vbox_config = [
 # machine(s) hash
 machines = [
   {
-    :name => "#{fqdn}",
+    :name => "hashiqube0.#{fqdn}",
     :ip => '10.9.99.10',
     :ssh_port => '2255',
     :disksize => '10GB',
     :vbox_config => vbox_config,
     :synced_folders => [
       { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
-      { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' }
+      { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
     ],
-  }
+  },
+  # {
+  #   :name => "hashiqube1.#{fqdn}",
+  #   :ip => '10.9.99.11',
+  #   :ssh_port => '2266',
+  #   :disksize => '10GB',
+  #   :vbox_config => vbox_config,
+  #   :synced_folders => [
+  #     { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
+  #     { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
+  #     { :vm_path => '/opt/sonarqube', :ext_rel_path => './sonarqube', :vm_owner => 'ubuntu' },
+  #   ],
+  # },
+  # {
+  #   :name => "hashiqube2.#{fqdn}",
+  #   :ip => '10.9.99.12',
+  #   :ssh_port => '2277',
+  #   :disksize => '10GB',
+  #   :vbox_config => vbox_config,
+  #   :synced_folders => [
+  #     { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
+  #     { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
+  #     { :vm_path => '/opt/sonarqube', :ext_rel_path => './sonarqube', :vm_owner => 'ubuntu' },
+  #   ],
+  # },
 ]
+
 
 Vagrant::configure("2") do |config|
 
@@ -51,42 +76,45 @@ Vagrant::configure("2") do |config|
     exec "vagrant plugin install #{plugin}#{COMMAND_SEPARATOR}vagrant #{ARGV.join(" ")}" unless Vagrant.has_plugin? plugin || ARGV[0] == 'plugin'
   end
 
-  machines.each do |machine|
+  machines.each_with_index do |machine, index|
 
     config.vm.box = "ubuntu/bionic64"
-    config.vm.define machine[:name] do |host|
+    config.vm.define machine[:name] do |config|
 
       config.disksize.size = machine[:disksize]
       config.ssh.forward_agent = true
       config.ssh.insert_key = true
       config.vm.network "private_network", ip: machine[:ip]
       config.vm.network "forwarded_port", guest: 22, host: machine[:ssh_port], id: 'ssh', auto_correct: true
-      config.vm.network "forwarded_port", guest: 8200, host: 8200 # vault
-      config.vm.network "forwarded_port", guest: 4646, host: 4646 # nomad
-      config.vm.network "forwarded_port", guest: 8500, host: 8500 # consul
-      config.vm.network "forwarded_port", guest: 8600, host: 8600, protocol: 'udp' # consul dns
-      config.vm.network "forwarded_port", guest: 8800, host: 8800 # terraform-enterprise
-      config.vm.network "forwarded_port", guest: 443, host: 4443 # terraform-enterprise
-      config.vm.network "forwarded_port", guest: 8888, host: 8888 # ansible/roles/www
-      config.vm.network "forwarded_port", guest: 8889, host: 8889 # docker/apache2
-      config.vm.network "forwarded_port", guest: 389, host: 3389 # ldap
-      config.vm.network "forwarded_port", guest: 8080, host: 8080 # localstack web
-      config.vm.network "forwarded_port", guest: 8088, host: 8088 # jenkins
-      config.vm.network "forwarded_port", guest: 9002, host: 9002 # consul counter-dashboard
-      config.vm.network "forwarded_port", guest: 9001, host: 9001 # consul counter-api
-      config.vm.network "forwarded_port", guest: 9022, host: 9022 # consul counter-dashboard-test
-      config.vm.network "forwarded_port", guest: 9011, host: 9011 # consul counter-api-test
-      config.vm.network "forwarded_port", guest: 3306, host: 3306 # mysql
-      config.vm.network "forwarded_port", guest: 1433, host: 1433 # mssql
-      config.vm.network "forwarded_port", guest: 9998, host: 9998 # fabio-dashboard
-      config.vm.network "forwarded_port", guest: 9999, host: 9999 # fabiolb
-      config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
-    # localstack
-    for port in 4567..4597 do
-      config.vm.network "forwarded_port", guest: "#{port}", host: "#{port}" # localstack
-    end
 
-      config.vm.hostname = "#{fqdn}"
+      if machines.size == 1 # only expose these ports if 1 machine, else conflicts
+        config.vm.network "forwarded_port", guest: 8200, host: 8200 # vault
+        config.vm.network "forwarded_port", guest: 4646, host: 4646 # nomad
+        config.vm.network "forwarded_port", guest: 8500, host: 8500 # consul
+        config.vm.network "forwarded_port", guest: 8600, host: 8600, protocol: 'udp' # consul dns
+        config.vm.network "forwarded_port", guest: 8800, host: 8800 # terraform-enterprise
+        config.vm.network "forwarded_port", guest: 443, host: 4443 # terraform-enterprise
+        config.vm.network "forwarded_port", guest: 8888, host: 8888 # ansible/roles/www
+        config.vm.network "forwarded_port", guest: 8889, host: 8889 # docker/apache2
+        config.vm.network "forwarded_port", guest: 389, host: 3389 # ldap
+        config.vm.network "forwarded_port", guest: 8080, host: 8080 # localstack web
+        config.vm.network "forwarded_port", guest: 8088, host: 8088 # jenkins
+        config.vm.network "forwarded_port", guest: 9002, host: 9002 # consul counter-dashboard
+        config.vm.network "forwarded_port", guest: 9001, host: 9001 # consul counter-api
+        config.vm.network "forwarded_port", guest: 9022, host: 9022 # consul counter-dashboard-test
+        config.vm.network "forwarded_port", guest: 9011, host: 9011 # consul counter-api-test
+        config.vm.network "forwarded_port", guest: 3306, host: 3306 # mysql
+        config.vm.network "forwarded_port", guest: 1433, host: 1433 # mssql
+        config.vm.network "forwarded_port", guest: 9998, host: 9998 # fabio-dashboard
+        config.vm.network "forwarded_port", guest: 9999, host: 9999 # fabiolb
+        config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
+        # localstack
+        for port in 4567..4597 do
+          config.vm.network "forwarded_port", guest: "#{port}", host: "#{port}" # localstack
+        end
+      end
+
+      config.vm.hostname = "#{machine[:name]}"
 
       unless machine[:vbox_config].nil?
         config.vm.provider :virtualbox do |vb|
@@ -111,7 +139,22 @@ Vagrant::configure("2") do |config|
       config.vm.provision "bootstrap", preserve_order: true, type: "shell", privileged: true, inline: <<-SHELL
         echo -e '\e[38;5;198m'"BEGIN BOOTSTRAP $(date '+%Y-%m-%d %H:%M:%S')"
         echo -e '\e[38;5;198m'"running vagrant as #{user}"
+        echo -e '\e[38;5;198m'"vagrant IP "#{machine[:ip]}
+        echo -e '\e[38;5;198m'"vagrant fqdn #{machine[:name]}"
+        echo -e '\e[38;5;198m'"vagrant index #{index}"
         cd ~\n
+        grep -q "VAGRANT_IP=#{machine[:ip]}" /etc/environment
+        if [ $? -eq 1 ]; then
+          echo "VAGRANT_IP=#{machine[:ip]}" >> /etc/environment
+        else
+          sed -i "s/VAGRANT_INDEX=.*/VAGRANT_INDEX=#{index}/g" /etc/environment
+        fi
+        grep -q "VAGRANT_INDEX=#{index}" /etc/environment
+        if [ $? -eq 1 ]; then
+          echo "VAGRANT_INDEX=#{index}" >> /etc/environment
+        else
+          sed -i "s/VAGRANT_INDEX=.*/VAGRANT_INDEX=#{index}/g" /etc/environment
+        fi
         # install applications
         export DEBIAN_FRONTEND=noninteractive
         export PATH=$PATH:/root/.local/bin

@@ -10,11 +10,13 @@ data_dir  = "/var/lib/nomad"
 
 bind_addr = "0.0.0.0" # the default
 
+datacenter = "dc1"
+
 advertise {
   # Defaults to the first private IP address.
-  http = "10.9.99.10"
-  rpc  = "10.9.99.10"
-  serf = "10.9.99.10:5648" # non-default ports may be specified
+  http = "${VAGRANT_IP}"
+  rpc  = "${VAGRANT_IP}"
+  serf = "${VAGRANT_IP}:5648" # non-default ports may be specified
 }
 
 server {
@@ -26,7 +28,7 @@ client {
   enabled       = true
   # https://github.com/hashicorp/nomad/issues/1282
   network_speed = 100
-  servers = ["10.9.99.10:4647"]
+  servers = ["${VAGRANT_IP}:4647"]
   network_interface = "enp0s8"
 }
 
@@ -37,7 +39,7 @@ plugin "raw_exec" {
 }
 
 consul {
-  address = "10.9.99.10:8500"
+  address = "${VAGRANT_IP}:8500"
 }
 EOF
   # check if nomad is installed, start and exit
@@ -87,7 +89,7 @@ nomad plan --address=http://localhost:4646 countdashboardtest.nomad
 nomad run --address=http://localhost:4646 countdashboardtest.nomad
 nomad plan --address=http://localhost:4646 fabio.nomad
 nomad run --address=http://localhost:4646 fabio.nomad
-# curl -v -H 'Host: fabio.service.consul' http://10.0.2.15:9999/
+# curl -v -H 'Host: fabio.service.consul' http://${VAGRANT_IP}:9999/
 echo -e '\e[38;5;198m'"++++ Nomad http://localhost:4646"
 }
 

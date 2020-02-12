@@ -7,9 +7,9 @@ mkdir -p /etc/consul
 mkdir -p /etc/consul.d
 cat <<EOF | sudo tee /etc/consul/server.hcl
 primary_datacenter = "dc1"
-client_addr = "10.9.99.10 127.0.0.1 ::1"
-bind_addr = "0.0.0.0"
-advertise_addr = "10.9.99.10"
+client_addr = "${VAGRANT_IP} 10.0.2.15"
+bind_addr = "${VAGRANT_IP}"
+advertise_addr = "${VAGRANT_IP}"
 data_dir = "/var/lib/consul"
 datacenter = "dc1"
 disable_host_node_id = true
@@ -38,7 +38,7 @@ cat <<EOF | sudo tee /etc/consul.d/vault.json
   {"service":
   {"name": "vault",
   "tags": ["urlprefix-vault.service.consul/"],
-  "address": "10.9.99.10",
+  "address": "${VAGRANT_IP}",
   "port": 8200
   }}
 EOF
@@ -46,7 +46,7 @@ cat <<EOF | sudo tee /etc/consul.d/docsify.json
   {"service":
   {"name": "docsify",
   "tags": ["urlprefix-docsify.service.consul/"],
-  "address": "10.9.99.10",
+  "address": "${VAGRANT_IP}",
   "port": 3333
   }}
 EOF
@@ -78,7 +78,7 @@ EOF
     sudo pkill -9 consul
     sudo killall consul
     sudo killall consul
-    sudo nohup consul agent -dev -client="0.0.0.0" -bind="10.9.99.10" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
+    sudo nohup consul agent -dev -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
     sh -c 'sudo tail -f /var/log/consul.log | { sed "/agent: Synced/ q" && kill $$ ;}'
     consul members
     consul info
@@ -90,19 +90,19 @@ EOF
     mkdir -p /usr/local/bin
     (cd /usr/local/bin && unzip /tmp/consul.zip)
     echo -e '\e[38;5;198m'"++++ Installed `/usr/local/bin/consul version`"
-    sudo nohup consul agent -dev -client="0.0.0.0" -bind="10.9.99.10" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
+    sudo nohup consul agent -dev -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
     sh -c 'sudo tail -f /var/log/consul.log | { sed "/agent: Synced/ q" && kill $$ ;}'
     consul members
     consul info
   fi
 echo -e '\e[38;5;198m'"++++ Adding Consul KV data for Fabio Load Balancer Routes"
-consul kv put fabio/config/vault1 "route add vault vault.service.consul:9999/ http://10.9.99.10:8200"
-consul kv put fabio/config/vault2 "route add vault fabio.service.consul:9999/vault http://10.9.99.10:8200 opts \"strip=/vault\""
-consul kv put fabio/config/nomad "route add nomad nomad.service.consul:9999/ http://10.9.99.10:4646"
-consul kv put fabio/config/consul "route add consul consul.service.consul:9999/ http://10.9.99.10:8500"
-consul kv put fabio/config/apache2 "route add apache2 fabio.service.consul:9999/apache2 http://10.9.99.10:8889 opts \"strip=/apache2\""
-consul kv put fabio/config/countdashtest1 "route add countdashtest fabio.service.consul:9999/countdashtest http://10.9.99.10:9022/ opts \"strip=/countdashtest\""
-consul kv put fabio/config/docsify "route add docsify docsify.service.consul:9999/ http://10.9.99.10:3333"
+consul kv put fabio/config/vault1 "route add vault vault.service.consul:9999/ http://${VAGRANT_IP}:8200"
+consul kv put fabio/config/vault2 "route add vault fabio.service.consul:9999/vault http://${VAGRANT_IP}:8200 opts \"strip=/vault\""
+consul kv put fabio/config/nomad "route add nomad nomad.service.consul:9999/ http://${VAGRANT_IP}:4646"
+consul kv put fabio/config/consul "route add consul consul.service.consul:9999/ http://${VAGRANT_IP}:8500"
+consul kv put fabio/config/apache2 "route add apache2 fabio.service.consul:9999/apache2 http://${VAGRANT_IP}:8889 opts \"strip=/apache2\""
+consul kv put fabio/config/countdashtest1 "route add countdashtest fabio.service.consul:9999/countdashtest http://${VAGRANT_IP}:9022/ opts \"strip=/countdashtest\""
+consul kv put fabio/config/docsify "route add docsify docsify.service.consul:9999/ http://${VAGRANT_IP}:3333"
 echo -e '\e[38;5;198m'"++++ Consul http://localhost:8500"
 }
 
