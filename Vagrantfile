@@ -32,30 +32,28 @@ machines = [
       { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
     ],
   },
-  # {
-  #   :name => "hashiqube1.#{fqdn}",
-  #   :ip => '10.9.99.11',
-  #   :ssh_port => '2266',
-  #   :disksize => '10GB',
-  #   :vbox_config => vbox_config,
-  #   :synced_folders => [
-  #     { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
-  #     { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
-  #     { :vm_path => '/opt/sonarqube', :ext_rel_path => './sonarqube', :vm_owner => 'ubuntu' },
-  #   ],
-  # },
-  # {
-  #   :name => "hashiqube2.#{fqdn}",
-  #   :ip => '10.9.99.12',
-  #   :ssh_port => '2277',
-  #   :disksize => '10GB',
-  #   :vbox_config => vbox_config,
-  #   :synced_folders => [
-  #     { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
-  #     { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
-  #     { :vm_path => '/opt/sonarqube', :ext_rel_path => './sonarqube', :vm_owner => 'ubuntu' },
-  #   ],
-  # },
+  #{
+  #  :name => "hashiqube1.#{fqdn}",
+  #  :ip => '10.9.99.11',
+  #  :ssh_port => '2266',
+  #  :disksize => '10GB',
+  #  :vbox_config => vbox_config,
+  #  :synced_folders => [
+  #    { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
+  #    { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
+  #  ],
+  #},
+  #{
+  #  :name => "hashiqube2.#{fqdn}",
+  #  :ip => '10.9.99.12',
+  #  :ssh_port => '2277',
+  #  :disksize => '10GB',
+  #  :vbox_config => vbox_config,
+  #  :synced_folders => [
+  #    { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
+  #    { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
+  #  ],
+  #},
 ]
 
 

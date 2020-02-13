@@ -80,6 +80,7 @@ EOF
     sudo killall consul
     sudo nohup consul agent -dev -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
     sh -c 'sudo tail -f /var/log/consul.log | { sed "/agent: Synced/ q" && kill $$ ;}'
+    consul join 10.9.99.10
     consul members
     consul info
   else
@@ -92,6 +93,7 @@ EOF
     echo -e '\e[38;5;198m'"++++ Installed `/usr/local/bin/consul version`"
     sudo nohup consul agent -dev -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
     sh -c 'sudo tail -f /var/log/consul.log | { sed "/agent: Synced/ q" && kill $$ ;}'
+    consul join 10.9.99.10
     consul members
     consul info
   fi

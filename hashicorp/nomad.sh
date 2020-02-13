@@ -59,6 +59,7 @@ EOF
     pkill nomad
     sleep 10
     pkill nomad
+    pkill nomad
     nohup nomad agent -config=/etc/nomad/server.conf -dev-connect > /var/log/nomad.log 2>&1 &
     sh -c 'sudo tail -f /var/log/nomad.log | { sed "/node registration complete/ q" && kill $$ ;}'
     nomad server members
