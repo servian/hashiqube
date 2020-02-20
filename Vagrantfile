@@ -235,7 +235,7 @@ Vagrant::configure("2") do |config|
         echo -e '\e[38;5;198m'"HashiQube has now been provisioned, and your services should be running."
         echo -e '\e[38;5;198m'"Below are some links for you to get started."
         echo -e '\e[38;5;198m'"Main documentation http://localhost:3333 Open this first."
-        echo -e '\e[38;5;198m'"Vault http://localhost:8200"
+        echo -e '\e[38;5;198m'"Vault http://localhost:8200 with $(cat /etc/vault/init.file | grep Root)"
         echo -e '\e[38;5;198m'"Consul http://localhost:8500"
         echo -e '\e[38;5;198m'"Nomad http://localhost:4646"
         echo -e '\e[38;5;198m'"Fabio http://localhost:9998"
