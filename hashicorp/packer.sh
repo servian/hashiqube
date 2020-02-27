@@ -15,7 +15,7 @@ function packer-install() {
   fi
   sudo touch /var/log/packer.log
   sudo chmod 777 /var/log/packer.log
-  sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install curl unzip jq
+  sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install curl unzip jq python3-hvac
   if [ -f /usr/local/bin/packer ]; then
     echo -e '\e[38;5;198m'"++++ `/usr/local/bin/packer version` already installed at /usr/local/bin/packer"
   else
@@ -26,6 +26,10 @@ function packer-install() {
 
     echo -e '\e[38;5;198m'"++++ Installed: `/usr/local/bin/packer version`"
   fi
+  echo -e '\e[38;5;198m'"++++ Add a Secret in Vault which Ansible will retrieve"
+  vault secrets enable -path=kv kv
+  vault kv put kv/ansible devops="all the things"
+  sed -i "s:token=[^ ]*:token=${VAULT_TOKEN}:" /vagrant/hashicorp/packer/linux/ubuntu/playbook.yml
   echo -e '\e[38;5;198m'"++++ Install Ansible to configure Containers/VMs/AMIs/Whatever"
   sudo DEBIAN_FRONTEND=noninteractive apt-get update
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip
