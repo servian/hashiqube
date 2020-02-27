@@ -26,6 +26,9 @@ function packer-install() {
 
     echo -e '\e[38;5;198m'"++++ Installed: `/usr/local/bin/packer version`"
   fi
+  # Packer will build a Docker container, use the Shell and Ansible provisioners, Ansible will also connect to Vault to retrieve secrets using a Token.
+  # https://learn.hashicorp.com/vault/getting-started/secrets-engines
+  # https://docs.ansible.com/ansible/latest/plugins/lookup/hashi_vault.html
   echo -e '\e[38;5;198m'"++++ Add a Secret in Vault which Ansible will retrieve"
   vault secrets enable -path=kv kv
   vault kv put kv/ansible devops="all the things"
