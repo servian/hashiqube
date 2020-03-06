@@ -29,10 +29,53 @@ function packer-install() {
   # Packer will build a Docker container, use the Shell and Ansible provisioners, Ansible will also connect to Vault to retrieve secrets using a Token.
   # https://learn.hashicorp.com/vault/getting-started/secrets-engines
   # https://docs.ansible.com/ansible/latest/plugins/lookup/hashi_vault.html
-  echo -e '\e[38;5;198m'"++++ Add a Secret in Vault which Ansible will retrieve"
+  echo -e '\e[38;5;198m'"++++ https://www.vaultproject.io/docs/auth/approle/"
+  echo -e '\e[38;5;198m'"++++ Using the root Vault token, enable the AppRole auth method"
+  echo -e '\e[38;5;198m'"++++ vault auth enable approle"
+  vault auth enable approle
+  echo -e '\e[38;5;198m'"++++ Using the root Vault token, Create an Ansible role"
+  echo -e '\e[38;5;198m'"++++ Create an policy named ansible allowing Ansible to read secrets"
+  tee ansible-vault-policy.hcl <<"EOF"
+  # Read-only permission on 'kv/*' path
+  path "kv/*" {
+    capabilities = [ "read" ]
+  }
+EOF
+  vault policy write ansible ansible-vault-policy.hcl
+  echo -e '\e[38;5;198m'"++++ vault write auth/approle/role/ansible \
+    secret_id_ttl=10h \\n
+    token_policies=ansible \\n
+    token_num_uses=100 \\n
+    token_ttl=10h \\n
+    token_max_ttl=10h \\n
+    secret_id_num_uses=100"
+  vault write auth/approle/role/ansible \
+    secret_id_ttl=10h \
+    token_policies=ansible \
+    token_num_uses=100 \
+    token_ttl=10h \
+    token_max_ttl=10h \
+    secret_id_num_uses=100
+  echo -e '\e[38;5;198m'"++++ Fetch the RoleID of the Ansible's Role"
+  echo -e '\e[38;5;198m'"++++ vault read auth/approle/role/ansible/role-id"
+  vault read auth/approle/role/ansible/role-id
+  echo -e '\e[38;5;198m'"++++ Using the root Vault token,Get a SecretID issued against the AppRole"
+  echo -e '\e[38;5;198m'"++++ vault write -f auth/approle/role/ansible/secret-id"
+  vault write -f auth/approle/role/ansible/secret-id
+  echo -e '\e[38;5;198m'"++++ Fetch the Token that Ansible will use to lookup secrets"
+  ANSIBLE_ROLE_ID=$(vault read auth/approle/role/ansible/role-id | grep role_id | tr -s ' ' | cut -d ' ' -f2)
+  echo -e '\e[38;5;198m'"++++ ANSIBLE_ROLE_ID: ${ANSIBLE_ROLE_ID}"
+  ANSIBLE_ROLE_SECRET_ID=$(vault write -f auth/approle/role/ansible/secret-id | grep secret_id | head -n 1 | tr -s ' ' | cut -d ' ' -f2)
+  echo -e '\e[38;5;198m'"++++ ANSIBLE_ROLE_SECRET_ID: ${ANSIBLE_ROLE_SECRET_ID}"
+  echo -e '\e[38;5;198m'"++++ vault write auth/approle/login role_id=\"${ANSIBLE_ROLE_ID}\" secret_id=\"${ANSIBLE_ROLE_ID}\""
+  vault write auth/approle/login role_id="${ANSIBLE_ROLE_ID}" secret_id="${ANSIBLE_ROLE_SECRET_ID}"
+  echo -e '\e[38;5;198m'"++++ Using the root Vault token, add a Secret in Vault which Ansible will retrieve"
+  echo -e '\e[38;5;198m'"++++ vault secrets enable -path=kv kv"
   vault secrets enable -path=kv kv
   vault kv put kv/ansible devops="all the things"
-  sed -i "s:token=[^ ]*:token=${VAULT_TOKEN}:" /vagrant/hashicorp/packer/linux/ubuntu/playbook.yml
+  ANSIBLE_TOKEN=$(vault write auth/approle/login role_id="${ANSIBLE_ROLE_ID}" secret_id="${ANSIBLE_ROLE_SECRET_ID}" | grep token | head -n1 | tr -s ' ' | cut -d ' ' -f2)
+  echo -e '\e[38;5;198m'"++++ ANSIBLE_TOKEN: ${ANSIBLE_TOKEN}"
+  sed -i "s:token=[^ ]*:token=${ANSIBLE_TOKEN}:" /vagrant/hashicorp/packer/linux/ubuntu/playbook.yml
   echo -e '\e[38;5;198m'"++++ Install Ansible to configure Containers/VMs/AMIs/Whatever"
   sudo DEBIAN_FRONTEND=noninteractive apt-get update
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip
