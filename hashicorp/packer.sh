@@ -29,6 +29,7 @@ function packer-install() {
   # Packer will build a Docker container, use the Shell and Ansible provisioners, Ansible will also connect to Vault to retrieve secrets using a Token.
   # https://learn.hashicorp.com/vault/getting-started/secrets-engines
   # https://docs.ansible.com/ansible/latest/plugins/lookup/hashi_vault.html
+  # https://learn.hashicorp.com/vault/identity-access-management/iam-authentication
   echo -e '\e[38;5;198m'"++++ https://www.vaultproject.io/docs/auth/approle/"
   echo -e '\e[38;5;198m'"++++ Using the root Vault token, enable the AppRole auth method"
   echo -e '\e[38;5;198m'"++++ vault auth enable approle"
@@ -36,8 +37,8 @@ function packer-install() {
   echo -e '\e[38;5;198m'"++++ Using the root Vault token, Create an Ansible role"
   echo -e '\e[38;5;198m'"++++ Create an policy named ansible allowing Ansible to read secrets"
   tee ansible-vault-policy.hcl <<"EOF"
-  # Read-only permission on 'kv/*' path
-  path "kv/*" {
+  # Read-only permission on 'kv/ansible*' path
+  path "kv/ansible*" {
     capabilities = [ "read" ]
   }
 EOF
@@ -72,6 +73,8 @@ EOF
   echo -e '\e[38;5;198m'"++++ Using the root Vault token, add a Secret in Vault which Ansible will retrieve"
   echo -e '\e[38;5;198m'"++++ vault secrets enable -path=kv kv"
   vault secrets enable -path=kv kv
+  echo -e '\e[38;5;198m'"++++ Create a Secret that Ansible will have access too"
+  echo -e '\e[38;5;198m'"++++ vault kv put kv/ansible devops=\"all the things\""
   vault kv put kv/ansible devops="all the things"
   ANSIBLE_TOKEN=$(vault write auth/approle/login role_id="${ANSIBLE_ROLE_ID}" secret_id="${ANSIBLE_ROLE_SECRET_ID}" | grep token | head -n1 | tr -s ' ' | cut -d ' ' -f2)
   echo -e '\e[38;5;198m'"++++ ANSIBLE_TOKEN: ${ANSIBLE_TOKEN}"
