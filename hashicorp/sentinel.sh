@@ -21,6 +21,24 @@ echo -e '\e[38;5;198m'"++++ cat /tmp/policy.sentinel"
 cat /tmp/policy.sentinel
 echo -e '\e[38;5;198m'"++++ sentinel apply /tmp/policy.sentinel"
 sentinel apply /tmp/policy.sentinel
+echo -e '\e[38;5;198m'"++++ Let's test some more advanced Sentinel Policies"
+# https://github.com/hashicorp/tfe-policies-example
+# https://docs.hashicorp.com/sentinel/language/
+echo -e '\e[38;5;198m'"++++ https://github.com/hashicorp/tfe-policies-example"
+echo -e '\e[38;5;198m'"++++ https://docs.hashicorp.com/sentinel/language/"
+cd /vagrant/hashicorp/sentinel/
+echo -e '\e[38;5;198m'"++++ sentinel test aws-block-allow-all-cidr.sentinel"
+sentinel test aws-block-allow-all-cidr.sentinel || true
+echo -e '\e[38;5;198m'"++++ sentinel apply -config ./test/aws-block-allow-all-cidr/pass.json aws-block-allow-all-cidr.sentinel"
+sentinel apply -config ./test/aws-block-allow-all-cidr/pass.json aws-block-allow-all-cidr.sentinel
+echo -e '\e[38;5;198m'"++++ sentinel apply -config ./test/aws-block-allow-all-cidr/fail.json aws-block-allow-all-cidr.sentinel"
+sentinel apply -config ./test/aws-block-allow-all-cidr/fail.json aws-block-allow-all-cidr.sentinel || true
+echo -e '\e[38;5;198m'"++++ sentinel test aws-alb-redirect.sentinel"
+sentinel test aws-alb-redirect.sentinel || true
+echo -e '\e[38;5;198m'"++++ sentinel apply -config ./test/aws-alb-redirect/fail.json aws-alb-redirect.sentinel"
+sentinel apply -config ./test/aws-alb-redirect/fail.json aws-alb-redirect.sentinel || true
+echo -e '\e[38;5;198m'"++++ sentinel apply -config ./test/aws-alb-redirect/pass.json aws-alb-redirect.sentinel"
+sentinel apply -config ./test/aws-alb-redirect/pass.json aws-alb-redirect.sentinel
 }
 
 sentinel-install

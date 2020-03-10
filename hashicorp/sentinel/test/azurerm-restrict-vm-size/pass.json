@@ -1,0 +1,18 @@
+{
+  "global":{},
+  "mock": {
+    "tfplan": {
+      "resources": {
+        "azurerm_virtual_machine": {
+          "always-bad": {
+            "0": {
+              "applied": {
+                "vm_size": "Standard_D1_v2"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

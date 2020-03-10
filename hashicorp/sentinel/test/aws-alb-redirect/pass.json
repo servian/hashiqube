@@ -1,0 +1,36 @@
+{
+  "mock": {
+    "tfplan": {
+      "resources": {
+        "aws_lb_listener": {
+          "foo": {
+            "0": {
+              "applied": {
+                "default_action": [
+                  {
+                    "authenticate_cognito": [],
+                    "authenticate_oidc": [],
+                    "fixed_response": [],
+                    "order": 1,
+                    "redirect": [
+                      {
+                        "host": "#{host}",
+                        "path": "/#{path}",
+                        "port": "443",
+                        "protocol": "HTTPS",
+                        "query": "#{query}",
+                        "status_code": "HTTP_301"
+                      }
+                    ],
+                    "target_group_arn": "",
+                    "type": "redirect"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

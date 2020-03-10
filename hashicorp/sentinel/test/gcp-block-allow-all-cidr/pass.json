@@ -1,0 +1,17 @@
+{
+  "mock": {
+    "tfplan": {
+      "resources": {
+        "google_compute_firewall": {
+          "foo": {
+            "0": {
+              "applied": {
+                "source_ranges": ["1.0.0.0/0"]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

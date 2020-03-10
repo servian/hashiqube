@@ -1,0 +1,26 @@
+{
+  "global":{},
+  "test": {
+    "main": true,
+    "instance_type_allowed": true
+  },
+  "mock": {
+    "tfplan": {
+      "resources": {
+        "aws_instance": {
+          "ok-in-dev": {
+            "0": {
+              "applied": {
+                "ami": "ami-0afae182eed9d2b46",
+                "instance_type": "t2.micro",
+                "tags": {
+                  "Name": "HelloWorld"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "global":{},
+  "test": {
+    "main": false,
+    "instance_type_allowed": false
+  },
+  "mock": {
+    "tfplan": {
+      "resources": {
+        "aws_instance": {
+          "always-bad": {
+            "0": {
+              "applied": {
+                "ami": "ami-0afae182eed9d2b46",
+                "instance_type": "t3.2xlarge",
+                "tags": {
+                  "Name": "HelloWorld"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

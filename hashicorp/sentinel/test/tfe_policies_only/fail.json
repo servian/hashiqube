@@ -1,0 +1,48 @@
+{
+  "test": {
+    "main": false
+  },
+  "mock": {
+    "tfplan": {
+      "resources": {
+        "tfe_team_access": {
+          "foo": {
+            "0": {
+              "applied": {
+                "access": "admin",
+                "team_id": "team-wrongteam",
+                "workspace_id": "ws-wrongworkspace"
+              }
+            }
+          }
+        },
+        "tfe_sentinel_policy": {
+          "passthrough": {
+            "0": {
+              "applied": {
+                "name": "passthrough",
+                "description": "returns true",
+                "organization": "example_corp",
+                "policy": "import \"tfplan\"...",
+                "enforce_mode": "hard-mandatory"
+              }
+            }
+          }
+        },
+        "tfe_policy_set": {
+          "global": {
+            "0": {
+              "applied": {
+                "name": "global",
+                "description": "All infrastructure",
+                "organization": "example_corp",
+                "global": true,
+                "policy_ids": ["pol-43123passthrough"]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

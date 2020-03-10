@@ -1,0 +1,28 @@
+import "tfconfig"
+import "strings"
+
+# Note that this is a template fed to main.tf
+# But it can also be used with the Sentinel simulator
+# Do not change "app.terraform.io/OurOrganization" below
+# since that is what the tfconfig mocks use
+
+# Set module_prefix
+module_prefix = "${hostname}/${organization}"
+if strings.has_prefix(module_prefix, "$") { 
+  # template wasn't evaluated, probably in testing
+  module_prefix = "app.terraform.io/OurOrganization"
+}
+
+# Require all modules directly under root module
+# to come from TFE private module registry (PMR)
+require_modules_from_pmr = rule { 
+  all tfconfig.modules as _, m {
+    print("source: ", m.source) and
+    strings.has_prefix(m.source, module_prefix)
+  }
+}
+  
+# Main rule that requires other rules to be true
+main = rule {
+  (require_modules_from_pmr) else true
+}

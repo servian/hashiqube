@@ -96,6 +96,472 @@ __Linux__
 
 * Docker: Ubuntu configured with Ansible
 
+__Windows__
+
+_Thanks to StefanScherer:_ <br />
+_https://github.com/StefanScherer/packer-windows_ <br />
+_https://github.com/StefanScherer/windows-docker-machine_ <br />
+_and_ <br />
+_joefitzgerald https://github.com/joefitzgerald/packer-windows_ <br />
+_and_ <br />
+_haxorof https://github.com/haxorof/packer-rhel_ <br />
+* Azure: Windows VM
+* Vagrant:
+* VMWare:
+* Docker:
+* HyperV:
+
+https://github.com/StefanScherer/packer-windows
+
+### Build Windows Virtualbox-iso
+
+__On your Host computer__ in `hashiqube/hashicorp/packer/windows` folder, please do:
+
+*~/workspace/hashiqube/hashicorp/packer/windows $* `packer inspect windows_2019.json`
+```
+Optional variables and their defaults:
+
+  autounattend               = ./answer_files/2019/Autounattend.xml
+  disk_size                  = 61440
+  disk_type_id               = 1
+  headless                   = true
+  hyperv_switchname          = {{env `hyperv_switchname`}}
+  iso_checksum               = 221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562
+  iso_checksum_type          = sha256
+  iso_url                    = https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso
+  manually_download_iso_from = https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019
+  restart_timeout            = 5m
+  virtio_win_iso             = ~/virtio-win.iso
+  winrm_timeout              = 2h
+
+Builders:
+
+  hyperv-iso
+  qemu
+  virtualbox-iso
+  vmware-iso
+
+Provisioners:
+
+  windows-shell
+  powershell
+  windows-restart
+  windows-shell
+
+Note: If your build names contain user variables or template
+functions such as 'timestamp', these are processed at build time,
+and therefore only show in their raw form here.
+```
+
+*~/workspace/hashiqube/hashicorp/packer/windows $* `packer build --only=virtualbox-iso windows_2019.json`
+
+```
+virtualbox-iso: output will be in this color.
+
+==> virtualbox-iso: Retrieving ISO
+==> virtualbox-iso: Trying https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso
+==> virtualbox-iso: Trying https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso?checksum=sha256%3A221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562
+==> virtualbox-iso: https://software-download.microsoft.com/download/sg/17763.379.190312-0539.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso?checksum=sha256%3A221F9ACBC727297A56674A0F1722B8AC7B6E840B4E1FFBDD538A9ED0DA823562 => /Users/riaannolan/workspace/hashiqube/hashicorp/packer/windows/packer_cache/c918dc8dbd1474b3d3cfe001787f98e93e18ae0e.iso
+==> virtualbox-iso: Creating floppy disk...
+    virtualbox-iso: Copying files flatly from floppy_files
+    virtualbox-iso: Copying file: ./answer_files/2019/Autounattend.xml
+    virtualbox-iso: Copying file: ./scripts/disable-screensaver.ps1
+    virtualbox-iso: Copying file: ./scripts/disable-winrm.ps1
+    virtualbox-iso: Copying file: ./scripts/enable-winrm.ps1
+    virtualbox-iso: Copying file: ./scripts/microsoft-updates.bat
+    virtualbox-iso: Copying file: ./scripts/win-updates.ps1
+    virtualbox-iso: Copying file: ./scripts/unattend.xml
+    virtualbox-iso: Copying file: ./scripts/sysprep.bat
+    virtualbox-iso: Done copying files from floppy_files
+    virtualbox-iso: Collecting paths from floppy_dirs
+    virtualbox-iso: Resulting paths from floppy_dirs : []
+    virtualbox-iso: Done copying paths from floppy_dirs
+==> virtualbox-iso: Creating ephemeral key pair for SSH communicator...
+==> virtualbox-iso: Created ephemeral SSH key pair for communicator
+==> virtualbox-iso: Creating virtual machine...
+==> virtualbox-iso: Creating hard drive...
+==> virtualbox-iso: Attaching floppy disk...
+==> virtualbox-iso: Creating forwarded port mapping for communicator (SSH, WinRM, etc) (host port 3409)
+==> virtualbox-iso: Starting the virtual machine...
+    virtualbox-iso: The VM will be run headless, without a GUI. If you want to
+    virtualbox-iso: view the screen of the VM, connect via VRDP without a password to
+    virtualbox-iso: rdp://127.0.0.1:5915
+==> virtualbox-iso: Waiting 2m0s for boot...
+==> virtualbox-iso: Typing the boot command...
+==> virtualbox-iso: Using winrm communicator to connect: 127.0.0.1
+==> virtualbox-iso: Waiting for WinRM to become available...
+==> virtualbox-iso: #< CLIXML
+    virtualbox-iso: WinRM connected.
+==> virtualbox-iso: <Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04"><Obj S="progress" RefId="0"><TN RefId="0"><T>System.Management.Automation.PSCustomObject</T><T>System.Object</T></TN><MS><I64 N="SourceId">1</I64><PR N="Record"><AV>Preparing modules for first use.</AV><AI>0</AI><Nil /><PI>-1</PI><PC>-1</PC><T>Completed</T><SR>-1</SR><SD> </SD></PR></MS></Obj><Obj S="progress" RefId="1"><TNRef RefId="0" /><MS><I64 N="SourceId">1</I64><PR N="Record"><AV>Preparing modules for first use.</AV><AI>0</AI><Nil /><PI>-1</PI><PC>-1</PC><T>Completed</T><SR>-1</SR><SD> </SD></PR></MS></Obj></Objs>
+==> virtualbox-iso: Connected to WinRM!
+==> virtualbox-iso: Uploading VirtualBox version info (6.0.14)
+==> virtualbox-iso: Provisioning with windows-shell...
+==> virtualbox-iso: Provisioning with shell script: ./scripts/vm-guest-tools.bat
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if not exist "C:\Windows\Temp\7z1900-x64.msi" (powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://www.7-zip.org/a/7z1900-x64.msi', 'C:\Windows\Temp\7z1900-x64.msi')"  0<NUL )
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if not exist "C:\Windows\Temp\7z1900-x64.msi" (powershell -Command "Start-Sleep 5 ; (New-Object System.Net.WebClient).DownloadFile('https://www.7-zip.org/a/7z1900-x64.msi', 'C:\Windows\Temp\7z1900-x64.msi')"  0<NUL )
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>msiexec /qb /i C:\Windows\Temp\7z1900-x64.msi
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if "virtualbox-iso" EQU "vmware-iso" goto :vmware
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if "virtualbox-iso" EQU "virtualbox-iso" goto :virtualbox
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if exist "C:\Users\vagrant\VBoxGuestAdditions.iso" (move /Y C:\Users\vagrant\VBoxGuestAdditions.iso C:\Windows\Temp )
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if not exist "C:\Windows\Temp\VBoxGuestAdditions.iso" (powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://download.virtualbox.org/virtualbox/6.0.10/VBoxGuestAdditions_6.0.10.iso', 'C:\Windows\Temp\VBoxGuestAdditions.iso')"  0<NUL )
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>cmd /c ""C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\VBoxGuestAdditions.iso -oC:\Windows\Temp\virtualbox"
+    virtualbox-iso:
+    virtualbox-iso: 7-Zip 19.00 (x64) : Copyright (c) 1999-2018 Igor Pavlov : 2019-02-21
+    virtualbox-iso:
+    virtualbox-iso: Scanning the drive for archives:
+    virtualbox-iso: 1 file, 77162496 bytes (74 MiB)
+    virtualbox-iso:
+    virtualbox-iso: Extracting archive: C:\Windows\Temp\VBoxGuestAdditions.iso
+    virtualbox-iso:
+    virtualbox-iso: WARNINGS:
+    virtualbox-iso: There are data after the end of archive
+    virtualbox-iso:
+    virtualbox-iso: --
+    virtualbox-iso: Path = C:\Windows\Temp\VBoxGuestAdditions.iso
+    virtualbox-iso: Type = Iso
+    virtualbox-iso: WARNINGS:
+    virtualbox-iso: There are data after the end of archive
+    virtualbox-iso: Physical Size = 76853248
+    virtualbox-iso: Tail Size = 309248
+    virtualbox-iso: Created = 2019-07-12 01:13:14
+    virtualbox-iso: Modified = 2019-07-12 01:13:14
+    virtualbox-iso:
+    virtualbox-iso: Everything is Ok
+    virtualbox-iso:
+    virtualbox-iso: Archives with Warnings: 1
+    virtualbox-iso:
+    virtualbox-iso: Warnings: 1
+    virtualbox-iso: Folders: 3
+    virtualbox-iso: Files: 38
+    virtualbox-iso: Size:       76740482
+    virtualbox-iso: Compressed: 77162496
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>cmd /c for %i in (C:\Windows\Temp\virtualbox\cert\vbox*.cer) do C:\Windows\Temp\virtualbox\cert\VBoxCertUtil add-trusted-publisher %i --root %i
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>C:\Windows\Temp\virtualbox\cert\VBoxCertUtil add-trusted-publisher C:\Windows\Temp\virtualbox\cert\vbox-sha1.cer --root C:\Windows\Temp\virtualbox\cert\vbox-sha1.cer
+    virtualbox-iso: VBoxCertUtil.exe: info: Successfully added 'C:\Windows\Temp\virtualbox\cert\vbox-sha1.cer' as trusted publisher
+    virtualbox-iso: VBoxCertUtil.exe: info: Successfully added 'C:\Windows\Temp\virtualbox\cert\vbox-sha1.cer' as root
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>C:\Windows\Temp\virtualbox\cert\VBoxCertUtil add-trusted-publisher C:\Windows\Temp\virtualbox\cert\vbox-sha256.cer --root C:\Windows\Temp\virtualbox\cert\vbox-sha256.cer
+    virtualbox-iso: VBoxCertUtil.exe: info: Successfully added 'C:\Windows\Temp\virtualbox\cert\vbox-sha256.cer' as trusted publisher
+    virtualbox-iso: VBoxCertUtil.exe: info: Successfully added 'C:\Windows\Temp\virtualbox\cert\vbox-sha256.cer' as root
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>cmd /c C:\Windows\Temp\virtualbox\VBoxWindowsAdditions.exe /S
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>rd /S /Q "C:\Windows\Temp\virtualbox"
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>goto :done
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>msiexec /qb /x C:\Windows\Temp\7z1900-x64.msi
+==> virtualbox-iso: Provisioning with shell script: ./scripts/enable-rdp.bat
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>netsh advfirewall firewall add rule name="Open Port 3389" dir=in action=allow protocol=TCP localport=3389
+    virtualbox-iso: Ok.
+    virtualbox-iso:
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+    virtualbox-iso: The operation completed successfully.
+==> virtualbox-iso: Provisioning with Powershell...
+==> virtualbox-iso: Provisioning with powershell script: ./scripts/debloat-windows.ps1
+    virtualbox-iso: Downloading debloat zip
+    virtualbox-iso: Disable Windows Defender
+    virtualbox-iso:
+==> virtualbox-iso: Uninstall-WindowsFeature : ArgumentNotValid: The role, role service, or feature name is not valid:
+==> virtualbox-iso: 'Windows-Defender-Features'. The name was not found.
+==> virtualbox-iso: At C:\Windows\Temp\script-5e1aeb39-0fd2-6a09-688e-4196b41ad17f.ps1:20 char:5
+    virtualbox-iso: Success Restart Needed Exit Code      Feature Result
+    virtualbox-iso: ------- -------------- ---------      --------------
+    virtualbox-iso: False   No             InvalidArgs    {}
+    virtualbox-iso: Optimize Windows Update
+    virtualbox-iso: Disable automatic download and installation of Windows updates
+    virtualbox-iso: Disable seeding of updates to other computers via Group Policies
+    virtualbox-iso:
+    virtualbox-iso: Property      : {}
+    virtualbox-iso: PSPath        : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeliveryOpti
+    virtualbox-iso:                 mization
+    virtualbox-iso: PSParentPath  : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows
+    virtualbox-iso: PSChildName   : DeliveryOptimization
+    virtualbox-iso: PSDrive       : HKLM
+    virtualbox-iso: PSProvider    : Microsoft.PowerShell.Core\Registry
+    virtualbox-iso: PSIsContainer : True
+    virtualbox-iso: SubKeyCount   : 0
+    virtualbox-iso: View          : Default
+    virtualbox-iso: Handle        : Microsoft.Win32.SafeHandles.SafeRegistryHandle
+    virtualbox-iso: ValueCount    : 0
+    virtualbox-iso: Name          : HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization
+    virtualbox-iso:
+    virtualbox-iso: Disable 'Updates are available' message
+    virtualbox-iso:
+    virtualbox-iso: SUCCESS: The file (or folder): "C:\Windows\System32\MusNotification.exe" now owned by user "VAGRANT-2019\vagrant".
+    virtualbox-iso: processed file: C:\Windows\System32\MusNotification.exe
+    virtualbox-iso: Successfully processed 1 files; Failed processing 0 files
+    virtualbox-iso:
+    virtualbox-iso: SUCCESS: The file (or folder): "C:\Windows\System32\MusNotificationUx.exe" now owned by user "VAGRANT-2019\vagrant".
+    virtualbox-iso: processed file: C:\Windows\System32\MusNotificationUx.exe
+    virtualbox-iso: Successfully processed 1 files; Failed processing 0 files
+==> virtualbox-iso: +     Uninstall-WindowsFeature Windows-Defender-Features
+==> virtualbox-iso: +     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+==> virtualbox-iso:     + CategoryInfo          : InvalidArgument: (Windows-Defender-Features:String) [Uninstall-WindowsFeature], Exceptio
+==> virtualbox-iso:    n
+==> virtualbox-iso:     + FullyQualifiedErrorId : NameDoesNotExist,Microsoft.Windows.ServerManager.Commands.RemoveWindowsFeatureCommand
+==> virtualbox-iso: Restarting Machine
+==> virtualbox-iso: Waiting for machine to restart...
+==> virtualbox-iso: A system shutdown is in progress.(1115)
+    virtualbox-iso: VAGRANT-2019 restarted.
+==> virtualbox-iso: #< CLIXML
+==> virtualbox-iso: <Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04"><Obj S="progress" RefId="0"><TN RefId="0"><T>System.Management.Automation.PSCustomObject</T><T>System.Object</T></TN><MS><I64 N="SourceId">1</I64><PR N="Record"><AV>Preparing modules for first use.</AV><AI>0</AI><Nil /><PI>-1</PI><PC>-1</PC><T>Completed</T><SR>-1</SR><SD> </SD></PR></MS></Obj></Objs>
+==> virtualbox-iso: Machine successfully restarted, moving on
+==> virtualbox-iso: Provisioning with windows-shell...
+==> virtualbox-iso: Provisioning with shell script: ./scripts/pin-powershell.bat
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>rem https://connect.microsoft.com/PowerShell/feedback/details/1609288/pin-to-taskbar-no-longer-working-in-windows-10
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>copy "A:\WindowsPowerShell.lnk" "C:\Users\vagrant\AppData\Local\Temp\Windows PowerShell.lnk"
+    virtualbox-iso: The system cannot find the file specified.
+==> virtualbox-iso: 'A:\PinTo10.exe' is not recognized as an internal or external command,
+==> virtualbox-iso: operable program or batch file.
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>A:\PinTo10.exe /PTFOL01:'C:\Users\vagrant\AppData\Local\Temp' /PTFILE01:'Windows PowerShell.lnk'
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>exit /b 0
+==> virtualbox-iso: Provisioning with shell script: ./scripts/set-winrm-automatic.bat
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>echo Set WinRM start type to auto
+    virtualbox-iso: Set WinRM start type to auto
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>sc config winrm start= auto
+    virtualbox-iso: [SC] ChangeServiceConfig SUCCESS
+==> virtualbox-iso: Provisioning with shell script: ./scripts/uac-enable.bat
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /f /v EnableLUA /t REG_DWORD /d 1
+    virtualbox-iso: The operation completed successfully.
+==> virtualbox-iso: Provisioning with shell script: ./scripts/compile-dotnet-assemblies.bat
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if "AMD64" == "AMD64" goto 64BIT
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>C:\Windows\microsoft.net\framework\v4.0.30319\ngen.exe update /force /queue  1>NUL
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>C:\Windows\microsoft.net\framework64\v4.0.30319\ngen.exe update /force /queue  1>NUL
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>C:\Windows\microsoft.net\framework\v4.0.30319\ngen.exe executequeueditems  1>NUL
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>C:\Windows\microsoft.net\framework64\v4.0.30319\ngen.exe executequeueditems  1>NUL
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>exit 0
+==> virtualbox-iso: Provisioning with shell script: ./scripts/dis-updates.bat
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>rem http://www.windows-commandline.com/disable-automatic-updates-command-line/
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 1 /f
+    virtualbox-iso: The operation completed successfully.
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>rem remove optional WSUS server settings
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /f
+    virtualbox-iso: The operation completed successfully.
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>rem even harder, disable windows update service
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>rem sc config wuauserv start= disabled
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>rem net stop wuauserv
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>set logfile=C:\Windows\Temp\win-updates.log
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if exist C:\Windows\Temp\win-updates.log (
+    virtualbox-iso: echo Show Windows Updates log file C:\Windows\Temp\win-updates.log
+    virtualbox-iso:  dir C:\Windows\Temp\win-updates.log
+    virtualbox-iso:  type C:\Windows\Temp\win-updates.log
+    virtualbox-iso:  rem output of type command is not fully shown in packer/ssh session, so try PowerShell
+    virtualbox-iso:  rem but it will hang if log file is about 22 KByte
+    virtualbox-iso:  rem powershell -command "Get-Content C:\Windows\Temp\win-updates.log"
+    virtualbox-iso:  echo End of Windows Updates log file C:\Windows\Temp\win-updates.log
+    virtualbox-iso: )
+==> virtualbox-iso: Provisioning with shell script: ./scripts/compact.bat
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if "virtua" == "hyperv" (
+    virtualbox-iso: echo "Skip compact steps in Hyper-V build."
+    virtualbox-iso:  goto :eof
+    virtualbox-iso: )
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if not exist "C:\Windows\Temp\7z1900-x64.msi" (powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://www.7-zip.org/a/7z1900-x64.msi', 'C:\Windows\Temp\7z1900-x64.msi')"  0<NUL )
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>msiexec /qb /i C:\Windows\Temp\7z1900-x64.msi
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if not exist "C:\Windows\Temp\ultradefrag.zip" (powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://downloads.sourceforge.net/project/ultradefrag/stable-release/6.1.0/ultradefrag-portable-6.1.0.bin.amd64.zip', 'C:\Windows\Temp\ultradefrag.zip')"  0<NUL )
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if not exist "C:\Windows\Temp\ultradefrag-portable-6.1.0.amd64\udefrag.exe" (cmd /c ""C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\ultradefrag.zip -oC:\Windows\Temp" )
+    virtualbox-iso:
+    virtualbox-iso: 7-Zip 19.00 (x64) : Copyright (c) 1999-2018 Igor Pavlov : 2019-02-21
+    virtualbox-iso:
+    virtualbox-iso: Scanning the drive for archives:
+    virtualbox-iso: 1 file, 768893 bytes (751 KiB)
+    virtualbox-iso:
+    virtualbox-iso: Extracting archive: C:\Windows\Temp\ultradefrag.zip
+    virtualbox-iso: --
+    virtualbox-iso: Path = C:\Windows\Temp\ultradefrag.zip
+    virtualbox-iso: Type = zip
+    virtualbox-iso: Physical Size = 768893
+    virtualbox-iso:
+    virtualbox-iso: Everything is Ok
+    virtualbox-iso:
+    virtualbox-iso: Folders: 5
+    virtualbox-iso: Files: 166
+    virtualbox-iso: Size:       2433004
+    virtualbox-iso: Compressed: 768893
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if not exist "C:\Windows\Temp\SDelete.zip" (
+    virtualbox-iso: powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://download.sysinternals.com/files/SDelete.zip', 'C:\Windows\Temp\SDelete.zip')"  0<NUL
+    virtualbox-iso:  powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://vagrantboxes.blob.core.windows.net/box/sdelete/v1.6.1/sdelete.exe', 'C:\Windows\Temp\sdelete.exe')"  0<NUL
+    virtualbox-iso: )
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if not exist "C:\Windows\Temp\sdelete.exe" (cmd /c ""C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\SDelete.zip -oC:\Windows\Temp" )
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>msiexec /qb /x C:\Windows\Temp\7z1900-x64.msi
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>net stop wuauserv
+    virtualbox-iso:
+==> virtualbox-iso: The Windows Update service is not started.
+==> virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>rmdir /S /Q C:\Windows\SoftwareDistribution\Download
+    virtualbox-iso:
+==> virtualbox-iso: More help is available by typing NET HELPMSG 3521.
+    virtualbox-iso: C:\Users\vagrant>mkdir C:\Windows\SoftwareDistribution\Download
+    virtualbox-iso:
+==> virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>net start wuauserv
+    virtualbox-iso: The Windows Update service is starting.
+    virtualbox-iso: The Windows Update service was started successfully.
+    virtualbox-iso:
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if "virtualbox-iso" NEQ "hyperv-iso" (
+    virtualbox-iso: cmd /c C:\Windows\Temp\ultradefrag-portable-6.1.0.amd64\udefrag.exe --optimize --repeat C:
+    virtualbox-iso:  cmd /c C:\Windows\System32\reg.exe ADD HKCU\Software\Sysinternals\SDelete /v EulaAccepted /t REG_DWORD /d 1 /f
+    virtualbox-iso:  cmd /c C:\Windows\Temp\sdelete.exe -q -z C:
+    virtualbox-iso: )
+    virtualbox-iso: UltraDefrag 6.1.0, Copyright (c) UltraDefrag Development Team, 2007-2013.
+    virtualbox-iso: UltraDefrag comes with ABSOLUTELY NO WARRANTY. This is free software,
+    virtualbox-iso: and you are welcome to redistribute it under certain conditions.
+    virtualbox-iso:
+    virtualbox-iso: C: defrag:   100.00% complete, 7 passes needed, fragmented/total = 6/205593
+    virtualbox-iso: The operation completed successfully.
+    virtualbox-iso:
+    virtualbox-iso: SDelete - Secure Delete v1.61
+    virtualbox-iso: Copyright (C) 1999-2012 Mark Russinovich
+    virtualbox-iso: Sysinternals - www.sysinternals.com
+    virtualbox-iso:
+    virtualbox-iso: SDelete is set for 1 pass.
+    virtualbox-iso: Free space cleaned on C:\
+    virtualbox-iso: 1 drives zapped
+    virtualbox-iso:
+==> virtualbox-iso: Gracefully halting virtual machine...
+    virtualbox-iso:
+==> virtualbox-iso: The service name is invalid.
+==> virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>net stop tiledatamodelsvc
+==> virtualbox-iso: More help is available by typing NET HELPMSG 2185.
+==> virtualbox-iso:
+    virtualbox-iso:
+    virtualbox-iso: C:\Users\vagrant>if exist a:\unattend.xml (c:\windows\system32\sysprep\sysprep.exe /generalize /oobe /shutdown /unattend:a:\unattend.xml )  else (
+    virtualbox-iso: del /F \Windows\System32\Sysprep\unattend.xml
+    virtualbox-iso:  c:\windows\system32\sysprep\sysprep.exe /generalize /oobe /shutdown /quiet
+    virtualbox-iso: )
+    virtualbox-iso: Removing floppy drive...
+==> virtualbox-iso: Preparing to export machine...
+    virtualbox-iso: Deleting forwarded port mapping for the communicator (SSH, WinRM, etc) (host port 3409)
+==> virtualbox-iso: Exporting virtual machine...
+    virtualbox-iso: Executing: export WindowsServer2019 --output output-virtualbox-iso/WindowsServer2019.ovf
+==> virtualbox-iso: Deregistering and deleting VM...
+==> virtualbox-iso: Running post-processor: vagrant
+==> virtualbox-iso (vagrant): Creating Vagrant box for 'virtualbox' provider
+    virtualbox-iso (vagrant): Copying from artifact: output-virtualbox-iso/WindowsServer2019-disk001.vmdk
+    virtualbox-iso (vagrant): Copying from artifact: output-virtualbox-iso/WindowsServer2019.ovf
+    virtualbox-iso (vagrant): Renaming the OVF to box.ovf...
+    virtualbox-iso (vagrant): Using custom Vagrantfile: vagrantfile-windows_2016.template
+    virtualbox-iso (vagrant): Compressing: Vagrantfile
+    virtualbox-iso (vagrant): Compressing: WindowsServer2019-disk001.vmdk
+    virtualbox-iso (vagrant): Compressing: box.ovf
+    virtualbox-iso (vagrant): Compressing: metadata.json
+Build 'virtualbox-iso' finished.
+
+==> Builds finished. The artifacts of successful builds are:
+--> virtualbox-iso: 'virtualbox' provider box: windows_2019_virtualbox.box
+```
+
+*~/workspace/hashiqube/hashicorp/packer/windows $* `ls -lah | grep box`
+```
+-rw-r--r--   1 riaannolan  staff   4.5G 12 Jan 21:18 windows_2019_virtualbox.box
+```
+
+### Build RedHat Virtualbox-iso
+
+__On your Host computer__ in `hashiqube/hashicorp/packer/linux/rhel` folder, please do:
+
+*~/workspace/hashiqube/hashicorp/packer/linux/rhel $* `packer build --only=virtualbox-iso rhel8.json`
+
+```
+virtualbox-iso: output will be in this color.
+
+==> virtualbox-iso: Retrieving Guest additions
+==> virtualbox-iso: Trying /Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAdditions.iso
+==> virtualbox-iso: Trying /Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAdditions.iso
+==> virtualbox-iso: /Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAdditions.iso => /Users/riaannolan/workspace/hashiqube/hashicorp/packer/linux/rhel/packer_cache/7784a55a71d48a1e9b5c487431438fef0f19d87f.iso
+==> virtualbox-iso: Retrieving ISO
+==> virtualbox-iso: Trying iso/rhel-8.1-x86_64-dvd.iso
+==> virtualbox-iso: Trying iso/rhel-8.1-x86_64-dvd.iso?checksum=sha256%3A2323ad44d75df1a1e83048a34e196ddfedcd6c0f6c49ea59bf08095e3bb9ef65
+==> virtualbox-iso: iso/rhel-8.1-x86_64-dvd.iso?checksum=sha256%3A2323ad44d75df1a1e83048a34e196ddfedcd6c0f6c49ea59bf08095e3bb9ef65 => /Users/riaannolan/workspace/hashiqube/hashicorp/packer/linux/rhel/packer_cache/e0829642bf518828676fda5c2502fd75ea3a305b.iso
+==> virtualbox-iso: Starting HTTP server on port 8182
+==> virtualbox-iso: Creating virtual machine...
+==> virtualbox-iso: Creating hard drive...
+==> virtualbox-iso: Creating forwarded port mapping for communicator (SSH, WinRM, etc) (host port 2429)
+==> virtualbox-iso: Executing custom VBoxManage commands...
+    virtualbox-iso: Executing: modifyvm packer-rhel-8-x86_64 --memory 1024
+    virtualbox-iso: Executing: modifyvm packer-rhel-8-x86_64 --cpus 2
+==> virtualbox-iso: Starting the virtual machine...
+    virtualbox-iso: The VM will be run headless, without a GUI. If you want to
+    virtualbox-iso: view the screen of the VM, connect via VRDP without a password to
+    virtualbox-iso: rdp://127.0.0.1:5919
+==> virtualbox-iso: Waiting 10s for boot...
+==> virtualbox-iso: Typing the boot command...
+==> virtualbox-iso: Using ssh communicator to connect: 127.0.0.1
+==> virtualbox-iso: Waiting for SSH to become available...
+==> virtualbox-iso: Connected to SSH!
+==> virtualbox-iso: Uploading VirtualBox version info (6.0.14)
+==> virtualbox-iso: Uploading VirtualBox guest additions ISO...
+==> virtualbox-iso: Provisioning with shell script: scripts/cleanup.sh
+==> virtualbox-iso: dd: error writing '/EMPTY': No space left on device
+==> virtualbox-iso: 5882+0 records in
+==> virtualbox-iso: 5881+0 records out
+==> virtualbox-iso: 6166740992 bytes (6.2 GB, 5.7 GiB) copied, 11.4726 s, 538 MB/s
+==> virtualbox-iso: Gracefully halting virtual machine...
+==> virtualbox-iso: Preparing to export machine...
+    virtualbox-iso: Deleting forwarded port mapping for the communicator (SSH, WinRM, etc) (host port 2429)
+==> virtualbox-iso: Exporting virtual machine...
+    virtualbox-iso: Executing: export packer-rhel-8-x86_64 --output output-virtualbox-iso/packer-rhel-8-x86_64.ovf
+==> virtualbox-iso: Deregistering and deleting VM...
+==> virtualbox-iso: Running post-processor: vagrant
+==> virtualbox-iso (vagrant): Creating Vagrant box for 'virtualbox' provider
+    virtualbox-iso (vagrant): Copying from artifact: output-virtualbox-iso/packer-rhel-8-x86_64-disk001.vmdk
+    virtualbox-iso (vagrant): Copying from artifact: output-virtualbox-iso/packer-rhel-8-x86_64.ovf
+    virtualbox-iso (vagrant): Renaming the OVF to box.ovf...
+    virtualbox-iso (vagrant): Compressing: Vagrantfile
+    virtualbox-iso (vagrant): Compressing: box.ovf
+    virtualbox-iso (vagrant): Compressing: metadata.json
+    virtualbox-iso (vagrant): Compressing: packer-rhel-8-x86_64-disk001.vmdk
+Build 'virtualbox-iso' finished.
+
+==> Builds finished. The artifacts of successful builds are:
+--> virtualbox-iso: 'virtualbox' provider box: builds/virtualbox-rhel-8.box
+```
+
 ### Build Ubuntu Docker-image
 
 __On your Host computer OR in the VM__ please do: <br />
@@ -643,26 +1109,27 @@ Bringing machine 'user.local.dev' up with 'virtualbox' provider...
 
 ## Sentinel
 https://docs.hashicorp.com/sentinel/
+https://github.com/hashicorp/tfe-policies-example
+https://docs.hashicorp.com/sentinel/language/
 
 Sentinel is a language and framework for policy built to be embedded in existing software to enable fine-grained, logic-based policy decisions. A policy describes under what circumstances certain behaviors are allowed. Sentinel is an enterprise-only feature of HashiCorp Consul, Nomad, Terraform, and Vault.
 
-`vagrant up --provision-with sentinel`  
-```                                                              
+`vagrant up --provision-with sentinel`
+```
 Bringing machine 'user.local.dev' up with 'virtualbox' provider...
-==> user.local.dev: Checking if box 'ubuntu/xenial64' version '20190918.0.0' is up to date...
+==> user.local.dev: Checking if box 'ubuntu/bionic64' version '20191218.0.0' is up to date...
 ==> user.local.dev: [vagrant-hostsupdater] Checking for host entries
 ==> user.local.dev: [vagrant-hostsupdater]   found entry for: 10.9.99.10 user.local.dev
-==> user.local.dev: [vagrant-hostsupdater]   found entry for: 10.9.99.10 user.local.dev
 ==> user.local.dev: Running provisioner: sentinel (shell)...
-    user.local.dev: Running: /var/folders/7j/gsrjvmds05n53ddg28krf4_80001p9/T/vagrant-shell20200110-35792-1ejlarj.sh
+    user.local.dev: Running: /var/folders/7j/gsrjvmds05n53ddg28krf4_80001p9/T/vagrant-shell20200310-40084-1bbypjm.sh
     user.local.dev: Reading package lists...
     user.local.dev: Building dependency tree...
     user.local.dev:
     user.local.dev: Reading state information...
-    user.local.dev: unzip is already the newest version (6.0-20ubuntu1).
-    user.local.dev: curl is already the newest version (7.47.0-1ubuntu2.14).
-    user.local.dev: jq is already the newest version (1.5+dfsg-1ubuntu0.1).
-    user.local.dev: 0 upgraded, 0 newly installed, 0 to remove and 4 not upgraded.
+    user.local.dev: unzip is already the newest version (6.0-21ubuntu1).
+    user.local.dev: jq is already the newest version (1.5+dfsg-2).
+    user.local.dev: curl is already the newest version (7.58.0-2ubuntu3.8).
+    user.local.dev: 0 upgraded, 0 newly installed, 0 to remove and 6 not upgraded.
     user.local.dev: ++++ Sentinel Simulator v0.9.2 already installed at /usr/local/bin/sentinel
     user.local.dev: hour = 4
     user.local.dev: main = rule { hour >= 0 and hour < 12 }
@@ -670,6 +1137,75 @@ Bringing machine 'user.local.dev' up with 'virtualbox' provider...
     user.local.dev: hour = 4
     user.local.dev: main = rule { hour >= 0 and hour < 12 }
     user.local.dev: ++++ sentinel apply /tmp/policy.sentinel
+    user.local.dev: Pass
+    user.local.dev: ++++ Let's test some more advanced Sentinel Policies
+    user.local.dev: ++++ https://github.com/hashicorp/tfe-policies-example
+    user.local.dev: ++++ https://docs.hashicorp.com/sentinel/language/
+    user.local.dev: ++++ sentinel test aws-block-allow-all-cidr.sentinel
+    user.local.dev: PASS - aws-block-allow-all-cidr.sentinel
+    user.local.dev:   PASS - test/aws-block-allow-all-cidr/empty.json
+    user.local.dev:   PASS - test/aws-block-allow-all-cidr/fail.json
+    user.local.dev:   PASS - test/aws-block-allow-all-cidr/pass.json
+    user.local.dev:   ERROR - test/aws-block-allow-all-cidr/plan.json
+    user.local.dev:
+    user.local.dev: ++++ sentinel apply -config ./test/aws-block-allow-all-cidr/pass.json aws-block-allow-all-cidr.sentinel
+    user.local.dev: Pass
+    user.local.dev: ++++ sentinel apply -config ./test/aws-block-allow-all-cidr/fail.json aws-block-allow-all-cidr.sentinel
+    user.local.dev: Fail
+    user.local.dev:
+    user.local.dev: Execution trace. The information below will show the values of all
+    user.local.dev: the rules evaluated and their intermediate boolean expressions. Note that
+    user.local.dev: some boolean expressions may be missing if short-circuit logic was taken.
+    user.local.dev: FALSE - aws-block-allow-all-cidr.sentinel:69:1 - Rule "main"
+    user.local.dev:   TRUE - aws-block-allow-all-cidr.sentinel:70:2 - ingress_cidr_blocks
+    user.local.dev:     TRUE - aws-block-allow-all-cidr.sentinel:50:2 - all get_resources("aws_security_group") as sg {
+    user.local.dev: 	all sg.applied.ingress as ingress {
+    user.local.dev: 		all disallowed_cidr_blocks as block {
+    user.local.dev: 			ingress.cidr_blocks not contains block
+    user.local.dev: 		}
+    user.local.dev: 	}
+    user.local.dev: }
+    user.local.dev:   FALSE - aws-block-allow-all-cidr.sentinel:71:2 - egress_cidr_blocks
+    user.local.dev:     FALSE - aws-block-allow-all-cidr.sentinel:60:2 - all get_resources("aws_security_group") as sg {
+    user.local.dev: 	all sg.applied.egress as egress {
+    user.local.dev: 		all disallowed_cidr_blocks as block {
+    user.local.dev: 			egress.cidr_blocks not contains block
+    user.local.dev: 		}
+    user.local.dev: 	}
+    user.local.dev: }
+    user.local.dev:
+    user.local.dev: FALSE - aws-block-allow-all-cidr.sentinel:59:1 - Rule "egress_cidr_blocks"
+    user.local.dev:
+    user.local.dev: TRUE - aws-block-allow-all-cidr.sentinel:49:1 - Rule "ingress_cidr_blocks"
+    user.local.dev:
+    user.local.dev: ++++ sentinel test aws-alb-redirect.sentinel
+    user.local.dev: PASS - aws-alb-redirect.sentinel
+    user.local.dev:   PASS - test/aws-alb-redirect/empty.json
+    user.local.dev:   PASS - test/aws-alb-redirect/fail.json
+    user.local.dev:   PASS - test/aws-alb-redirect/pass.json
+    user.local.dev:   ERROR - test/aws-alb-redirect/plan.json
+    user.local.dev:
+    user.local.dev: ++++ sentinel apply -config ./test/aws-alb-redirect/fail.json aws-alb-redirect.sentinel
+    user.local.dev: Fail
+    user.local.dev:
+    user.local.dev: Execution trace. The information below will show the values of all
+    user.local.dev: the rules evaluated and their intermediate boolean expressions. Note that
+    user.local.dev: some boolean expressions may be missing if short-circuit logic was taken.
+    user.local.dev: FALSE - aws-alb-redirect.sentinel:69:1 - Rule "main"
+    user.local.dev:   FALSE - aws-alb-redirect.sentinel:70:2 - default_action
+    user.local.dev:     FALSE - aws-alb-redirect.sentinel:49:2 - all get_resources("aws_lb_listener") as ln {
+    user.local.dev: 	all ln.applied.default_action as action {
+    user.local.dev:
+    user.local.dev: 		all action.redirect as rdir {
+    user.local.dev:
+    user.local.dev: 			rdir.status_code == redirect_status_code
+    user.local.dev: 		}
+    user.local.dev: 	}
+    user.local.dev: }
+    user.local.dev:
+    user.local.dev: FALSE - aws-alb-redirect.sentinel:48:1 - Rule "default_action"
+    user.local.dev:
+    user.local.dev: ++++ sentinel apply -config ./test/aws-alb-redirect/pass.json aws-alb-redirect.sentinel
     user.local.dev: Pass
 ```
 

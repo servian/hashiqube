@@ -1,0 +1,37 @@
+{
+  "test": {
+    "main": false
+  },
+  "mock": {
+    "tfplan": {
+      "resources": {
+        "azurerm_network_security_group": {
+          "foo": {
+            "0": {
+              "applied": {
+                "security_rule": [
+                  {
+                    "source_address_prefix": "0.0.0.0/0",
+                    "access": "Allow"
+                  }
+                ]
+              }
+            }
+          },
+          "bar": {
+            "0": {
+              "applied": {
+                "security_rule": [
+                  {
+                    "source_address_prefix": "*",
+                    "access": "Allow"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

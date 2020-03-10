@@ -1,0 +1,62 @@
+{
+  "version": 4,
+  "terraform_version": "0.12.20",
+  "serial": 10,
+  "lineage": "12bdaffa-5252-42ac-9a3b-ce389625f05b",
+  "outputs": {},
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "test",
+      "provider": "provider.aws",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-southeast-2:xxxxxxxxxxxx:security-group/sg-0f24eb64fdea8c3ab",
+            "description": "Managed by Terraform",
+            "egress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 0,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "-1",
+                "security_groups": [],
+                "self": false,
+                "to_port": 0
+              }
+            ],
+            "id": "sg-0f24eb64fdea8c3ab",
+            "ingress": [
+              {
+                "cidr_blocks": [
+                  "10.0.0.0/8"
+                ],
+                "description": "",
+                "from_port": 443,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 443
+              }
+            ],
+            "name": "test",
+            "name_prefix": null,
+            "owner_id": "xxxxxxxxxxxx",
+            "revoke_rules_on_delete": false,
+            "tags": null,
+            "timeouts": null,
+            "vpc_id": "vpc-xxxxxxxx"
+          }
+        }
+      ]
+    }
+  ]
+}

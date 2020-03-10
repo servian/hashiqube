@@ -1,0 +1,68 @@
+import "tfplan"
+
+# Get an array of all resources of the given type (or an empty array).
+get_resources = func(type) {
+	if length(tfplan.module_paths else []) > 0 { # always true in the real tfplan import
+		return get_resources_all_modules(type)
+	} else { # fallback for tests
+		return get_resources_root_only(type)
+	}
+}
+
+get_resources_root_only = func(type) {
+	resources = []
+	named_and_counted_resources = tfplan.resources[type] else {}
+	# Get resource bodies out of nested resource maps, from:
+	# {"name": {"0": {"applied": {...}, "diff": {...} }, "1": {...}}, "name": {...}}
+	# to:
+	# [{"applied": {...}, "diff": {...}}, {"applied": {...}, "diff": {...}}, ...]
+	for named_and_counted_resources as _, instances {
+		for instances as _, body {
+			append(resources, body)
+		}
+	}
+	return resources
+}
+
+get_resources_all_modules = func(type) {
+	resources = []
+	for tfplan.module_paths as path {
+		named_and_counted_resources = tfplan.module(path).resources[type] else {}
+		# Get resource bodies out of nested resource maps, from:
+		# {"name": {"0": {"applied": {...}, "diff": {...} }, "1": {...}}, "name": {...}}
+		# to:
+		# [{"applied": {...}, "diff": {...}}, {"applied": {...}, "diff": {...}}, ...]
+		for named_and_counted_resources as _, instances {
+			for instances as _, body {
+				append(resources, body)
+			}
+		}
+	}
+	return resources
+}
+
+no_tfe_oauth_client = rule { length(get_resources("tfe_oauth_client")) == 0 }
+no_tfe_organization = rule { length(get_resources("tfe_organization")) == 0 }
+no_tfe_organization_token = rule { length(get_resources("tfe_organization_token")) == 0 }
+no_tfe_ssh_key = rule { length(get_resources("tfe_ssh_key")) == 0 }
+no_tfe_team = rule { length(get_resources("tfe_team")) == 0 }
+no_tfe_team_access = rule { length(get_resources("tfe_team_access")) == 0 }
+no_tfe_team_member = rule { length(get_resources("tfe_team_member")) == 0 }
+no_tfe_team_members = rule { length(get_resources("tfe_team_members")) == 0 }
+no_tfe_team_token = rule { length(get_resources("tfe_team_token")) == 0 }
+no_tfe_variable = rule { length(get_resources("tfe_variable")) == 0 }
+no_tfe_workspace = rule { length(get_resources("tfe_workspace")) == 0 }
+
+main = rule {
+	no_tfe_oauth_client and
+	no_tfe_organization and
+	no_tfe_organization_token and
+	no_tfe_ssh_key and
+	no_tfe_team and
+	no_tfe_team_access and
+	no_tfe_team_member and
+	no_tfe_team_members and
+	no_tfe_team_token and
+	no_tfe_variable and
+	no_tfe_workspace
+}

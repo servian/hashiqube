@@ -1,0 +1,107 @@
+{
+  "version": 4,
+  "terraform_version": "0.12.20",
+  "serial": 5,
+  "lineage": "12bdaffa-5252-42ac-9a3b-ce389625f05b",
+  "outputs": {},
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "aws_lb",
+      "name": "test",
+      "provider": "provider.aws",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "access_logs": [
+              {
+                "bucket": "",
+                "enabled": false,
+                "prefix": ""
+              }
+            ],
+            "arn": "arn:aws:elasticloadbalancing:ap-southeast-2:xxxxxxxxxxxx:loadbalancer/app/test-lb-tf/3c392540ec1d8c52",
+            "arn_suffix": "app/test-lb-tf/3c392540ec1d8c52",
+            "dns_name": "test-lb-tf-264708051.ap-southeast-2.elb.amazonaws.com",
+            "enable_cross_zone_load_balancing": null,
+            "enable_deletion_protection": false,
+            "enable_http2": true,
+            "id": "arn:aws:elasticloadbalancing:ap-southeast-2:xxxxxxxxxxxx:loadbalancer/app/test-lb-tf/3c392540ec1d8c52",
+            "idle_timeout": 60,
+            "internal": false,
+            "ip_address_type": "ipv4",
+            "load_balancer_type": "application",
+            "name": "test-lb-tf",
+            "name_prefix": null,
+            "security_groups": [
+              "sg-0cba66d63b4a36709"
+            ],
+            "subnet_mapping": [
+              {
+                "allocation_id": "",
+                "subnet_id": "subnet-0996589dafff86221"
+              },
+              {
+                "allocation_id": "",
+                "subnet_id": "subnet-09fbd75ad2e22bdaf"
+              }
+            ],
+            "subnets": [
+              "subnet-0996589dafff86221",
+              "subnet-09fbd75ad2e22bdaf"
+            ],
+            "tags": null,
+            "timeouts": null,
+            "vpc_id": "vpc-00058cc8fac8855e0",
+            "zone_id": "XXXXXXXXXXXXXX"
+          }
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_lb_listener",
+      "name": "test",
+      "provider": "provider.aws",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:elasticloadbalancing:ap-southeast-2:xxxxxxxxxxxx:listener/app/test-lb-tf/3c392540ec1d8c52/cc2192019dcfc0af",
+            "certificate_arn": null,
+            "default_action": [
+              {
+                "authenticate_cognito": [],
+                "authenticate_oidc": [],
+                "fixed_response": [],
+                "order": 1,
+                "redirect": [
+                  {
+                    "host": "#{host}",
+                    "path": "/#{path}",
+                    "port": "443",
+                    "protocol": "HTTPS",
+                    "query": "#{query}",
+                    "status_code": "HTTP_301"
+                  }
+                ],
+                "target_group_arn": "",
+                "type": "redirect"
+              }
+            ],
+            "id": "arn:aws:elasticloadbalancing:ap-southeast-2:xxxxxxxxxxxx:listener/app/test-lb-tf/3c392540ec1d8c52/cc2192019dcfc0af",
+            "load_balancer_arn": "arn:aws:elasticloadbalancing:ap-southeast-2:xxxxxxxxxxxx:loadbalancer/app/test-lb-tf/3c392540ec1d8c52",
+            "port": 80,
+            "protocol": "HTTP",
+            "ssl_policy": "",
+            "timeouts": null
+          },
+          "dependencies": [
+            "aws_lb.test"
+          ]
+        }
+      ]
+    }
+  ]
+}

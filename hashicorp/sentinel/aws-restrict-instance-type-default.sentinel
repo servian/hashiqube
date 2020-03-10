@@ -1,0 +1,66 @@
+import "tfplan"
+
+# Get an array of all resources of the given type (or an empty array).
+get_resources = func(type) {
+	if length(tfplan.module_paths else []) > 0 { # always true in the real tfplan import
+		return get_resources_all_modules(type)
+	} else { # fallback for tests
+		return get_resources_root_only(type)
+	}
+}
+
+get_resources_root_only = func(type) {
+	resources = []
+	named_and_counted_resources = tfplan.resources[type] else {}
+	# Get resource bodies out of nested resource maps, from:
+	# {"name": {"0": {"applied": {...}, "diff": {...} }, "1": {...}}, "name": {...}}
+	# to:
+	# [{"applied": {...}, "diff": {...}}, {"applied": {...}, "diff": {...}}, ...]
+	for named_and_counted_resources as _, instances {
+		for instances as _, body {
+			append(resources, body)
+		}
+	}
+	return resources
+}
+
+get_resources_all_modules = func(type) {
+	resources = []
+	for tfplan.module_paths as path {
+		named_and_counted_resources = tfplan.module(path).resources[type] else {}
+		# Get resource bodies out of nested resource maps, from:
+		# {"name": {"0": {"applied": {...}, "diff": {...} }, "1": {...}}, "name": {...}}
+		# to:
+		# [{"applied": {...}, "diff": {...}}, {"applied": {...}, "diff": {...}}, ...]
+		for named_and_counted_resources as _, instances {
+			for instances as _, body {
+				append(resources, body)
+			}
+		}
+	}
+	return resources
+}
+
+# Allowed Types
+allowed_types = [
+	"t2.nano",
+	"t2.micro",
+	"t2.small",
+	"t2.medium",
+	"t2.large",
+	"t2.xlarge",
+	"m4.large",
+	"m4.xlarge",
+]
+
+# Rule to restrict instance types
+instance_type_allowed = rule {
+	all get_resources("aws_instance") as r {
+		r.applied.instance_type in allowed_types
+	}
+}
+
+# Main rule that requires other rules to be true
+main = rule {
+	(instance_type_allowed) else true
+}
