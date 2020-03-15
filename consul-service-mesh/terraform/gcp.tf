@@ -2,7 +2,7 @@
 # https://github.com/terraform-providers/terraform-provider-google/blob/master/examples/internal-load-balancing/main.tf
 
 provider "google" {
-  credentials = file("~/.gcp/35beb316c481.json")
+  credentials = file("~/.gcp/credentials.json")
   project     = var.gcp_project
   region      = var.gcp_region
 }
