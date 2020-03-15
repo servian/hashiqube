@@ -92,7 +92,7 @@ For Documentation please open http://localhost:3333 in your browser
 ## Support & Feedback
 For suggestions, feedback and queries please branch or and submit a Pull Request or directly contact the architects of the HashiQube via email:
 
-Lead Automation Architect [riaan.nolan@servian.com](mailto:riaan.nolan@servian.com) | Lead Security Architect [thomas.cockin@servian.com](mailto:thomas.cockin@servian.com)    
+Lead Automation Architect [riaan.nolan@servian.com](mailto:riaan.nolan@servian.com)
 
 ## Contributors and Special mentions
 A Very special mention to HashiQube's contributors, Thank You All for your help, suggestions and contributions no matter how small <3

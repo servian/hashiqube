@@ -177,3 +177,6 @@ See "man sudo_root" for details.
 
 ubuntu@hashiqube1:~$
 ```
+
+__Be sure to destroy the resources after you are done__
+`terraform destroy --auto-approve`
