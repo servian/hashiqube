@@ -13,7 +13,8 @@ then
   DC=1
   INSTANCE_PRIVATE_IP=$(hostname --all-ip-addresses | cut -d ' ' -f1)
   INSTANCE_IP=$(curl -s 'https://api.ipify.org?format=text')
-  HASHIQUBE1_IP=$(curl -s 'https://api.ipify.org?format=text')
+  # HASHIQUBE1_IP=$(curl -s 'https://api.ipify.org?format=text')
+  HASHIQUBE1_IP=${HASHIQUBE1_IP}
   HOSTNAME=hashiqube1
   FQDN=hashiqube1.service.consul
 else
@@ -21,15 +22,16 @@ else
   DC=2
   INSTANCE_PRIVATE_IP=$(hostname --all-ip-addresses | cut -d ' ' -f1)
   INSTANCE_IP=$(curl -s 'https://api.ipify.org?format=text')
-  HASHIQUBE2_IP=$(curl -s 'https://api.ipify.org?format=text')
+  # HASHIQUBE2_IP=$(curl -s 'https://api.ipify.org?format=text')
+  HASHIQUBE2_IP=${HASHIQUBE2_IP}
   HOSTNAME=hashiqube2
   FQDN=hashiqube2.service.consul
 fi
 
 # set hostname
-echo "${HOSTNAME}" > /etc/hostname
-hostname "${HOSTNAME}"
-sed -i "s/.*127.0.0.1.*/127.0.0.1 ${FQDN} ${HOSTNAME} localhost/g" /etc/hosts
+echo "$HOSTNAME" > /etc/hostname
+hostname "$HOSTNAME"
+sed -i "s/.*127.0.0.1.*/127.0.0.1 $FQDN $HOSTNAME localhost/g" /etc/hosts
 
 # https://docs.docker.com/install/linux/docker-ce/ubuntu/
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes apt-transport-https ca-certificates curl gnupg-agent software-properties-common awscli
@@ -46,20 +48,14 @@ function consul-install() {
 mkdir -p /etc/consul
 mkdir -p /etc/consul.d
 
-if [[ $(ec2metadata --public-hostname) =~ .*\.amazonaws\.com ]]
-then
-  # discover HASHIQUBE2_IP
-  HASHIQUBE2_IP=$(aws ec2 describe-security-groups --group-names hashiqube --region ap-southeast-2 --output text | grep HASHIQUBE | tr '\t' ' ' | cut -d ' ' -f2 | cut -d '/' -f1)
-fi
-
 # consul config file
 cat <<EOF | sudo tee /etc/consul/server.hcl
 primary_datacenter = "dc1"
-client_addr = "127.0.0.1 {{GetPrivateIP}}"
-bind_addr = "{{GetPrivateIP}}"
-advertise_addr = "${INSTANCE_IP}"
+client_addr = "127.0.0.1 $INSTANCE_PRIVATE_IP"
+bind_addr = "$INSTANCE_PRIVATE_IP"
+advertise_addr = "$INSTANCE_IP"
 data_dir = "/var/lib/consul"
-datacenter = "dc${DC}"
+datacenter = "dc$DC"
 disable_host_node_id = true
 disable_update_check = true
 leave_on_terminate = true
@@ -74,7 +70,7 @@ recursors = [
   "8.8.8.8",
   "8.8.4.4",
 ]
-server_name = "hashiqube${DC}.service.consul"
+server_name = "hashiqube$DC.service.consul"
 ui = true
 retry_join_wan = ["${HASHIQUBE1_IP}", "${HASHIQUBE2_IP}"]
 EOF
@@ -122,7 +118,7 @@ EOF
     sudo pkill -9 consul
     sudo killall consul
     sudo killall consul
-    sudo nohup consul agent -dev -advertise-wan=${INSTANCE_IP} -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
+    sudo nohup consul agent -dev -advertise-wan=$INSTANCE_IP -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
     sh -c 'sudo tail -f /var/log/consul.log | { sed "/agent: Synced/ q" && kill $$ ;}'
   else
   # if consul is not installed, download and install
@@ -132,20 +128,20 @@ EOF
     wget -q $LATEST_URL -O /tmp/consul.zip
     (cd /usr/bin && unzip /tmp/consul.zip)
     echo -e '\e[38;5;198m'"++++ Installed `/usr/bin/consul version`"
-    sudo nohup consul agent -dev -advertise-wan=${INSTANCE_IP} -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
+    sudo nohup consul agent -dev -advertise-wan=$INSTANCE_IP -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
     sh -c 'sudo tail -f /var/log/consul.log | { sed "/agent: Synced/ q" && kill $$ ;}'
   fi
   echo -e '\e[38;5;198m'"++++ Adding Consul KV data for Fabio Load Balancer Routes"
-  consul kv put fabio/config/consul-hashiqube "route add consul consul.service.consul:9999/ http://${INSTANCE_IP}:8500"
-  consul kv put fabio/config/nomad-hashiqube "route add nomad nomad.service.consul:9999/ http://${INSTANCE_IP}:4646"
-  consul kv put fabio/config/fabio-hashiqube "route add fabio fabio.service.consul:9999/ http://${INSTANCE_IP}:9998"
+  consul kv put fabio/config/consul-hashiqube "route add consul consul.service.consul:9999/ http://$INSTANCE_IP:8500"
+  consul kv put fabio/config/nomad-hashiqube "route add nomad nomad.service.consul:9999/ http://$INSTANCE_IP:4646"
+  consul kv put fabio/config/fabio-hashiqube "route add fabio fabio.service.consul:9999/ http://$INSTANCE_IP:9998"
 # consul kv put fabio/config/vault2 "route add vault fabio.service.consul:9999/vault http://10.9.99.10:8200 opts \"strip=/vault\""
 # consul kv put fabio/config/nomad "route add nomad nomad.service.consul:9999/ http://10.9.99.10:4646"
 # consul kv put fabio/config/consul "route add consul consul.service.consul:9999/ http://10.9.99.10:8500"
 # consul kv put fabio/config/apache2 "route add apache2 fabio.service.consul:9999/apache2 http://10.9.99.10:8889 opts \"strip=/apache2\""
 # consul kv put fabio/config/countdashtest1 "route add countdashtest fabio.service.consul:9999/countdashtest http://10.9.99.10:9022/ opts \"strip=/countdashtest\""
 # consul kv put fabio/config/docsify "route add docsify docsify.service.consul:9999/ http://10.9.99.10:3333"
-echo -e '\e[38;5;198m'"++++ Consul http://${INSTANCE_IP}:8500"
+echo -e '\e[38;5;198m'"++++ Consul http://$INSTANCE_IP:8500"
 }
 
 # install and configure Nomad
@@ -156,15 +152,15 @@ mkdir -p /etc/nomad.d
 cat <<EOF | sudo tee /etc/nomad/server.conf
 data_dir  = "/var/lib/nomad"
 
-datacenter = "dc${DC}"
+datacenter = "dc$DC"
 
 bind_addr = "0.0.0.0" # the default
 
 advertise {
   # Defaults to the first private IP address.
-  http = "${INSTANCE_PRIVATE_IP}"
-  rpc  = "${INSTANCE_PRIVATE_IP}"
-  serf = "${INSTANCE_PRIVATE_IP}:5648" # non-default ports may be specified
+  http = "$INSTANCE_PRIVATE_IP"
+  rpc  = "$INSTANCE_PRIVATE_IP"
+  serf = "$INSTANCE_PRIVATE_IP:5648" # non-default ports may be specified
 }
 
 server {
@@ -172,11 +168,16 @@ server {
   bootstrap_expect = 1
 }
 
+# https://nomadproject.io/docs/configuration/server_join/
+# server_join {
+#   retry_join = [ "${HASHIQUBE1_IP}", "${HASHIQUBE2_IP}" ]
+# }
+
 client {
   enabled       = true
   # https://github.com/hashicorp/nomad/issues/1282
   network_speed = 100
-  servers = ["${INSTANCE_PRIVATE_IP}:4647"]
+  servers = ["$INSTANCE_PRIVATE_IP:4647"]
 }
 
 plugin "raw_exec" {
@@ -186,7 +187,7 @@ plugin "raw_exec" {
 }
 
 consul {
-  address = "${INSTANCE_PRIVATE_IP}:8500"
+  address = "$INSTANCE_PRIVATE_IP:8500"
 }
 EOF
 
@@ -194,7 +195,7 @@ EOF
 cat <<EOF | sudo tee /etc/nomad.d/countdashboard.nomad
 // https://www.nomadproject.io/guides/integrations/consul-connect/index.html
 job "countdash" {
-  datacenters = ["dc${DC}"]
+  datacenters = ["dc$DC"]
 
   group "api" {
     network {
@@ -259,7 +260,7 @@ job "countdash" {
       driver = "docker"
 
       env {
-        COUNTING_SERVICE_URL = "http://${NOMAD_UPSTREAM_ADDR_count_api}"
+        COUNTING_SERVICE_URL = "http://$NOMAD_UPSTREAM_ADDR_count_api"
       }
 
       config {
@@ -281,7 +282,7 @@ EOF
 cat <<EOF | sudo tee /etc/nomad.d/fabio.nomad
 # https://learn.hashicorp.com/nomad/load-balancing/fabio
 job "fabio" {
-  datacenters = ["dc${DC}"]
+  datacenters = ["dc$DC"]
   type = "system"
 
   group "fabio" {
@@ -292,20 +293,20 @@ job "fabio" {
         network_mode = "host"
       }
 
-      env {
-        FABIO_insecure                         = false
-        FABIO_registry_consul_addr             = "\${NOMAD_IP_lb}:8500"
-        FABIO_registry_consul_register_addr    = "\${NOMAD_IP_ui}:\${NOMAD_HOST_PORT_ui}"
-        FABIO_proxy_addr                       = ":\${NOMAD_PORT_lb};proto=http"
-        FABIO_ui_addr                          = ":\${NOMAD_PORT_ui}"
-      }
       # env {
-      #   NOMAD_IP_elb = "0.0.0.0"
-      #   NOMAD_IP_admin = "0.0.0.0"
-      #   NOMAD_IP_tcp = "0.0.0.0"
-      #   NOMAD_ADDR_ui = "0.0.0.0:9998"
-      #   NOMAD_ADDR_lb = "0.0.0.0:9999"
+      #   FABIO_insecure                         = false
+      #   FABIO_registry_consul_addr             = "\$NOMAD_IP_lb:8500"
+      #   FABIO_registry_consul_register_addr    = "\$NOMAD_IP_ui:\$NOMAD_HOST_PORT_ui"
+      #   FABIO_proxy_addr                       = ":\$NOMAD_PORT_lb;proto=http"
+      #   FABIO_ui_addr                          = ":\$NOMAD_PORT_ui"
       # }
+      env {
+         NOMAD_IP_elb = "0.0.0.0"
+         NOMAD_IP_admin = "0.0.0.0"
+         NOMAD_IP_tcp = "0.0.0.0"
+         NOMAD_ADDR_ui = "0.0.0.0:9998"
+         NOMAD_ADDR_lb = "0.0.0.0:9999"
+      }
 
       resources {
         cpu    = 200
@@ -343,7 +344,7 @@ cat <<EOF | sudo tee /etc/nomad.d/http-echo.nomad
 # https://github.com/hashicorp/demo-nomad-101/blob/master/lab-2/http-echo.nomad
 # http-echo
 job "http-echo" {
-  datacenters = ["dc${DC}"]
+  datacenters = ["dc$DC"]
 
   group "echo" {
     count = 1
@@ -431,13 +432,13 @@ EOF
     nomad node status
   fi
   cd /etc/nomad.d;
-  nomad plan --address=http://${INSTANCE_PRIVATE_IP}:4646 countdashboard.nomad
-  nomad run --address=http://${INSTANCE_PRIVATE_IP}:4646 countdashboard.nomad
-  nomad plan --address=http://${INSTANCE_PRIVATE_IP}:4646 fabio.nomad
-  nomad run --address=http://${INSTANCE_PRIVATE_IP}:4646 fabio.nomad
-  nomad plan --address=http://${INSTANCE_PRIVATE_IP}:4646 http-echo.nomad
-  nomad run --address=http://${INSTANCE_PRIVATE_IP}:4646 http-echo.nomad
-echo -e '\e[38;5;198m'"++++ Nomad http://${INSTANCE_PRIVATE_IP}:4646"
+  nomad plan --address=http://$INSTANCE_PRIVATE_IP:4646 countdashboard.nomad
+  nomad run --address=http://$INSTANCE_PRIVATE_IP:4646 countdashboard.nomad
+  nomad plan --address=http://$INSTANCE_PRIVATE_IP:4646 fabio.nomad
+  nomad run --address=http://$INSTANCE_PRIVATE_IP:4646 fabio.nomad
+  nomad plan --address=http://$INSTANCE_PRIVATE_IP:4646 http-echo.nomad
+  nomad run --address=http://$INSTANCE_PRIVATE_IP:4646 http-echo.nomad
+echo -e '\e[38;5;198m'"++++ Nomad http://$INSTANCE_PRIVATE_IP:4646"
 }
 
 consul-install

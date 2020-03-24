@@ -67,6 +67,14 @@ resource "aws_iam_role_policy" "hashiqube" {
 EOF
 }
 
+data "template_file" "hashiqube1_user_data" {
+  template = file("./startup_script")
+  vars = {
+    HASHIQUBE1_IP = aws_eip.hashiqube.public_ip
+    HASHIQUBE2_IP = google_compute_address.static.address
+  }
+}
+
 resource "aws_instance" "hashiqube" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.medium"
@@ -74,7 +82,8 @@ resource "aws_instance" "hashiqube" {
   security_groups = [aws_security_group.hashiqube.name]
 
   key_name  = aws_key_pair.hashiqube.key_name
-  user_data = file("./startup_script")
+  # user_data = file("./startup_script")
+  user_data = data.template_file.hashiqube1_user_data.rendered
 
   iam_instance_profile = aws_iam_instance_profile.hashiqube.name
 

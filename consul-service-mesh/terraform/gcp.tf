@@ -39,6 +39,14 @@ data "google_compute_subnetwork" "default" {
   name     = "default"
 }
 
+data "template_file" "hashiqube2_user_data" {
+  template = file("./startup_script")
+  vars = {
+    HASHIQUBE1_IP = aws_eip.hashiqube.public_ip
+    HASHIQUBE2_IP = google_compute_address.static.address
+  }
+}
+
 resource "google_compute_instance_template" "hashiqube" {
   provider    = google
   name_prefix = var.gcp_cluster_name
@@ -63,7 +71,9 @@ resource "google_compute_instance_template" "hashiqube" {
     disk_type    = var.gcp_root_volume_disk_type
   }
 
-  metadata_startup_script = file("./startup_script")
+  # metadata_startup_script = file("./startup_script")
+  metadata_startup_script = data.template_file.hashiqube2_user_data.rendered
+
   metadata = {
     ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
   }
@@ -90,8 +100,8 @@ resource "google_compute_address" "static" {
   name = "hashiqube"
 }
 
-resource "google_compute_firewall" "allow_intercluster_consul_inbound" {
-  name    = "${var.gcp_cluster_name}-rule-consul-inter-inbound"
+resource "google_compute_firewall" "hashiqube" {
+  name    = "${var.gcp_cluster_name}-hashiqube"
   network = "default"
   project = var.gcp_project
 
@@ -105,13 +115,11 @@ resource "google_compute_firewall" "allow_intercluster_consul_inbound" {
     ports    = ["0-65535"]
   }
 
-  source_ranges           = ["${data.external.myipaddress.result.ip}/32", "${aws_eip.hashiqube.public_ip}/32"]
-  source_service_accounts = [google_service_account.consul_compute.email]
-  target_service_accounts = [google_service_account.consul_compute.email]
+  source_ranges = ["${data.external.myipaddress.result.ip}/32", "${aws_eip.hashiqube.public_ip}/32"]
 }
 
-resource "google_compute_firewall" "allow_cluster_consul_wan" {
-  name    = "${var.gcp_cluster_name}-rule-consul-wan"
+resource "google_compute_firewall" "hashiqube1" {
+  name    = "${var.gcp_cluster_name}-hashiqube1"
   network = "default"
   project = var.gcp_project
 
@@ -125,8 +133,8 @@ resource "google_compute_firewall" "allow_cluster_consul_wan" {
     ports    = ["0-65535"]
   }
 
-  source_ranges           = ["${data.external.myipaddress.result.ip}/32", "${aws_eip.hashiqube.public_ip}/32"]
-  target_service_accounts = [google_service_account.consul_compute.email]
+  source_ranges = ["${aws_eip.hashiqube.public_ip}/32"]
+  description   = "HASHIQUBE1_IP"
 }
 
 resource "google_service_account" "consul_compute" {
