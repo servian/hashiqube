@@ -110,7 +110,7 @@ echo -e '\e[38;5;198m'"++++ Starting Terraform Enterprise Install"
 bash /tmp/install.sh no-proxy private-address=10.9.99.10 public-address=10.9.99.10 > /var/log/terraform-enterprise.log 2>&1 &
 sh -c 'sudo tail -f /var/log/terraform-enterprise.log | { sed "/Operator installation successful/ q" && kill $$ ;}'
 echo -e '\e[38;5;198m'"++++ Operator Installation successful, continueing.."
-sh -c 'sudo docker logs replicated -f | { sed "/Service retraced is ready/ q" && kill $$ ;}'
+sh -c 'sudo tail -f /var/log/syslog | { sed "/Service retraced is ready/ q" && kill $$ ;}'
 echo -e '\e[38;5;198m'"++++ Service retraced is ready, all Components started"
 echo -e '\e[38;5;198m'"++++ To finish the installation go to http://10.9.99.10:8800"
 #systemctl daemon-reload
