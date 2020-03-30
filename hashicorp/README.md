@@ -1218,6 +1218,12 @@ Terraform Cloud is an application that helps teams use Terraform together. It ma
 
 For independent teams and small to medium-sized businesses, Terraform Cloud is also available as a hosted service at https://app.terraform.io.
 
+__Make sure you get a Terraform Licence file and place it in hashicorp directory e.g hashicorp/ptfe-license.rli__
+
+When you run `vagrant up --provision-with terraform-enterprise` system logs and docker logs will be followed, the output will be in read, don't worry. This is for status output, __the installation takes a while__. The output will end when Terraform Enterprise is ready.
+
+Once done, you will see __++++ To finish the installation go to http://10.9.99.10:8800__
+
 ![Terraform Enterprise](images/terraform-enterprise.png?raw=true "Terraform Enterprise")
 ![Terraform Enterprise](images/terraform-enterprise_logged_in.png?raw=true "Terraform Enterprise")
 `vagrant up --provision-with terraform-enterprise`
