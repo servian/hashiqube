@@ -10,6 +10,10 @@ Let's bring up HashiQube in some public clouds and see how we can connect them a
 This demo will you Terraform to bring up the Multi Cloud.
 
 ## Instructions
+* You need an SSH key pair configured on your laptop, you can create one with this command <br />
+`ssh-keygen -t rsa -b 2048`
+
+
 You need an account with AWS and GCP, you can open a free account with each.
 * Configure your AWS credentials in ~/.aws/credentials
 `cat ~/.aws/credentials`
@@ -177,6 +181,3 @@ See "man sudo_root" for details.
 
 ubuntu@hashiqube1:~$
 ```
-
-__Be sure to destroy the resources after you are done__
-`terraform destroy --auto-approve`
