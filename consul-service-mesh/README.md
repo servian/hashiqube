@@ -5,9 +5,9 @@ https://learn.hashicorp.com/nomad/operating-nomad/clustering <br />
 Service Mesh Made Easy
 A distributed networking layer to connect, secure and observe services across any runtime platform and public or private cloud.
 
-Let's bring up HashiQube in some public clouds and see how we can connect them all together in a Service Mesh, we will also bring up Nomad with the countdash demo, fabio load balancer and http-echo service.
+Let's bring up HashiQube in some public clouds and see how we can connect them all together in a Service Mesh, we will also bring up Nomad with the countdash demo, fabio load balancer and http-echo service and Vault with raft storage backend.
 
-This demo will you Terraform to bring up the Multi Cloud.
+This demo we will use Terraform to bring up the Multi Cloud.
 
 ## Instructions
 * You need an SSH key pair configured on your laptop, you can create one with this command <br />
@@ -78,61 +78,51 @@ commands will detect it and remind you to do so if necessary.
 `terraform apply --auto-approve`
 ```
 data.external.myipaddress: Refreshing state...
+google_service_account.consul_compute: Refreshing state... [id=projects/thermal-formula-256223/serviceAccounts/sa-consul-compute-prod@thermal-formula-256223.iam.gserviceaccount.com]
 data.google_compute_subnetwork.default: Refreshing state...
+google_compute_address.static: Refreshing state... [id=projects/thermal-formula-256223/regions/australia-southeast1/addresses/hashiqube]
+google_project_iam_member.compute_policy: Refreshing state... [id=thermal-formula-256223/roles/compute.networkViewer/serviceaccount:sa-consul-compute-prod@thermal-formula-256223.iam.gserviceaccount.com]
+aws_key_pair.hashiqube: Refreshing state... [id=hashiqube]
+aws_eip.hashiqube: Refreshing state... [id=eipalloc-06ec22c0dd9bb69e5]
+aws_iam_role.hashiqube: Refreshing state... [id=hashiqube]
 data.aws_ami.ubuntu: Refreshing state...
-google_service_account.consul_compute: Creating...
-google_compute_address.static: Creating...
-google_service_account.consul_compute: Creation complete after 3s [id=projects/thermal-formula-256223/serviceAccounts/sa-consul-compute-prod@thermal-formula-256223.iam.gserviceaccount.com]
-google_project_iam_member.compute_policy: Creating...
-aws_iam_role.hashiqube: Creating...
-aws_key_pair.hashiqube: Creating...
-aws_eip.hashiqube: Creating...
-aws_key_pair.hashiqube: Creation complete after 0s [id=hashiqube]
-aws_eip.hashiqube: Creation complete after 0s [id=eipalloc-0d97d1dfb4f5a6b0d]
-google_compute_firewall.allow_intercluster_consul_inbound: Creating...
-google_compute_firewall.allow_cluster_consul_wan: Creating...
-google_compute_address.static: Creation complete after 5s [id=projects/thermal-formula-256223/regions/australia-southeast1/addresses/hashiqube]
-aws_security_group.hashiqube: Creating...
+aws_security_group.hashiqube: Refreshing state... [id=sg-0c28270ff99301a30]
+google_compute_firewall.hashiqube: Refreshing state... [id=projects/thermal-formula-256223/global/firewalls/consul-hashiqube]
+google_compute_firewall.hashiqube1: Refreshing state... [id=projects/thermal-formula-256223/global/firewalls/consul-hashiqube1]
+data.template_file.hashiqube2_user_data: Refreshing state...
+data.template_file.hashiqube1_user_data: Refreshing state...
+aws_iam_role_policy.hashiqube: Refreshing state... [id=hashiqube:hashiqube]
+aws_iam_instance_profile.hashiqube: Refreshing state... [id=hashiqube]
 google_compute_instance_template.hashiqube: Creating...
-aws_iam_role.hashiqube: Creation complete after 2s [id=hashiqube]
-aws_iam_role_policy.hashiqube: Creating...
-aws_iam_instance_profile.hashiqube: Creating...
-aws_security_group.hashiqube: Creation complete after 2s [id=sg-06f375c319e9b005d]
-aws_iam_role_policy.hashiqube: Creation complete after 2s [id=hashiqube:hashiqube]
-aws_iam_instance_profile.hashiqube: Creation complete after 3s [id=hashiqube]
 aws_instance.hashiqube: Creating...
-google_compute_instance_template.hashiqube: Creation complete after 6s [id=projects/thermal-formula-256223/global/instanceTemplates/consul20200315180711098900000001]
+google_compute_instance_template.hashiqube: Creation complete after 7s [id=projects/thermal-formula-256223/global/instanceTemplates/consul20200408025107558300000001]
 google_compute_region_instance_group_manager.hashiqube: Creating...
-google_project_iam_member.compute_policy: Creation complete after 10s [id=thermal-formula-256223/roles/compute.networkViewer/serviceaccount:sa-consul-compute-prod@thermal-formula-256223.iam.gserviceaccount.com]
-google_compute_firewall.allow_cluster_consul_wan: Still creating... [10s elapsed]
-google_compute_firewall.allow_intercluster_consul_inbound: Still creating... [10s elapsed]
 aws_instance.hashiqube: Still creating... [10s elapsed]
 google_compute_region_instance_group_manager.hashiqube: Still creating... [10s elapsed]
-google_compute_firewall.allow_intercluster_consul_inbound: Creation complete after 18s [id=projects/thermal-formula-256223/global/firewalls/consul-rule-consul-inter-inbound]
-google_compute_firewall.allow_cluster_consul_wan: Creation complete after 19s [id=projects/thermal-formula-256223/global/firewalls/consul-rule-consul-wan]
 aws_instance.hashiqube: Still creating... [20s elapsed]
-google_compute_region_instance_group_manager.hashiqube: Creation complete after 20s [id=projects/thermal-formula-256223/regions/australia-southeast1/instanceGroupManagers/hashiqube]
+google_compute_region_instance_group_manager.hashiqube: Creation complete after 18s [id=projects/thermal-formula-256223/regions/australia-southeast1/instanceGroupManagers/hashiqube]
 aws_instance.hashiqube: Still creating... [30s elapsed]
-aws_instance.hashiqube: Still creating... [40s elapsed]
-aws_instance.hashiqube: Creation complete after 42s [id=i-05c007ecc8746640e]
+aws_instance.hashiqube: Creation complete after 33s [id=i-08bcba01ea28adaea]
 aws_eip_association.eip_assoc: Creating...
-aws_eip_association.eip_assoc: Creation complete after 0s [id=eipassoc-00b8a789123882607]
+aws_eip_association.eip_assoc: Creation complete after 1s [id=eipassoc-0853dc0964e7b303f]
 
-Apply complete! Resources: 15 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-AWS_hashiqube1-consul-service-consul = http://13.239.110.170:8500
-AWS_hashiqube1-fabio-ui-service-consul = http://13.239.110.170:9998
-AWS_hashiqube1-nomad-service-consul = http://13.239.110.170:4646
-AWS_hashiqube1-service-consul = 13.239.110.170
-AWS_hashiqube1-ssh-service-consul = ssh ubuntu@13.239.110.170
-GCP_hashiqube2-consul-service-consul = http://34.87.237.149:8500
-GCP_hashiqube2-fabio-ui-service-consul = http://34.87.237.149:9998
-GCP_hashiqube2-nomad-service-consul = http://34.87.237.149:4646
-GCP_hashiqube2-service-consul = 34.87.237.149
-GCP_hashiqube2-ssh-service-consul = ssh ubuntu@34.87.237.149
-OnPrem_hashiqube0-service-consul = 61.68.144.9
+AWS_hashiqube1-consul-service-consul = http://52.64.145.12:8500
+AWS_hashiqube1-fabio-ui-service-consul = http://52.64.145.12:9998
+AWS_hashiqube1-nomad-service-consul = http://52.64.145.12:4646
+AWS_hashiqube1-service-consul = 52.64.145.12
+AWS_hashiqube1-ssh-service-consul = ssh ubuntu@52.64.145.12
+AWS_hashiqube1-vault-service-consul = http://52.64.145.12:8200
+GCP_hashiqube2-consul-service-consul = http://34.87.212.153:8500
+GCP_hashiqube2-fabio-ui-service-consul = http://34.87.212.153:9998
+GCP_hashiqube2-nomad-service-consul = http://34.87.212.153:4646
+GCP_hashiqube2-service-consul = 34.87.212.153
+GCP_hashiqube2-ssh-service-consul = ssh ubuntu@34.87.212.153
+GCP_hashiqube2-vault-service-consul = http://34.87.212.153:8200
+OnPrem_hashiqube0-service-consul = 220.240.244.19
 ```
 
 These instances will only be accessible by you, since we whitelist our IPs - see gcp.tf and aws.tf and main.tf for details.
@@ -145,6 +135,9 @@ You will be able to access Nomad on the above addresses on port 4646
 
 You will be able to access Fabio on the above addresses on port 9998
 ![Fabio](images/fabio-consul-service-mesh.png?raw=true "Fabio")
+
+You will be able to access Vault on the above addresses on port 8200
+![Vault](images/vault-consul-service-mesh.png?raw=true "Vault")
 
 You will be able to ssh into the instances as user ubuntu
 `ssh ubuntu@13.239.110.170`  
@@ -180,4 +173,83 @@ To run a command as administrator (user "root"), use "sudo <command>".
 See "man sudo_root" for details.
 
 ubuntu@hashiqube1:~$
+```
+## Destroy
+When you are done remember to destroy the resources so you are bot billed for them anymore
+
+`terraform destroy --auto-approve`
+```
+data.external.myipaddress: Refreshing state...
+data.google_compute_subnetwork.default: Refreshing state...
+google_service_account.consul_compute: Refreshing state... [id=projects/thermal-formula-256223/serviceAccounts/sa-consul-compute-prod@thermal-formula-256223.iam.gserviceaccount.com]
+google_compute_address.static: Refreshing state... [id=projects/thermal-formula-256223/regions/australia-southeast1/addresses/hashiqube]
+google_project_iam_member.compute_policy: Refreshing state... [id=thermal-formula-256223/roles/compute.networkViewer/serviceaccount:sa-consul-compute-prod@thermal-formula-256223.iam.gserviceaccount.com]
+aws_key_pair.hashiqube: Refreshing state... [id=hashiqube]
+aws_eip.hashiqube: Refreshing state... [id=eipalloc-06ec22c0dd9bb69e5]
+aws_iam_role.hashiqube: Refreshing state... [id=hashiqube]
+data.aws_ami.ubuntu: Refreshing state...
+aws_security_group.hashiqube: Refreshing state... [id=sg-0c28270ff99301a30]
+data.template_file.hashiqube1_user_data: Refreshing state...
+data.template_file.hashiqube2_user_data: Refreshing state...
+google_compute_firewall.hashiqube: Refreshing state... [id=projects/thermal-formula-256223/global/firewalls/consul-hashiqube]
+google_compute_firewall.hashiqube1: Refreshing state... [id=projects/thermal-formula-256223/global/firewalls/consul-hashiqube1]
+google_compute_instance_template.hashiqube: Refreshing state... [id=projects/thermal-formula-256223/global/instanceTemplates/consul20200408025107558300000001]
+google_compute_region_instance_group_manager.hashiqube: Refreshing state... [id=projects/thermal-formula-256223/regions/australia-southeast1/instanceGroupManagers/hashiqube]
+aws_iam_role_policy.hashiqube: Refreshing state... [id=hashiqube:hashiqube]
+aws_iam_instance_profile.hashiqube: Refreshing state... [id=hashiqube]
+aws_instance.hashiqube: Refreshing state... [id=i-08bcba01ea28adaea]
+aws_eip_association.eip_assoc: Refreshing state... [id=eipassoc-0853dc0964e7b303f]
+google_project_iam_member.compute_policy: Destroying... [id=thermal-formula-256223/roles/compute.networkViewer/serviceaccount:sa-consul-compute-prod@thermal-formula-256223.iam.gserviceaccount.com]
+google_compute_firewall.hashiqube1: Destroying... [id=projects/thermal-formula-256223/global/firewalls/consul-hashiqube1]
+google_compute_firewall.hashiqube: Destroying... [id=projects/thermal-formula-256223/global/firewalls/consul-hashiqube]
+google_compute_region_instance_group_manager.hashiqube: Destroying... [id=projects/thermal-formula-256223/regions/australia-southeast1/instanceGroupManagers/hashiqube]
+aws_iam_role_policy.hashiqube: Destroying... [id=hashiqube:hashiqube]
+aws_eip_association.eip_assoc: Destroying... [id=eipassoc-0853dc0964e7b303f]
+aws_eip_association.eip_assoc: Destruction complete after 0s
+aws_instance.hashiqube: Destroying... [id=i-08bcba01ea28adaea]
+aws_iam_role_policy.hashiqube: Destruction complete after 1s
+google_compute_firewall.hashiqube: Destruction complete after 9s
+google_compute_firewall.hashiqube1: Destruction complete after 9s
+google_project_iam_member.compute_policy: Still destroying... [id=thermal-formula-256223/roles/compute.ne...formula-256223.iam.gserviceaccount.com, 10s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 10s elapsed]
+google_project_iam_member.compute_policy: Destruction complete after 11s
+aws_instance.hashiqube: Still destroying... [id=i-08bcba01ea28adaea, 10s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 20s elapsed]
+aws_instance.hashiqube: Still destroying... [id=i-08bcba01ea28adaea, 20s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 30s elapsed]
+aws_instance.hashiqube: Still destroying... [id=i-08bcba01ea28adaea, 30s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 40s elapsed]
+aws_instance.hashiqube: Still destroying... [id=i-08bcba01ea28adaea, 40s elapsed]
+aws_instance.hashiqube: Destruction complete after 41s
+aws_key_pair.hashiqube: Destroying... [id=hashiqube]
+aws_iam_instance_profile.hashiqube: Destroying... [id=hashiqube]
+aws_security_group.hashiqube: Destroying... [id=sg-0c28270ff99301a30]
+aws_key_pair.hashiqube: Destruction complete after 0s
+aws_security_group.hashiqube: Destruction complete after 0s
+aws_iam_instance_profile.hashiqube: Destruction complete after 2s
+aws_iam_role.hashiqube: Destroying... [id=hashiqube]
+aws_iam_role.hashiqube: Destruction complete after 2s
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 50s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 1m0s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 1m10s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 1m20s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 1m30s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 1m40s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 1m50s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 2m0s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 2m10s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 2m20s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 2m30s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Still destroying... [id=projects/thermal-formula-256223/regions...heast1/instanceGroupManagers/hashiqube, 2m40s elapsed]
+google_compute_region_instance_group_manager.hashiqube: Destruction complete after 2m46s
+google_compute_instance_template.hashiqube: Destroying... [id=projects/thermal-formula-256223/global/instanceTemplates/consul20200408025107558300000001]
+google_compute_instance_template.hashiqube: Destruction complete after 3s
+google_service_account.consul_compute: Destroying... [id=projects/thermal-formula-256223/serviceAccounts/sa-consul-compute-prod@thermal-formula-256223.iam.gserviceaccount.com]
+aws_eip.hashiqube: Destroying... [id=eipalloc-06ec22c0dd9bb69e5]
+google_compute_address.static: Destroying... [id=projects/thermal-formula-256223/regions/australia-southeast1/addresses/hashiqube]
+aws_eip.hashiqube: Destruction complete after 0s
+google_service_account.consul_compute: Destruction complete after 0s
+google_compute_address.static: Destruction complete after 4s
+
+Destroy complete! Resources: 15 destroyed.
 ```

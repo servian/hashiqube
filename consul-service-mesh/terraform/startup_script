@@ -13,7 +13,6 @@ then
   DC=1
   INSTANCE_PRIVATE_IP=$(hostname --all-ip-addresses | cut -d ' ' -f1)
   INSTANCE_IP=$(curl -s 'https://api.ipify.org?format=text')
-  # HASHIQUBE1_IP=$(curl -s 'https://api.ipify.org?format=text')
   HASHIQUBE1_IP=${HASHIQUBE1_IP}
   HOSTNAME=hashiqube1
   FQDN=hashiqube1.service.consul
@@ -22,7 +21,6 @@ else
   DC=2
   INSTANCE_PRIVATE_IP=$(hostname --all-ip-addresses | cut -d ' ' -f1)
   INSTANCE_IP=$(curl -s 'https://api.ipify.org?format=text')
-  # HASHIQUBE2_IP=$(curl -s 'https://api.ipify.org?format=text')
   HASHIQUBE2_IP=${HASHIQUBE2_IP}
   HOSTNAME=hashiqube2
   FQDN=hashiqube2.service.consul
@@ -34,7 +32,7 @@ hostname "$HOSTNAME"
 sed -i "s/.*127.0.0.1.*/127.0.0.1 $FQDN $HOSTNAME localhost/g" /etc/hosts
 
 # https://docs.docker.com/install/linux/docker-ce/ubuntu/
-sudo DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes apt-transport-https ca-certificates curl gnupg-agent software-properties-common awscli
+sudo DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes apt-transport-https ca-certificates curl unzip jq gnupg-agent software-properties-common awscli
 sudo -i
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
@@ -135,12 +133,6 @@ EOF
   consul kv put fabio/config/consul-hashiqube "route add consul consul.service.consul:9999/ http://$INSTANCE_IP:8500"
   consul kv put fabio/config/nomad-hashiqube "route add nomad nomad.service.consul:9999/ http://$INSTANCE_IP:4646"
   consul kv put fabio/config/fabio-hashiqube "route add fabio fabio.service.consul:9999/ http://$INSTANCE_IP:9998"
-# consul kv put fabio/config/vault2 "route add vault fabio.service.consul:9999/vault http://10.9.99.10:8200 opts \"strip=/vault\""
-# consul kv put fabio/config/nomad "route add nomad nomad.service.consul:9999/ http://10.9.99.10:4646"
-# consul kv put fabio/config/consul "route add consul consul.service.consul:9999/ http://10.9.99.10:8500"
-# consul kv put fabio/config/apache2 "route add apache2 fabio.service.consul:9999/apache2 http://10.9.99.10:8889 opts \"strip=/apache2\""
-# consul kv put fabio/config/countdashtest1 "route add countdashtest fabio.service.consul:9999/countdashtest http://10.9.99.10:9022/ opts \"strip=/countdashtest\""
-# consul kv put fabio/config/docsify "route add docsify docsify.service.consul:9999/ http://10.9.99.10:3333"
 echo -e '\e[38;5;198m'"++++ Consul http://$INSTANCE_IP:8500"
 }
 
@@ -167,11 +159,6 @@ server {
   enabled          = true
   bootstrap_expect = 1
 }
-
-# https://nomadproject.io/docs/configuration/server_join/
-# server_join {
-#   retry_join = [ "${HASHIQUBE1_IP}", "${HASHIQUBE2_IP}" ]
-# }
 
 client {
   enabled       = true
@@ -293,13 +280,6 @@ job "fabio" {
         network_mode = "host"
       }
 
-      # env {
-      #   FABIO_insecure                         = false
-      #   FABIO_registry_consul_addr             = "\$NOMAD_IP_lb:8500"
-      #   FABIO_registry_consul_register_addr    = "\$NOMAD_IP_ui:\$NOMAD_HOST_PORT_ui"
-      #   FABIO_proxy_addr                       = ":\$NOMAD_PORT_lb;proto=http"
-      #   FABIO_ui_addr                          = ":\$NOMAD_PORT_ui"
-      # }
       env {
          NOMAD_IP_elb = "0.0.0.0"
          NOMAD_IP_admin = "0.0.0.0"
@@ -441,8 +421,136 @@ EOF
 echo -e '\e[38;5;198m'"++++ Nomad http://$INSTANCE_PRIVATE_IP:4646"
 }
 
+# install and configure Vault
+function vault-install() {
+  # only do if vault is not found
+
+  echo -e '\e[38;5;198m'"++++ Vault not installed, installing.."
+
+  LATEST_URL=$(curl -sL https://releases.hashicorp.com/vault/index.json | jq -r '.versions[].builds[].url' | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n | egrep -v 'rc|ent|beta' | egrep 'linux.*amd64' | sort -V | tail -n 1)
+  wget -q $LATEST_URL -O /tmp/vault.zip
+
+  mkdir -p /usr/local/bin
+  (cd /usr/local/bin && unzip /tmp/vault.zip)
+  echo -e '\e[38;5;198m'"++++ Installed `/usr/local/bin/vault --version`"
+
+  # enable command autocompletion
+  vault -autocomplete-install
+  complete -C /usr/local/bin/vault vault
+
+  # create Vault data directories
+  sudo mkdir /etc/vault
+  sudo mkdir -p /var/lib/vault/data
+  sudo mkdir -p /var/lib/vault/raft/data
+
+  # create user named vault
+  sudo useradd --system --home /etc/vault --shell /bin/false vault
+  sudo chown -R vault:vault /etc/vault /var/lib/vault/
+
+  # create a Vault service file at /etc/systemd/system/vault.service
+  cat <<EOF | sudo tee /etc/systemd/system/vault.service
+[Unit]
+Description="HashiCorp Vault - A tool for managing secrets"
+Documentation=https://www.vaultproject.io/docs/
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/etc/vault/config.hcl
+
+[Service]
+User=vault
+Group=vault
+ProtectSystem=full
+ProtectHome=read-only
+PrivateTmp=yes
+PrivateDevices=yes
+SecureBits=keep-caps
+AmbientCapabilities=CAP_IPC_LOCK
+NoNewPrivileges=yes
+ExecStart=/usr/local/bin/vault server -config=/etc/vault/config.hcl
+ExecReload=/bin/kill --signal HUP
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+StartLimitBurst=3
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  # create Vault /etc/vault/config.hcl file
+  touch /etc/vault/config.hcl
+
+  # add basic configuration settings for Vault to /etc/vault/config.hcl file
+  cat <<EOF | sudo tee /etc/vault/config.hcl
+disable_cache = true
+disable_mlock = true
+ui = true
+listener "tcp" {
+   address          = "0.0.0.0:8200"
+   tls_disable      = 1
+}
+# https://www.vaultproject.io/docs/configuration/storage/raft/
+storage "raft" {
+  path = "/var/lib/vault/raft/data"
+  node_id = "raft_$HOSTNAME"
+}
+cluster_addr = "http://$INSTANCE_PRIVATE_IP:8201"
+#storage "file" {
+#   path  = "/var/lib/vault/data"
+#}
+# use consul as storage backend
+#storage "consul" {
+#  address = "$INSTANCE_PRIVATE_IP:8500"
+#  path    = "vault"
+#}
+api_addr         = "http://0.0.0.0:8200"
+max_lease_ttl         = "10h"
+default_lease_ttl    = "10h"
+cluster_name         = "vault"
+raw_storage_endpoint     = true
+disable_sealwrap     = true
+disable_printable_check = true
+EOF
+
+  # start and enable vault service to start on system boot
+  sudo systemctl daemon-reload
+  sudo systemctl enable --now vault
+
+  # check vault status
+  sudo systemctl status vault
+
+  # initialize vault server
+  export VAULT_ADDR=http://127.0.0.1:8200
+  echo "export VAULT_ADDR=http://127.0.0.1:8200" >> ~/.bashrc
+
+  sleep 20
+  vault operator init > /etc/vault/init.file
+  for i in $(cat /etc/vault/init.file | grep Unseal | cut -d " " -f4 | head -n 3); do vault operator unseal $i; done
+  vault status
+  cat /etc/vault/init.file
+  # add vault ENV variables
+  VAULT_TOKEN=$(grep 'Initial Root Token' /etc/vault/init.file | cut -d ':' -f2 | tr -d ' ')
+  grep -q "$VAULT_TOKEN" /etc/environment
+  if [ $? -eq 1 ]; then
+    echo "VAULT_TOKEN=$VAULT_TOKEN" >> /etc/environment
+  else
+    sed -i "s/VAULT_TOKEN=.*/VAULT_TOKEN=$VAULT_TOKEN/g" /etc/environment
+  fi
+  grep -q "VAULT_ADDR=http://127.0.0.1:8200" /etc/environment
+  if [ $? -eq 1 ]; then
+    echo "VAULT_ADDR=http://127.0.0.1:8200" >> /etc/environment
+  else
+    sed -i "s/VAULT_ADDR=.*/VAULT_ADDR=http://127.0.0.1:8200/g" /etc/environment
+  fi
+echo -e '\e[38;5;198m'"++++ Vault http://$INSTANCE_IP:8200"
+}
+
 consul-install
 nomad-install
+vault-install
 
 # check whos listening on what
 lsof -nPi

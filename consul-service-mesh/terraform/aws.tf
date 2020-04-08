@@ -155,6 +155,10 @@ output "AWS_hashiqube1-nomad-service-consul" {
   value = "http://${aws_eip.hashiqube.public_ip}:4646"
 }
 
+output "AWS_hashiqube1-vault-service-consul" {
+  value = "http://${aws_eip.hashiqube.public_ip}:8200"
+}
+
 output "AWS_hashiqube1-fabio-ui-service-consul" {
   value = "http://${aws_eip.hashiqube.public_ip}:9998"
 }

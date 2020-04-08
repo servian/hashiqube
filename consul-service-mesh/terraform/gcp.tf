@@ -165,6 +165,10 @@ output "GCP_hashiqube2-nomad-service-consul" {
   value = "http://${google_compute_address.static.address}:4646"
 }
 
+output "GCP_hashiqube2-vault-service-consul" {
+  value = "http://${google_compute_address.static.address}:8200"
+}
+
 output "GCP_hashiqube2-fabio-ui-service-consul" {
   value = "http://${google_compute_address.static.address}:9998"
 }
