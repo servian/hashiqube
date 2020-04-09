@@ -96,6 +96,7 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 8889, host: 8889 # docker/apache2
         config.vm.network "forwarded_port", guest: 389, host: 3389 # ldap
         config.vm.network "forwarded_port", guest: 8080, host: 8080 # localstack web
+        config.vm.network "forwarded_port", guest: 7443, host: 7443 # localstack web
         config.vm.network "forwarded_port", guest: 8088, host: 8088 # jenkins
         config.vm.network "forwarded_port", guest: 9002, host: 9002 # consul counter-dashboard
         config.vm.network "forwarded_port", guest: 9001, host: 9001 # consul counter-api
