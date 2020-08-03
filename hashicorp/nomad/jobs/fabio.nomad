@@ -9,10 +9,19 @@ job "fabio" {
       config {
         image = "fabiolb/fabio"
         network_mode = "host"
-        volumes = [
-          # Use absolute paths to mount arbitrary paths on the host
-          "/vagrant/hashicorp/nomad/jobs:/etc/fabio"
+        # https://www.nomadproject.io/docs/drivers/docker.html#volumes
+        # https://github.com/hashicorp/nomad/issues/5562
+        mounts = [
+          {
+            type   = "bind"
+            target = "/etc/fabio"
+            source = "/vagrant/hashicorp/nomad/jobs"
+          },
         ]
+        #volumes = [
+        #  # Use absolute paths to mount arbitrary paths on the host
+        #  "/vagrant/hashicorp/nomad/jobs:/etc/fabio"
+        #]
       }
 
       env {

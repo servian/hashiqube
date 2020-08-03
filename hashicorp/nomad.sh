@@ -30,6 +30,11 @@ client {
   network_speed = 100
   servers = ["${VAGRANT_IP}:4647"]
   network_interface = "enp0s8"
+  # https://www.nomadproject.io/docs/drivers/docker.html#volumes
+  # https://github.com/hashicorp/nomad/issues/5562
+  options = {
+    "docker.volumes.enabled" = true
+  }
 }
 
 plugin "raw_exec" {
@@ -78,6 +83,10 @@ EOF
     echo 1 > /proc/sys/net/bridge/bridge-nf-call-arptables
     echo 1 > /proc/sys/net/bridge/bridge-nf-call-ip6tables
     echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+    pkill nomad
+    sleep 10
+    pkill nomad
+    pkill nomad
     nohup nomad agent -config=/etc/nomad/server.conf -dev-connect > /var/log/nomad.log 2>&1 &
     sh -c 'sudo tail -f /var/log/nomad.log | { sed "/node registration complete/ q" && kill $$ ;}'
     nomad server members
