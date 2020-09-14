@@ -209,7 +209,7 @@ Vagrant::configure("2") do |config|
 
       # install localstack
       # vagrant up --provision-with localstack to only run this on vagrant up
-      config.vm.provision "localstack", type: "shell", preserve_order: true, privileged: false, path: "localstack/localstack.sh"
+      config.vm.provision "localstack", type: "shell", preserve_order: true, privileged: false, path: "stack/localstack.sh"
 
       # vagrant up --provision-with ldap to only run this on vagrant up
       # run ldap docker container for testing with vault (for example) ldap login

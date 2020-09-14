@@ -3,7 +3,7 @@
 function terraform-install() {
 # ensure localstack is running
   echo -e '\e[38;5;198m'"++++ Ensure Localstack is running.."
-  sudo bash /vagrant/localstack/localstack.sh
+  sudo bash /vagrant/stack/localstack.sh
   sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install curl unzip jq
   if [ -f /usr/local/bin/terraform ]; then
     echo -e '\e[38;5;198m'"++++ `/usr/local/bin/terraform version` already installed at /usr/local/bin/terraform"
@@ -20,7 +20,7 @@ function terraform-install() {
   echo -e '\e[38;5;198m'"++++ pip list | grep aws"
   pip list | grep aws
   sudo pip list | grep aws
-  cd /vagrant/localstack/
+  cd /vagrant/stack/test
   echo -e '\e[38;5;198m'"++++ terraform init.."
   terraform init
   echo -e '\e[38;5;198m'"++++ terraform fmt.."
@@ -33,7 +33,7 @@ function terraform-install() {
   terraform apply --auto-approve
   echo -e '\e[38;5;198m'"++++ awslocal s3 ls.."
   sudo -i -u vagrant
-  cd /vagrant/localstack/
+  cd /vagrant/stack/
   export PATH=$HOME/.local/bin:$PATH
   awslocal s3 ls
 }
