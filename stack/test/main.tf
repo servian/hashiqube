@@ -18,7 +18,7 @@ provider "aws" {
     dynamodb       = "http://localhost:4569"
     es             = "http://localhost:4578"
     firehose       = "http://localhost:4573"
-    iam            = "http://localhost:4593"git push --set-upstream origin PBK5-Retain-Selected-Resources
+    iam            = "http://localhost:4593"
     redshift       = "http://localhost:4577"
     s3             = "http://localhost:4572"
     secretsmanager = "http://localhost:4584"
