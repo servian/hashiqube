@@ -41,6 +41,7 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 ## Additional Information
 This repository is designed to provide you with a stack that demonstrates the power of HashiCorp's product suite with non-enterprise editions of the following software;
 * [__Vagrant__](hashicorp/#vagrant) - Development Environments Made Easy
+* [__Cloud__](cloud/#terraform-hashicorp-hashiqube) - Hashiqube on AWS, GCP and Azure (Clustered) https://registry.terraform.io/modules/star3am/hashiqube/hashicorp/latest
 * [__Vault__](hashicorp/#vault) - Manage Secrets and Protect Sensitive Data
 * [__Consul__](hashicorp/#consul) - Secure Service Networking
 * [__Nomad__](hashicorp/#nomad) - Deploy and Manage Any Containerized, Legacy, or Batch Application
