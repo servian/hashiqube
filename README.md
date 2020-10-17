@@ -55,6 +55,7 @@ This repository is designed to provide you with a stack that demonstrates the po
 * [__Jenkins__](jenkins/#jenkins) - The leading open source automation server
 * [__Oracle MySQL__](database/#oracle-mysql) - MySQL is an open-source relational database management system (RDBMS)
 * [__Microsoft MSSQL__](database/#microsoft-sql-mssql-express) - Microsoft SQL Server is a relational database management system developed by Microsoft
+* [__PostgreSQL__](database/#postgresql) - PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and SQL compliance
 * [__Docsify__](docsify/#docsify) - A magical documentation site generator
 
 Once the stack is up you will have a large number of services running and available on `localhost` <br />
