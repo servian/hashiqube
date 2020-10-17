@@ -104,6 +104,7 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 9011, host: 9011 # consul counter-api-test
         config.vm.network "forwarded_port", guest: 3306, host: 3306 # mysql
         config.vm.network "forwarded_port", guest: 1433, host: 1433 # mssql
+        config.vm.network "forwarded_port", guest: 5432, host: 5432 # postgres
         config.vm.network "forwarded_port", guest: 9998, host: 9998 # fabio-dashboard
         config.vm.network "forwarded_port", guest: 9999, host: 9999 # fabiolb
         config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
@@ -222,6 +223,10 @@ Vagrant::configure("2") do |config|
       # vagrant up --provision-with mssql to only run this on vagrant up
       # run mssql docker container for testing with vault
       config.vm.provision "mssql", run: "never", type: "shell", preserve_order: true, privileged: false, path: "database/mssql.sh"
+
+      # vagrant up --provision-with postgresql to only run this on vagrant up
+      # run postgresql docker container for testing with vault
+      config.vm.provision "postgresql", run: "never", type: "shell", preserve_order: true, privileged: false, path: "database/postgresql.sh"
 
       # install jenkins
       # vagrant up --provision-with jenkins to only run this on vagrant up
