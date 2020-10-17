@@ -19,7 +19,7 @@ Last year I started learning about #Hashicorp products, and to help me do that, 
 
 This year I wanted to improve my Terraform knowledge while studying for my Terraform Associate Exam and I decided to try spin up HashiQube on the Clouds, GCP, Azure and AWS using Terraform.
 
-I have written a Terraform Registry module that can help you do exactly that, https://lnkd.in/dS6cuSR
+I have written a Terraform Registry module that can help you do exactly that, https://registry.terraform.io/modules/star3am/hashiqube/hashicorp/latest
 
 This module can launch a Vault, Consul and Nomad (Clustered) on all clouds or just 1 if you only have 1 Cloud account.
 
