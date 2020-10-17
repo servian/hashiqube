@@ -1,6 +1,6 @@
 * [Home](README.md)
 
-  * [Cloud](cloud/README.md)
+  * [Multi Cloud](multi-cloud/README.md)
   * [Database](database/README.md)
   * [Docker](docker/README.md)
   * [Docsify](docsify/README.md)
