@@ -48,6 +48,8 @@ This repository is designed to provide you with a stack that demonstrates the po
 * [__Terraform__](hashicorp/#terraform) - Use Infrastructure as Code to provision and manage any cloud, infrastructure, or service
 * [__Packer__](hashicorp/#packer) - Build Automated Machine Images
 * [__Sentinel__](hashicorp/#sentinel) - Sentinel is an embedded policy-as-code framework
+* [__Waypoint__](hashicorp/#waypoint) - Waypoint is an open source solution that provides a modern workflow for build, deploy, and release across platforms
+* [__Boundary__](hashicorp/#boundary) - Simple and secure remote access to any system from anywhere based on user identity.
 * [__Fabio__](hashicorp/#fabio-load-balancer) - Fabio is an HTTP and TCP reverse proxy that configures itself with data from Consul
 * [__Docker__](docker/#docker) - Securely build, share and run any application, anywhere
 * [__Localstack__](localstack/#localstack) - A fully functional local AWS cloud stack
@@ -98,8 +100,11 @@ Lead Automation Architect [riaan.nolan@servian.com](mailto:riaan.nolan@servian.c
 
 ## Contributors and Special mentions
 A Very special mention to HashiQube's contributors, Thank You All for your help, suggestions and contributions no matter how small <3
+ - Thomas Cockin
  - Konstantin Vanyushov
  - Tristan Morgan
+ - Ringo Chan
+ - Ehsan Mirzaei
 
 ## License
 HashiQube is available as open-source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

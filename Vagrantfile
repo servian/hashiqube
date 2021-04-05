@@ -88,6 +88,8 @@ Vagrant::configure("2") do |config|
       if machines.size == 1 # only expose these ports if 1 machine, else conflicts
         config.vm.network "forwarded_port", guest: 8200, host: 8200 # vault
         config.vm.network "forwarded_port", guest: 4646, host: 4646 # nomad
+        config.vm.network "forwarded_port", guest: 9702, host: 9702 # waypoint
+        config.vm.network "forwarded_port", guest: 19200, host: 19200 # boundary
         config.vm.network "forwarded_port", guest: 8500, host: 8500 # consul
         config.vm.network "forwarded_port", guest: 8600, host: 8600, protocol: 'udp' # consul dns
         config.vm.network "forwarded_port", guest: 8800, host: 8800 # terraform-enterprise
@@ -199,6 +201,14 @@ Vagrant::configure("2") do |config|
       # install nomad
       # vagrant up --provision-with nomad to only run this on vagrant up
       config.vm.provision "nomad", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/nomad.sh"
+
+      # install waypoint
+      # vagrant up --provision-with waypoint to only run this on vagrant up
+      config.vm.provision "waypoint", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/waypoint.sh"
+
+      # install boundary
+      # vagrant up --provision-with boundary to only run this on vagrant up
+      config.vm.provision "boundary", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/boundary.sh"
 
       # install packer
       # vagrant up --provision-with packer to only run this on vagrant up
