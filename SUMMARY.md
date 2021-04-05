@@ -1,6 +1,5 @@
 * [Home](README.md)
 
-  * [Multi Cloud](multi-cloud/README.md)
   * [Database](database/README.md)
   * [Docker](docker/README.md)
   * [Docsify](docsify/README.md)
@@ -9,3 +8,4 @@
   * [Jenkins](jenkins/README.md)
   * [Ldap](ldap/README.md)
   * [Localstack](localstack/README.md)
+  * [Multi-cloud](multi-cloud/README.md)
