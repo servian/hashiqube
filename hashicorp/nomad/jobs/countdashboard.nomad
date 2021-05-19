@@ -17,9 +17,6 @@ job "countdash" {
           resources {
             cpu = 600
             memory = 600
-            network {
-              mbits = 1
-            }
           }
         }
       }
