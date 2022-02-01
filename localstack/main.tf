@@ -44,6 +44,28 @@ resource "aws_s3_bucket" "localstack-s3-bucket" {
   }
 }
 
+resource "aws_security_group" "default" {
+  name        = "default"
+  description = "Default Security Group"
+
+  ingress {
+    # TLS (change to whatever ports you need)
+    from_port = 22
+    to_port   = 22
+    protocol  = "tcp"
+    # Please restrict your ingress to only necessary IPs and ports.
+    # Opening to 0.0.0.0/0 can lead to security vulnerabilities.
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 locals {
   ec2_instance_with_index = zipmap(
     range(length(var.ec2_instance)),

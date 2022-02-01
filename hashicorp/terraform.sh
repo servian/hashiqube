@@ -35,7 +35,7 @@ function terraform-install() {
   sudo -i -u vagrant
   cd /vagrant/localstack/
   export PATH=$HOME/.local/bin:$PATH
-  awslocal s3 ls
+  awslocal s3 ls || true
 }
 
 terraform-install

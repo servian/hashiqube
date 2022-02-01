@@ -446,8 +446,41 @@ EOF
   nomad server members
   nomad node status
 }
+function waypoint-install() {
+  sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install curl unzip jq
+  yes | sudo docker system prune -a
+  yes | sudo docker system prune --volumes
+  # check if waypoint is installed, start and exit
+  if [ -f /usr/local/bin/waypoint ]; then
+    echo "Waypoint already installed at /usr/local/bin/waypoint"
+    echo "`/usr/local/bin/waypoint version`"
+  else
+  # if waypoint is not installed, download and install
+    echo "Waypoint not installed, installing.."
+    LATEST_URL=$(curl -sL https://releases.hashicorp.com/waypoint/index.json | jq -r '.versions[].builds[].url' | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n | egrep -v 'rc|beta' | egrep 'linux.*amd64' | sort -V | tail -n 1)
+    wget -q $LATEST_URL -O /tmp/waypoint.zip
+    mkdir -p /usr/local/bin
+    (cd /usr/local/bin && unzip /tmp/waypoint.zip)
+    echo "Installed `/usr/local/bin/waypoint version`"
+  fi
+  echo "Waypoint Server starting"
+  export NOMAD_ADDR="http://$INSTANCE_PRIVATE_IP:4646"
+  waypoint install -platform=nomad -nomad-dc=dc$DC -accept-tos
+  # https://www.waypointproject.io/docs/server/run#bootstrap-the-server
+  #waypoint server bootstrap -server-addr=$INSTANCE_PRIVATE_IP:9701 -server-tls-skip-verify
+  waypoint context verify
+  sudo cp -r /etc/nomad.d/.config/waypoint /root/.config/
+  sudo cp -r /etc/nomad.d/.config/waypoint /home/ubuntu/.config/
+  sudo chown -R ubuntu:ubuntu /home/ubuntu/.config
+  sudo bash -c "cat /etc/nomad.d/.config/waypoint/context/install*"
+  nomad status
+  echo "Waypoint Server https://$HASHIQUBE_IP:9702 and enter the following Token displayed below"
+  sudo waypoint token new
+  echo "Nomad http://$HASHIQUBE_IP:4646"
+}
 consul-install
 vault-install
 nomad-install
+waypoint-install
 lsof -nPi
 echo END $(date '+%Y-%m-%d %H:%M:%S')

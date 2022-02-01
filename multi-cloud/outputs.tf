@@ -45,6 +45,10 @@ output "aws_hashiqube-nomad" {
   value = var.deploy_to_aws ? try("http://${module.aws-hashiqube[0].hashiqube_ip}:4646", null) : null
 }
 
+output "aws_hashiqube-waypoint" {
+  value = var.deploy_to_aws ? try("https://${module.aws-hashiqube[0].hashiqube_ip}:9702", null) : null
+}
+
 output "aws_hashiqube-vault" {
   value = var.deploy_to_aws ? try("http://${module.aws-hashiqube[0].hashiqube_ip}:8200", null) : null
 }
@@ -54,7 +58,7 @@ output "aws_hashiqube-fabio-ui" {
 }
 
 output "aws_hashiqube-fabio-lb" {
-  value = var.deploy_to_aws ? try("http://${module.aws-hashiqube[0].hashiqube_ip}:9999", null) : null
+  value = var.deploy_to_aws ? try("https://${module.aws-hashiqube[0].hashiqube_ip}:9999", null) : null
 }
 
 # Azure
@@ -72,6 +76,10 @@ output "azure_hashiqube-consul" {
 
 output "azure_hashiqube-nomad" {
   value = var.deploy_to_azure ? try("http://${module.azure-hashiqube[0].hashiqube_ip}:4646", null) : null
+}
+
+output "azure_hashiqube-waypoint" {
+  value = var.deploy_to_azure ? try("https://${module.azure-hashiqube[0].hashiqube_ip}:9702", null) : null
 }
 
 output "azure_hashiqube-vault" {
@@ -101,6 +109,10 @@ output "gcp_hashiqube-consul" {
 
 output "gcp_hashiqube-nomad" {
   value = var.deploy_to_gcp ? try("http://${module.gcp-hashiqube[0].hashiqube_ip}:4646", null) : null
+}
+
+output "gcp_hashiqube-waypoint" {
+  value = var.deploy_to_gcp ? try("https://${module.gcp-hashiqube[0].hashiqube_ip}:9702", null) : null
 }
 
 output "gcp_hashiqube-vault" {

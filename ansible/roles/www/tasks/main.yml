@@ -1,0 +1,20 @@
+---
+- name: "Install Web Service"
+  package:
+    name: "{{ www.package }}"
+    state: present
+- name: Ensure the default Apache port is 8888
+  lineinfile:
+    path: /etc/apache2/ports.conf
+    regexp: '^Listen '
+    insertafter: '^#Listen '
+    line: Listen 8888
+- name: "Start Web Service"
+  service:
+    name: "{{ www.service }}"
+    state: restarted
+    enabled: yes
+- name: "Copy Web Content"
+  copy:
+    src: "{{ role_path }}/files/index.html"
+    dest: "{{ www.docroot }}/index.html"

@@ -25,7 +25,7 @@
       "type": "shell",
       "inline": [
         "apt-get update",
-        "apt-get install apt-utils python apt-utils -yq"
+        "apt-get install apt-utils python -yq"
       ]
     },
     {

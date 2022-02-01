@@ -12,7 +12,7 @@ variable "deploy_to_gcp" {
 
 variable "deploy_to_azure" {
   type        = bool
-  default     = false
+  default     = true
   description = "Deploy Hashiqube on Azure"
 }
 

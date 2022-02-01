@@ -11,16 +11,16 @@ client_addr = "${VAGRANT_IP} 10.0.2.15"
 bind_addr = "${VAGRANT_IP}"
 advertise_addr = "${VAGRANT_IP}"
 data_dir = "/var/lib/consul"
-datacenter = "dc1"
+datacenter = "dc${VAGRANT_INDEX}"
 disable_host_node_id = true
 disable_update_check = true
 leave_on_terminate = true
 log_level = "INFO"
-ports = {
-  grpc  = 8502
-  dns   = 8600
-  https = -1
-}
+# ports = {
+#   grpc  = 8502
+#   dns   = 8600
+#   https = -1
+# }
 connect {
   enabled = true
 }
@@ -48,6 +48,14 @@ cat <<EOF | sudo tee /etc/consul.d/docsify.json
   "tags": ["urlprefix-docsify.service.consul/"],
   "address": "${VAGRANT_IP}",
   "port": 3333
+  }}
+EOF
+cat <<EOF | sudo tee /etc/consul.d/hashiqube.json
+  {"service":
+  {"name": "hashiqube0",
+  "tags": ["urlprefix-hashiqube0.service.consul/"],
+  "address": "${VAGRANT_IP}",
+  "port": 22
   }}
 EOF
 # cat <<EOF | sudo tee /etc/consul.d/countdashtest.json
@@ -80,7 +88,6 @@ EOF
     sudo killall consul
     sudo nohup consul agent -dev -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
     sh -c 'sudo tail -f /var/log/consul.log | { sed "/agent: Synced/ q" && kill $$ ;}'
-    consul join 10.9.99.10
     consul members
     consul info
   else
@@ -93,7 +100,6 @@ EOF
     echo -e '\e[38;5;198m'"++++ Installed `/usr/local/bin/consul version`"
     sudo nohup consul agent -dev -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
     sh -c 'sudo tail -f /var/log/consul.log | { sed "/agent: Synced/ q" && kill $$ ;}'
-    consul join 10.9.99.10
     consul members
     consul info
   fi

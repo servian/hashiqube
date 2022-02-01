@@ -14,3 +14,22 @@ sudo echo '{
 }
 ' >/etc/docker/daemon.json
 sudo service docker restart
+cd /vagrant/docker
+docker stop registry
+docker rm registry
+docker stop apache2
+docker rm apache2
+yes | sudo docker system prune -a
+yes | sudo docker system prune --volumes
+echo "Creating Private Docker Registry"
+docker run -d -p 5000:5000 --restart=always --name registry registry:2
+echo -e '\e[38;5;198m'"++++ docker build -t apache2 ."
+docker build -t apache2 .
+echo -e '\e[38;5;198m'"++++ docker images --filter reference=apache2"
+docker images --filter reference=apache2
+echo -e '\e[38;5;198m'"++++ docker run -t -d -i -p 8889:80 --name apache2 --rm apache2"
+docker run -t -d -i -p 8889:80 --name apache2 --rm apache2
+docker ps
+echo -e '\e[38;5;198m''++++ open http://localhost:8889 in your browser'
+echo -e '\e[38;5;198m''++++ you can also run below to get apache2 version from the docker container'
+echo -e '\e[38;5;198m'"++++ vagrant ssh -c \"docker ps; docker exec -it apache2 /bin/bash -c 'apache2 -t -v; ps aux'\""

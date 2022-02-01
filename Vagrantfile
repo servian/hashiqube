@@ -32,30 +32,29 @@ machines = [
       { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
     ],
   },
-  #{
-  #  :name => "hashiqube1.#{fqdn}",
-  #  :ip => '10.9.99.11',
-  #  :ssh_port => '2266',
-  #  :disksize => '10GB',
-  #  :vbox_config => vbox_config,
-  #  :synced_folders => [
-  #    { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
-  #    { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
-  #  ],
-  #},
-  #{
-  #  :name => "hashiqube2.#{fqdn}",
-  #  :ip => '10.9.99.12',
-  #  :ssh_port => '2277',
-  #  :disksize => '10GB',
-  #  :vbox_config => vbox_config,
-  #  :synced_folders => [
-  #    { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
-  #    { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
-  #  ],
-  #},
+  # {
+  #   :name => "hashiqube1.#{fqdn}",
+  #   :ip => '10.9.99.11',
+  #   :ssh_port => '2266',
+  #   :disksize => '10GB',
+  #   :vbox_config => vbox_config,
+  #   :synced_folders => [
+  #     { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
+  #     { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
+  #   ],
+  # },
+  # {
+  #   :name => "hashiqube2.#{fqdn}",
+  #   :ip => '10.9.99.12',
+  #   :ssh_port => '2277',
+  #   :disksize => '10GB',
+  #   :vbox_config => vbox_config,
+  #   :synced_folders => [
+  #     { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
+  #     { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
+  #   ],
+  # },
 ]
-
 
 Vagrant::configure("2") do |config|
 
@@ -69,14 +68,14 @@ Vagrant::configure("2") do |config|
   end
 
   # auto install plugins, will prompt for admin password on 1st vagrant up
-  required_plugins = %w( vagrant-disksize )
+  required_plugins = %w( vagrant-disksize vagrant-hostsupdater )
   required_plugins.each do |plugin|
     exec "vagrant plugin install #{plugin}#{COMMAND_SEPARATOR}vagrant #{ARGV.join(" ")}" unless Vagrant.has_plugin? plugin || ARGV[0] == 'plugin'
   end
 
   machines.each_with_index do |machine, index|
 
-    config.vm.box = "ubuntu/bionic64"
+    config.vm.box = "ubuntu/focal64"
     config.vm.define machine[:name] do |config|
 
       config.disksize.size = machine[:disksize]
@@ -92,11 +91,9 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 19200, host: 19200 # boundary
         config.vm.network "forwarded_port", guest: 8500, host: 8500 # consul
         config.vm.network "forwarded_port", guest: 8600, host: 8600, protocol: 'udp' # consul dns
-        config.vm.network "forwarded_port", guest: 8800, host: 8800 # terraform-enterprise
-        config.vm.network "forwarded_port", guest: 443, host: 4443 # terraform-enterprise
         config.vm.network "forwarded_port", guest: 8888, host: 8888 # ansible/roles/www
         config.vm.network "forwarded_port", guest: 8889, host: 8889 # docker/apache2
-        config.vm.network "forwarded_port", guest: 389, host: 3389 # ldap
+        config.vm.network "forwarded_port", guest: 389, host: 33389 # ldap
         config.vm.network "forwarded_port", guest: 8080, host: 8080 # localstack web
         config.vm.network "forwarded_port", guest: 7443, host: 7443 # localstack web
         config.vm.network "forwarded_port", guest: 8088, host: 8088 # jenkins
@@ -105,11 +102,12 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 9022, host: 9022 # consul counter-dashboard-test
         config.vm.network "forwarded_port", guest: 9011, host: 9011 # consul counter-api-test
         config.vm.network "forwarded_port", guest: 3306, host: 3306 # mysql
-        config.vm.network "forwarded_port", guest: 1433, host: 1433 # mssql
         config.vm.network "forwarded_port", guest: 5432, host: 5432 # postgres
+        config.vm.network "forwarded_port", guest: 1433, host: 1433 # mssql
         config.vm.network "forwarded_port", guest: 9998, host: 9998 # fabio-dashboard
         config.vm.network "forwarded_port", guest: 9999, host: 9999 # fabiolb
         config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
+
         # localstack
         for port in 4567..4597 do
           config.vm.network "forwarded_port", guest: "#{port}", host: "#{port}" # localstack
@@ -117,6 +115,7 @@ Vagrant::configure("2") do |config|
       end
 
       config.vm.hostname = "#{machine[:name]}"
+      config.hostsupdater.aliases = ["#{machine[:name]}"]
 
       unless machine[:vbox_config].nil?
         config.vm.provider :virtualbox do |vb|
@@ -141,7 +140,7 @@ Vagrant::configure("2") do |config|
       config.vm.provision "bootstrap", preserve_order: true, type: "shell", privileged: true, inline: <<-SHELL
         echo -e '\e[38;5;198m'"BEGIN BOOTSTRAP $(date '+%Y-%m-%d %H:%M:%S')"
         echo -e '\e[38;5;198m'"running vagrant as #{user}"
-        echo -e '\e[38;5;198m'"vagrant IP "#{machine[:ip]}
+        echo -e '\e[38;5;198m'"vagrant IP #{machine[:ip]}"
         echo -e '\e[38;5;198m'"vagrant fqdn #{machine[:name]}"
         echo -e '\e[38;5;198m'"vagrant index #{index}"
         cd ~\n
@@ -157,26 +156,11 @@ Vagrant::configure("2") do |config|
         else
           sed -i "s/VAGRANT_INDEX=.*/VAGRANT_INDEX=#{index}/g" /etc/environment
         fi
-        # install applications
-        export DEBIAN_FRONTEND=noninteractive
-        export PATH=$PATH:/root/.local/bin
-        sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes update -o Acquire::CompressionTypes::Order::=gz
-        sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes upgrade
-        sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install swapspace jq curl unzip software-properties-common bzip2 git make python3-pip python3-dev python3-virtualenv golang-go apt-utils
-        sudo -E -H pip3 install pip --upgrade
-        sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes autoremove
-        sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes clean
-        sudo rm -rf /var/lib/apt/lists/partial
-
-        # if the user IS jenkins, the we are running this from a Jenkinsfile (Scripted Pipelines)
-        if [ "#{user}" != "jenkins" ]; then
-          cd "#{machine[:synced_folders][0][:vm_path]}"
-          # printenv
-          # below is run from the Makefile, shorthand commands to run composer, gulp, database importer
-          # make bootstrap
-        fi
-        echo -e '\e[38;5;198m'"END BOOTSTRAP $(date '+%Y-%m-%d %H:%M:%S')"
       SHELL
+
+      # install base tools
+      # vagrant up --provision-with basetools to only run this on vagrant up
+      config.vm.provision "basetools", preserve_order: true, type: "shell", path: "hashiqube/basetools.sh"
 
       # install docker
       # vagrant up --provision-with docker to only run this on vagrant up
@@ -186,9 +170,8 @@ Vagrant::configure("2") do |config|
       # vagrant up --provision-with terraform to only run this on vagrant up
       config.vm.provision "terraform", preserve_order: true, type: "shell", privileged: true, path: "hashicorp/terraform.sh"
 
-      # install terraform-enterprise
-      # vagrant up --provision-with terraform-enterprise to only run this on vagrant up
-      config.vm.provision "terraform-enterprise", run: "never", preserve_order: true, type: "shell", privileged: true, path: "hashicorp/terraform-enterprise.sh"
+
+      # blast-radius
 
       # install vault
       # vagrant up --provision-with vault to only run this on vagrant up
@@ -220,31 +203,63 @@ Vagrant::configure("2") do |config|
 
       # install localstack
       # vagrant up --provision-with localstack to only run this on vagrant up
-      config.vm.provision "localstack", type: "shell", preserve_order: true, privileged: false, path: "localstack/localstack.sh"
+      config.vm.provision "localstack", run: "never", type: "shell", preserve_order: true, privileged: false, path: "localstack/localstack.sh"
 
       # vagrant up --provision-with ldap to only run this on vagrant up
       # run ldap docker container for testing with vault (for example) ldap login
       config.vm.provision "ldap", run: "never", type: "shell", preserve_order: true, privileged: true, path: "ldap/ldap.sh"
 
+
       # vagrant up --provision-with mysql to only run this on vagrant up
       # run mysql docker container for testing with vault
       config.vm.provision "mysql", run: "never", type: "shell", preserve_order: true, privileged: false, path: "database/mysql.sh"
-
-      # vagrant up --provision-with mssql to only run this on vagrant up
-      # run mssql docker container for testing with vault
-      config.vm.provision "mssql", run: "never", type: "shell", preserve_order: true, privileged: false, path: "database/mssql.sh"
 
       # vagrant up --provision-with postgresql to only run this on vagrant up
       # run postgresql docker container for testing with vault
       config.vm.provision "postgresql", run: "never", type: "shell", preserve_order: true, privileged: false, path: "database/postgresql.sh"
 
+      # vagrant up --provision-with mssql to only run this on vagrant up
+      # run mssql docker container for testing with vault
+      config.vm.provision "mssql", run: "never", type: "shell", preserve_order: true, privileged: false, path: "database/mssql.sh"
+
+      # install apache2 with ansible
+      # vagrant up --provision-with ansible_local to only run this on vagrant up
+      if ARGV.include? '--provision-with'
+        config.vm.provision "ansible_local" do |ansible|
+          ansible.playbook     = "ansible/playbook.yml"
+          ansible.verbose      = true
+          ansible.install_mode = "pip"
+          ansible.version      = "latest"
+          ansible.become       = true
+          ansible.extra_vars   = {
+            www: {
+              package: "apache2",
+              service: "apache2",
+              docroot: "/var/www/html"
+            }
+          }
+        end
+      end
+
       # install jenkins
       # vagrant up --provision-with jenkins to only run this on vagrant up
       config.vm.provision "jenkins", run: "never", type: "shell", preserve_order: true, privileged: false, path: "jenkins/jenkins.sh"
 
+
+
+
+
+
+      
+
       # docsify
       # vagrant up --provision-with docsify to only run this on vagrant up
       config.vm.provision "docsify", type: "shell", preserve_order: true, privileged: false, path: "docsify/docsify.sh"
+
+
+
+
+
 
       # vagrant up --provision-with bootstrap to only run this on vagrant up
       config.vm.provision "welcome", preserve_order: true, type: "shell", privileged: true, inline: <<-SHELL

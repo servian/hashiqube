@@ -253,10 +253,10 @@ gcp_hashiqube_ip = 34.87.219.xxx
 your_ipaddress = 103.234.250.xxx
 ```
 
-When you do Terraform Apply, this is the output you will see. 
+When you do Terraform Apply, this is the output you will see.
 ![HashiQube SSH](https://github.com/star3am/terraform-hashicorp-hashiqube/blob/master/images/hashiqube-01-terraform-apply.png?raw=true "HashiQube Terraform Apply")
 
-Now that HashiQube is up, let's SSH into the instance. 
+Now that HashiQube is up, let's SSH into the instance.
 ![HashiQube SSH](https://github.com/star3am/terraform-hashicorp-hashiqube/blob/master/images/hashiqube-03-ssh.png?raw=true "HashiQube SSH")
 
 You can check the Vault, Consul and Nomad Cluster status.
@@ -279,7 +279,7 @@ We can also access Fabio Load Balancer, running as a Nomad job
 To make use of this module, you need a Cloud account.
 AWS, GCP and Azure is supported.
 
-- You need a Public/Private SSH key pair. 
+- You need a Public/Private SSH key pair.
 - A Cloud account
 
 __Instructions on how to setup a SSH Key pair__: <br />
@@ -312,7 +312,7 @@ __Instructions on how to setup Cloud Account__: <br />
 | gcp_cluster_tag_name | string | "hashiqube" | GCP Cluster tag to apply |
 | gcp_cluster_size | number | 1 | GCP size of the cluster |
 | gcp_zones| list(string) | ["australia-southeast1-a","australia-southeast1-b","australia-southeast1-c"] | The zones accross which GCP resources will be launched |
-| gcp_machine_type | string | "n1-standard-1" | GCP machine type | 
+| gcp_machine_type | string | "n1-standard-1" | GCP machine type |
 | gcp_custom_metadata | map(string) | {} | A map of metadata key value pairs to assign to the Compute Instance metadata |
 | gcp_root_volume_disk_size_gb | number | 16 | The size, in GB, of the root disk volume on each HashiQube node |
 | gcp_root_volume_disk_type | string | "pd-standard" | The GCE disk type. Can be either pd-ssd, local-ssd, or pd-standard |
@@ -326,6 +326,7 @@ __Instructions on how to setup Cloud Account__: <br />
 | aws_hashiqube-fabio-lb | http://aws_hashiqube-fabio-lb:9999
 | aws_hashiqube-fabio-ui | http://aws_hashiqube-fabio-ui:9998
 | aws_hashiqube-nomad | http://aws_hashiqube-nomad:4646
+| aws_hashiqube-waipoint | https://aws_hashiqube-nomad:9702
 | aws_hashiqube-ssh | ssh ubuntu@54.206.165.xxx
 | aws_hashiqube-vault | http://aws_hashiqube-vault:8200
 | aws_hashiqube_ip | 54.206.165.xxx
@@ -333,6 +334,7 @@ __Instructions on how to setup Cloud Account__: <br />
 | azure_hashiqube-fabio-lb | http://azure_hashiqube-fabio-lb:9999
 | azure_hashiqube-fabio-ui | http://azure_hashiqube-fabio-ui:9998
 | azure_hashiqube-nomad | http://azure_hashiqube-nomad:4646
+| azure_hashiqube-waipoint | https://azure_hashiqube-nomad:9702
 | azure_hashiqube-ssh | ssh ubuntu@13.75.237.xxx
 | azure_hashiqube-vault | http://azure_hashiqube-vault:8200
 | azure_hashiqube_ip | 13.75.237.xxx
@@ -340,6 +342,7 @@ __Instructions on how to setup Cloud Account__: <br />
 | gcp_hashiqube-fabio-lb | http://gcp_hashiqube-fabio-lb:9999
 | gcp_hashiqube-fabio-ui | http://gcp_hashiqube-fabio-ui:9998
 | gcp_hashiqube-nomad | http://gcp_hashiqube-nomad:4646
+| gcp_hashiqube-waipoint | https://gcp_hashiqube-nomad:9702
 | gcp_hashiqube-ssh | ssh ubuntu@34.87.219.xxx
 | gcp_hashiqube-vault | http://gcp_hashiqube-vault:8200
 | gcp_hashiqube_ip | 34.87.219.xxx

@@ -59,6 +59,10 @@ EOF
   nomad job stop $(nomad job status | grep running | grep example | cut -d ' ' -f1)
   waypoint init
   waypoint up
+  cd /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs
+  nomad job stop $(nomad job status | grep running | grep custom | cut -d ' ' -f1)
+  waypoint init
+  waypoint up
   echo -e '\e[38;5;198m'"++++ Waypoint Server https://10.9.99.10:9702 and enter the following Token displayed below"
   sudo waypoint token new
   echo -e '\e[38;5;198m'"++++ Nomad http://localhost:4646"
