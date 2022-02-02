@@ -1,5 +1,5 @@
 output "aws_s3_bucket_localstack-s3-bucket" {
-  value = aws_s3_bucket.localstack-s3-bucket
+  value = aws_s3_bucket.test-bucket
 }
 
 output "ec2_instance_with_index_zipmap" {

@@ -27,6 +27,8 @@ function terraform-install() {
   terraform fmt
   echo -e '\e[38;5;198m'"++++ terraform validate.."
   terraform validate
+  echo -e '\e[38;5;198m'"++++ terraform destroy.."
+  terraform destroy --auto-approve
   echo -e '\e[38;5;198m'"++++ terraform plan.."
   terraform plan
   echo -e '\e[38;5;198m'"++++ terraform apply.."

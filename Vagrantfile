@@ -94,8 +94,7 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 8888, host: 8888 # ansible/roles/www
         config.vm.network "forwarded_port", guest: 8889, host: 8889 # docker/apache2
         config.vm.network "forwarded_port", guest: 389, host: 33389 # ldap
-        config.vm.network "forwarded_port", guest: 8080, host: 8080 # localstack web
-        config.vm.network "forwarded_port", guest: 7443, host: 7443 # localstack web
+        config.vm.network "forwarded_port", guest: 4566, host: 4566 # localstack
         config.vm.network "forwarded_port", guest: 8088, host: 8088 # jenkins
         config.vm.network "forwarded_port", guest: 9002, host: 9002 # consul counter-dashboard
         config.vm.network "forwarded_port", guest: 9001, host: 9001 # consul counter-api
@@ -108,10 +107,6 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 9999, host: 9999 # fabiolb
         config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
 
-        # localstack
-        for port in 4567..4597 do
-          config.vm.network "forwarded_port", guest: "#{port}", host: "#{port}" # localstack
-        end
       end
 
       config.vm.hostname = "#{machine[:name]}"
