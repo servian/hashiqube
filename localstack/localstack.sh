@@ -1,15 +1,18 @@
 #!/bin/bash
+# https://docs.localstack.cloud/get-started/
+
 sudo usermod -aG docker vagrant
-sudo -i
 export PATH=$PATH:/root/.local/bin
-sudo -E -H pip3 install --upgrade awscli-local
-sudo -E -H pip3 install --upgrade awscli
-sudo -E -H pip3 install --upgrade localstack
-sudo -E -H pip3 install --upgrade flask-cors
-sudo -i
+rm awscliv2.zip
+curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+rm -rf aws
+unzip -q awscliv2.zip
+yes | sudo ./aws/install --update
+echo -e '\e[38;5;198m'"aws --version"
+aws --version
+python3 -m pip install awscli-local --quiet
+python3 -m pip install flask-cors --quiet
 sudo -E docker stop localstack_main
-sudo -E docker rm localstack_main
 yes | sudo docker system prune --volumes
-# BUG: https://github.com/servian/hashiqube/issues/1
-#sudo -E ENTRYPOINT=-d localstack start --docker
-sudo docker run -it -d -e DEFAULT_REGION="us-east-1" -e TEST_AWS_ACCOUNT_ID="000000000000" -e LOCALSTACK_HOSTNAME="localhost" -p 7443:443 -p 4566:4566 --rm --privileged --name localstack_main -p 8080:8080 -p 8081:8081  -p 4567-4617:4567-4617 -v "/tmp/localstack:/tmp/localstack" -v "/var/run/docker.sock:/var/run/docker.sock" -e DOCKER_HOST="unix:///var/run/docker.sock" -e HOST_TMP_FOLDER="/tmp/localstack" "localstack/localstack"
+sudo docker run --rm -it -d -p 4566:4566 -p 4571:4571 --rm --privileged --name localstack_main localstack/localstack
+sudo docker ps | grep localstack
