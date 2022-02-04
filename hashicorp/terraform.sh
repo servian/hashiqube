@@ -15,11 +15,14 @@ function terraform-install() {
     echo -e '\e[38;5;198m'"++++ Installed: `/usr/local/bin/terraform version`"
   fi
   sudo -i -u vagrant
-  pip3 install --upgrade awscli awscli-local
-  sudo pip3 install --upgrade awscli awscli-local
-  echo -e '\e[38;5;198m'"++++ pip list | grep aws"
-  pip list | grep aws
-  sudo pip list | grep aws
+  pip3 install --upgrade awscli-local
+  rm awscliv2.zip
+  curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  rm -rf aws
+  unzip -q awscliv2.zip
+  yes | sudo ./aws/install --update
+  echo -e '\e[38;5;198m'"++++ aws --version"
+  aws --version
   cd /vagrant/localstack/
   echo -e '\e[38;5;198m'"++++ terraform init.."
   terraform init
