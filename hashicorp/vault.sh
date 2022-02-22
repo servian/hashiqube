@@ -138,7 +138,7 @@ EOF
   if [ $? -eq 1 ]; then
     echo "VAULT_ADDR=http://127.0.0.1:8200" >> /etc/environment
   else
-    sed -i "s/VAULT_ADDR=.*/VAULT_ADDR=http://127.0.0.1:8200/g" /etc/environment
+    sed -i "s%VAULT_ADDR=.*%VAULT_ADDR=http://127.0.0.1:8200%g" /etc/environment
   fi
 
 else
@@ -153,7 +153,7 @@ else
   if [ $? -eq 1 ]; then
     echo "VAULT_ADDR=http://127.0.0.1:8200" >> /etc/environment
   else
-    sed -i "s/VAULT_ADDR=.*/VAULT_ADDR=http://127.0.0.1:8200/g" /etc/environment
+    sed -i "s%VAULT_ADDR=.*%VAULT_ADDR=http://127.0.0.1:8200%g" /etc/environment
   fi
   echo -e '\e[38;5;198m'"++++ Vault already installed and running"
   echo -e '\e[38;5;198m'"++++ Vault http://localhost:8200/ui and enter the following codes displayed below"
