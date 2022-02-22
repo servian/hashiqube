@@ -93,10 +93,10 @@ EOF
     nomad node status
   fi
 cd /vagrant/hashicorp/nomad/jobs;
-nomad plan --address=http://localhost:4646 countdashboard.nomad
-nomad run --address=http://localhost:4646 countdashboard.nomad
-nomad plan --address=http://localhost:4646 countdashboardtest.nomad
-nomad run --address=http://localhost:4646 countdashboardtest.nomad
+#nomad plan --address=http://localhost:4646 countdashboard.nomad
+#nomad run --address=http://localhost:4646 countdashboard.nomad
+#nomad plan --address=http://localhost:4646 countdashboardtest.nomad
+#nomad run --address=http://localhost:4646 countdashboardtest.nomad
 nomad plan --address=http://localhost:4646 fabio.nomad
 nomad run --address=http://localhost:4646 fabio.nomad
 # curl -v -H 'Host: fabio.service.consul' http://${VAGRANT_IP}:9999/

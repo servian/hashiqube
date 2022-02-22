@@ -12,8 +12,8 @@ export DEBIAN_FRONTEND=noninteractive
 export PATH=$PATH:/root/.local/bin
 sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes update -o Acquire::CompressionTypes::Order::=gz
 sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes upgrade
-sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install swapspace rkhunter jq curl unzip software-properties-common bzip2 git make python3.8 python3-pip python3-dev python3-virtualenv golang-go apt-utils ntp dnsmasq update-motd toilet figlet
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1 --force
+sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install swapspace rkhunter jq curl unzip software-properties-common bzip2 git make python3.9 python3-pip python3-dev python3-virtualenv golang-go apt-utils ntp dnsmasq update-motd toilet figlet
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1 --force
 sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 --force
 python -V
 sudo python -V
