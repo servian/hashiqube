@@ -256,6 +256,7 @@ Vagrant::configure("2") do |config|
 
 
 
+
       # vagrant up --provision-with bootstrap to only run this on vagrant up
       config.vm.provision "welcome", preserve_order: true, type: "shell", privileged: true, inline: <<-SHELL
         echo -e '\e[38;5;198m'"HashiQube has now been provisioned, and your services should be running."
