@@ -139,5 +139,10 @@ A Very special mention to HashiQube's contributors, Thank You All for your help,
  - Ehsan Mirzaei
  - Greg Luxford
 
+## Videos
+Videos were made with asciinema https://asciinema.org/
+- asciinema rec -i 1
+- asciicast2gif -S 1 -s 2 tmpd1zpq13n-ascii.cast tmpd1zpq13n-ascii.gif
+
 ## License
 HashiQube is available as open-source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

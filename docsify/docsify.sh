@@ -1,8 +1,8 @@
 #!/bin/bash
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash --
+
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes nodejs
 sudo npm i docsify-cli -g --loglevel=error
-cd /vagrant/
+cd /vagrant
 # This generates SUMMARY.md which is the menu for Docsify
 # Example output
 # find . -maxdepth 2 -name '*.md' | grep -v SUMMARY | grep -v "\./README" | cut -d "/" -f2 | sort | awk 'BEGIN { print "* [Home](README.md)\n" } { FS=" "} { print "  * ["toupper(substr($0,0,1))tolower(substr($0,2))"]("$1"/README.md)" }'

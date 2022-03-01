@@ -13,9 +13,10 @@ node {
     def secrets = [
       [path: 'kv2/secret/another_test', engineVersion: 2, secretValues: [
       [vaultKey: 'another_test']]],
-      [path: 'kv1/secret/testing', engineVersion: 1, secretValues: [
-      [envVar: 'testing', vaultKey: 'value_one'],
-      [envVar: 'testing_again', vaultKey: 'value_two']]]
+      [path: 'kv1/secret/testing/value_one', engineVersion: 1, secretValues: [
+      [vaultKey: 'value_one']]],
+      [path: 'kv1/secret/testing/value_two', engineVersion: 1, secretValues: [
+      [envVar: 'my_var', vaultKey: 'value_two']]]
     ]
 
     // optional configuration, if you do not provide this the next higher configuration
@@ -26,8 +27,8 @@ node {
 
     // inside this block your credentials will be available as env variables
     withVault([configuration: configuration, vaultSecrets: secrets]) {
-      sh 'echo $testing'
-      sh 'echo $testing_again'
+      sh 'echo $value_one'
+      sh 'echo $my_var'
       sh 'echo $another_test'
     }
   }
