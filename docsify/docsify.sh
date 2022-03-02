@@ -1,5 +1,6 @@
 #!/bin/bash
 
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes nodejs
 sudo npm i docsify-cli -g --loglevel=error
 cd /vagrant
