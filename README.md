@@ -1,5 +1,5 @@
 # HashiQube Overview
-HashiQube is a VM with a Docker daemon inside. It runs all HashiCorp products. __Vault, Terraform, Nomad, Consul, Vagrant, Packer and Sentinel.__
+HashiQube is a VM with a Docker daemon inside. It runs all HashiCorp products. __Vault, Terraform, Nomad, Consul, Waypoint, Boundary, Vagrant, Packer and Sentinel.__
 It also runs a host of other popular Open Source DevOps / DevSecOps applications showcasing how simple integration with HashiCorp products can result in tangible learnings and benefits for all its users
 Once the Qube is up an internet connection is no longer needed meaning sales pitches and demos for potential and existing customers is greatly aided.
 
