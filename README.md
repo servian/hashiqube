@@ -3,10 +3,13 @@ HashiQube is a VM with a Docker daemon inside. It runs all HashiCorp products. _
 It also runs a host of other popular Open Source DevOps / DevSecOps applications showcasing how simple integration with HashiCorp products can result in tangible learnings and benefits for all its users
 Once the Qube is up an internet connection is no longer needed meaning sales pitches and demos for potential and existing customers is greatly aided.
 
-HashiCorp website: https://www.hashicorp.com/resources/hashiqube-a-development-lab-using-all-the-hashicorp-products
-HashiQube website: https://servian.github.io/hashiqube
+## Links
+HashiCorp blog post about HashiQube: https://www.hashicorp.com/resources/hashiqube-a-development-lab-using-all-the-hashicorp-products <br />
+HashiQube website: https://servian.github.io/hashiqube <br />
+HashiQube github: https://github.com/servian/hashiqube <br />
+HashiQube youtube: https://www.youtube.com/watch?v=6jGDAGWaFiw
 
-## HashiQube runs all HashiCorp's products
+## HashiQube runs all HashiCorp's products 
 ![HashiQube](images/thestack.png?raw=true "HashiQube")
 
 ## Purpose
