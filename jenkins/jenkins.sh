@@ -3,7 +3,7 @@ sudo docker stop jenkins
 sudo docker rm jenkins
 yes | sudo docker system prune -a
 yes | sudo docker system prune --volumes
-sudo docker run -d -p 8088:8088 -e JENKINS_OPTS="--httpPort=8088" --restart always --name jenkins -v /var/jenkins_home:/var/jenkins_home jenkins/jenkins:lts
+sudo docker run -d -p 8088:8088 -e JENKINS_OPTS="--httpPort=8088" --memory 512M --restart always --name jenkins -v /var/jenkins_home:/var/jenkins_home jenkins/jenkins:lts
 sleep 20
 echo -e '\e[38;5;198m'"++++ Using the root Vault token, add a Secret in Vault which Jenkins will retrieve"
 # add vault ENV variables

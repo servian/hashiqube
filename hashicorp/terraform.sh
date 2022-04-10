@@ -1,14 +1,24 @@
 #!/bin/bash
 
 function terraform-install() {
-# ensure localstack is running
+  
+  # ensure localstack is running
   echo -e '\e[38;5;198m'"++++ Ensure Localstack is running.."
   sudo bash /vagrant/localstack/localstack.sh
+
+  arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
+  if [[ $arch == x86_64* ]]; then
+      ARCH="amd64"
+  elif  [[ $arch == aarch64 ]]; then
+      ARCH="arm64"
+  fi
+  echo -e '\e[38;5;198m'"CPU is $ARCH"
+  
   sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install curl unzip jq
   if [ -f /usr/local/bin/terraform ]; then
     echo -e '\e[38;5;198m'"++++ `/usr/local/bin/terraform version` already installed at /usr/local/bin/terraform"
   else
-    LATEST_URL=$(curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n | egrep -v 'rc|beta' | egrep 'linux.*amd64' | sort -V | tail -n1)
+    LATEST_URL=$(curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n | egrep -v 'rc|beta' | egrep "linux.*$ARCH" | sort -V | tail -n1)
     wget -q $LATEST_URL -O /tmp/terraform.zip
     mkdir -p /usr/local/bin
     (cd /usr/local/bin && unzip /tmp/terraform.zip)
@@ -17,7 +27,8 @@ function terraform-install() {
   sudo -i -u vagrant
   pip3 install --upgrade awscli-local
   rm awscliv2.zip
-  curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  # https://aws.amazon.com/blogs/developer/aws-cli-v2-now-available-for-linux-arm/ aarch64
+  curl -s "https://awscli.amazonaws.com/awscli-exe-linux-${arch}.zip" -o "awscliv2.zip"
   rm -rf aws
   unzip -q awscliv2.zip
   yes | sudo ./aws/install --update

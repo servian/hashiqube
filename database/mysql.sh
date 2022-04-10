@@ -7,12 +7,13 @@ yes | sudo docker system prune -a
 yes | sudo docker system prune --volumes
 sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install mysql-client
 sudo docker run \
+  --memory 512M \
   --name mysql \
   -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=mysqldb \
   -p 3306:3306 \
   -d mysql:latest \
   --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-sleep 15;
+sleep 60;
 echo -e '\e[38;5;198m'"++++ Show databases"
 mysql -h 127.0.0.1 -u root -ppassword -e "show databases;"
 echo -e '\e[38;5;198m'"++++ Create Vault MySQL user"

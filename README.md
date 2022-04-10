@@ -23,7 +23,85 @@ Thanks to the flexibility of the HashiCorp products there is no need wonder how 
 * Please download __Virtualbox__ from https://www.virtualbox.org/wiki/Downloads and __Vagrant__ from https://www.vagrantup.com/downloads.html and install
 * Using `git` - clone this repo `git clone $repo .` [__What is Git?__](git/#git)
 * Inside the local repo folder, do `vagrant up --provision` - This will setup, Vault, Nomad, Consul, Terraform, Localstack and Docker as well as giving you access the docsify website at http://localhost:3333
-* Open in your browser http://localhost:3333 for Documentation
+
+:bulb: If you see this error message
+
+```
+The IP address configured for the host-only network is not within the
+allowed ranges. Please update the address used to be within the allowed
+ranges and run the command again.
+
+Address: 10.9.99.10
+Ranges: 192.168.56.0/21
+
+Valid ranges can be modified in the /etc/vbox/networks.conf file. For
+more information including valid format see:
+
+https://www.virtualbox.org/manual/ch06.html#network_hostonly
+```
+
+Please create the following file: __/etc/vbox/networks.conf__ with the following contents
+
+```
+* 10.0.0.0/8 192.168.0.0/16
+* 2001::/64
+``` 
+
+and re-run `vagrant up --provision`
+
+## Dependencies
+To get started we are now going to install some core dependencies to get the Lab started, you need to install
+below dependencies before you can do anything
+
+__Mac Users only, Windows Users can skip this step__
+Let's first check if we have an __M1 Mac__, if that is the case the __virtualbox__ provider will not work.
+
+Click on the Apple Icon top left
+![About this Mac](images/mac_apple_icon.png?raw=true "About this Mac")
+
+and click on __About this Mac__
+
+If you see an __Intel__ chip, you can proceed with the `virtualbox` provider.
+![About this Mac Intel](images/mac_intel.png?raw=true "About this Mac Intel")
+
+If you see an __Apple M1__ chip, please ensure you specify the environment variable and the provider to be docker.
+```
+vagrant plugin uninstall vagrant-hostsupdater # the hostsupdator plugin does not work with the docker provider
+```
+
+![About this Mac M1](images/mac_m1.png?raw=true "About this Mac M1")
+
+#### Docker Desktop
+Docker Desktop is an easy-to-install application for your Mac or Windows environment that enables you to build and share containerized applications and microservices. It's a graphical user interface for the docker service.
+
+* Please download __Docker Desktop__ from https://www.docker.com/products/docker-desktop and install it on your laptop, to verify please bring up the Docker Desktop application. 
+
+I already have HashiQube running, you won't see any containers but you will be able to open the application 
+
+![Docker Desktop](images/docker_desktop_installed.png?raw=true "Docker Desktop")
+
+Now that docker has been installed we need to ensure that your docker environment and settings are configured
+
+- Ensure you have the latest version installed
+- Ensure that your Operating System is updated see: https://www.docker.com/blog/speed-boost-achievement-unlocked-on-docker-desktop-4-6-for-mac/
+
+##### Docker Desktop Resources
+
+![Docker Desktop Resources](images/docker_installed_resources.png?raw=true "Docker Desktop Resources")
+
+* Please ensure that you give your docker daemon at least __10G of RAM__ and sufficient disk space
+
+##### Docker Desktop Experimental Features
+
+![Docker Desktop Experimental Features](images/docker_installed_experimental_features.png?raw=true "Docker Desktop Experimental Features")
+
+https://www.docker.com/blog/speed-boost-achievement-unlocked-on-docker-desktop-4-6-for-mac/
+
+The latest version of Docker on Mac has some signaficant performance improvements, you should consider updating. 
+
+Improvements have been made to the way that files are synced between the macOS host and Docker VM. During testing with our amazing macOS community of users, we have observed that these changes have reduced the time taken to complete filesystem operations by up to 98%.
+
+For developers, these incredible gains in speed mean less time waiting for filesystem operations to complete (or building project-specific workarounds to improve performance) and more time focusing on innovation!
 
 ## Consul DNS
 __Local DNS via Consul__ <br />
@@ -41,6 +119,32 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 * Virtualbox
 * Vagrant
 * `vagrant up --provision`
+
+
+If you see this error message
+
+```
+The IP address configured for the host-only network is not within the
+allowed ranges. Please update the address used to be within the allowed
+ranges and run the command again.
+
+Address: 10.9.99.10
+Ranges: 192.168.56.0/21
+
+Valid ranges can be modified in the /etc/vbox/networks.conf file. 
+For more information including valid format see
+
+https://www.virtualbox.org/manual/ch06.html#network_hostonly
+```
+
+Please create the following file: __/etc/vbox/networks.conf__ with the following contents
+
+```
+* 10.0.0.0/8 192.168.0.0/16
+* 2001::/64
+``` 
+
+and re-run `vagrant up --provision`
 
 ## Additional Information
 * [__Multi Cloud__](multi-cloud/#terraform-hashicorp-hashiqube) - Hashiqube on AWS, GCP and Azure (Clustered) https://registry.terraform.io/modules/star3am/hashiqube/hashicorp/latest
@@ -110,6 +214,31 @@ For Documentation please open http://localhost:3333 in your browser
 ==> user.local.dev: [vagrant-hostsupdater]   found entry for: 10.9.99.10 vault-user.local.dev
 ==> user.local.dev: [vagrant-hostsupdater]   found entry for: 10.9.99.10 nomad-user.local.dev
 ==> user.local.dev: Setting hostname...
+```
+
+### Errors you might encounter
+__Error__ response from daemon: cannot stop container: 6c0c8135620ff47efe12df417a0df0e57d7a81a7f7ca06d011323fbb52e573db: tried to kill container, but did not receive an exit event <br />
+__Command__ `vagrant destroy` <br />
+__Solution__ run `vagrant destroy` again <br />
+```
+    hashiqube0.service.consul: Are you sure you want to destroy the 'hashiqube0.service.consul' VM? [y/N] y
+==> hashiqube0.service.consul: Stopping container...
+A Docker command executed by Vagrant didn't complete successfully!
+The command run along with the output from the command is shown
+below.
+
+Command: ["docker", "stop", "-t", "1", "6c0c8135620ff47efe12df417a0df0e57d7a81a7f7ca06d011323fbb52e573db", {:notify=>[:stdout, :stderr]}]
+
+Stderr: Error response from daemon: cannot stop container: 6c0c8135620ff47efe12df417a0df0e57d7a81a7f7ca06d011323fbb52e573db: tried to kill container, but did not receive an exit event
+```
+
+__Error__ The IP address configured for the host-only network is not within the allowed ranges. Please 
+update the address used to be within the allowed ranges and run the command again. <br />
+__Command__ `vagrant up --provision` <br /> 
+__Solution__ Ensure the following contents are present in `/etc/vbox/networks.conf` <br>
+```
+* 10.0.0.0/8 192.168.0.0/16
+* 2001::/64
 ```
 
 ## To investigate

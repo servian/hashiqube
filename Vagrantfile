@@ -7,8 +7,8 @@ fqdn = ENV["fqdn"] || "service.consul"
 
 # https://www.virtualbox.org/manual/ch08.html
 vbox_config = [
-  { '--memory' => '4096' },
-  { '--cpus' => '2' },
+  { '--memory' => '10240' },
+  { '--cpus' => '4' },
   { '--cpuexecutioncap' => '100' },
   { '--biosapic' => 'x2apic' },
   { '--ioapic' => 'on' },
@@ -28,7 +28,7 @@ machines = [
     :disksize => '10GB',
     :vbox_config => vbox_config,
     :synced_folders => [
-      { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
+      { :vm_path => '/osdata', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
       { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
     ],
   },
@@ -67,21 +67,24 @@ Vagrant::configure("2") do |config|
     COMMAND_SEPARATOR = ";"
   end
 
-  # auto install plugins, will prompt for admin password on 1st vagrant up
-  required_plugins = %w( vagrant-disksize vagrant-hostsupdater )
-  required_plugins.each do |plugin|
-    exec "vagrant plugin install #{plugin}#{COMMAND_SEPARATOR}vagrant #{ARGV.join(" ")}" unless Vagrant.has_plugin? plugin || ARGV[0] == 'plugin'
-  end
+  # deprecated
+  # if @chipset != "Apple"; then
+  #   # auto install plugins, will prompt for admin password on 1st vagrant up
+  #   required_plugins = %w( vagrant-disksize vagrant-hostsupdater )
+  #   required_plugins.each do |plugin|
+  #     exec "vagrant plugin install #{plugin}#{COMMAND_SEPARATOR}vagrant #{ARGV.join(" ")}" unless Vagrant.has_plugin? plugin || ARGV[0] == 'plugin'
+  #   end
+  # end
 
   machines.each_with_index do |machine, index|
 
     config.vm.box = "ubuntu/focal64"
     config.vm.define machine[:name] do |config|
 
-      config.disksize.size = machine[:disksize]
+      # config.disksize.size = machine[:disksize] # deprecated
       config.ssh.forward_agent = true
       config.ssh.insert_key = true
-      config.vm.network "private_network", ip: machine[:ip]
+      config.vm.network "private_network", ip: "#{machine[:ip]}"
       config.vm.network "forwarded_port", guest: 22, host: machine[:ssh_port], id: 'ssh', auto_correct: true
 
       if machines.size == 1 # only expose these ports if 1 machine, else conflicts
@@ -110,7 +113,6 @@ Vagrant::configure("2") do |config|
       end
 
       config.vm.hostname = "#{machine[:name]}"
-      config.hostsupdater.aliases = ["#{machine[:name]}"]
 
       unless machine[:vbox_config].nil?
         config.vm.provider :virtualbox do |vb|
@@ -120,6 +122,30 @@ Vagrant::configure("2") do |config|
             end
           end
         end
+      end
+      
+      # if you are not on Apple M chip and want to use docker provider do:
+      # vagrant up --provision-with basetools --provider docker
+      # https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container
+      # https://github.com/containers/podman/issues/3295
+      # --tmpfs /tmp : Create a temporary filesystem in /tmp
+      # --tmpfs /run : Create another temporary filesystem in /run
+      # --tmpfs /run/lock : Apparently having a tmpfs in /run isn’t enough – you ALSO need one in /run/lock
+      # -v /sys/fs/cgroup:/sys/fs/cgroup:ro : Mount the CGroup kernel configuration values into the container
+      # https://github.com/docker/for-mac/issues/6073
+      # Docker Desktop now uses cgroupv2. If you need to run systemd in a container then:
+      # * Ensure your version of systemd supports cgroupv2. It must be at least systemd 247. Consider upgrading any centos:7 images to centos:8.
+      # * Containers running systemd need the following options: --privileged --cgroupns=host -v /sys/fs/cgroup:/sys/fs/cgroup:rw.
+      # https://betterprogramming.pub/managing-virtual-machines-under-vagrant-on-a-mac-m1-aebc650bc12c
+      config.vm.provider "docker" do |docker, override|
+        override.vm.box        = nil
+        docker.build_dir       = "."
+        docker.remains_running = true
+        docker.has_ssh         = true
+        docker.privileged      = true
+        docker.volumes         = ['/sys/fs/cgroup:/sys/fs/cgroup:rw']
+        docker.create_args     = ['--cgroupns=host', '--tmpfs=/tmp:exec', '--tmpfs=/var/lib/docker:mode=0777,dev,size=15g,suid,exec', '--tmpfs=/run', '--tmpfs=/run/lock'] # '--memory=10g', '--memory-swap=14g', '--oom-kill-disable'
+        docker.env             = { "PROVIDER": "docker", "NAME": "hashiqube" }
       end
 
       # mount the shared folder inside the VM
@@ -160,6 +186,10 @@ Vagrant::configure("2") do |config|
       # install docker
       # vagrant up --provision-with docker to only run this on vagrant up
       config.vm.provision "docker", preserve_order: true, type: "shell", path: "docker/docker.sh"
+
+      # docsify
+      # vagrant up --provision-with docsify to only run this on vagrant up
+      config.vm.provision "docsify", type: "shell", preserve_order: true, privileged: false, path: "docsify/docsify.sh"
 
       # install terraform
       # vagrant up --provision-with terraform to only run this on vagrant up
@@ -246,10 +276,6 @@ Vagrant::configure("2") do |config|
 
 
       
-
-      # docsify
-      # vagrant up --provision-with docsify to only run this on vagrant up
-      config.vm.provision "docsify", type: "shell", preserve_order: true, privileged: false, path: "docsify/docsify.sh"
 
 
 
