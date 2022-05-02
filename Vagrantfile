@@ -124,7 +124,8 @@ Vagrant::configure("2") do |config|
         end
       end
       
-      # if you are not on Apple M chip and want to use docker provider do:
+      # IMPORTANT:
+      # if you are on Apple M chip you need to use docker provider do:
       # vagrant up --provision-with basetools --provider docker
       # https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container
       # https://github.com/containers/podman/issues/3295
