@@ -31,29 +31,7 @@ machines = [
       { :vm_path => '/osdata', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
       { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
     ],
-  },
-  # {
-  #   :name => "hashiqube1.#{fqdn}",
-  #   :ip => '10.9.99.11',
-  #   :ssh_port => '2266',
-  #   :disksize => '10GB',
-  #   :vbox_config => vbox_config,
-  #   :synced_folders => [
-  #     { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
-  #     { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
-  #   ],
-  # },
-  # {
-  #   :name => "hashiqube2.#{fqdn}",
-  #   :ip => '10.9.99.12',
-  #   :ssh_port => '2277',
-  #   :disksize => '10GB',
-  #   :vbox_config => vbox_config,
-  #   :synced_folders => [
-  #     { :vm_path => '/data', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
-  #     { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
-  #   ],
-  # },
+  }
 ]
 
 Vagrant::configure("2") do |config|
@@ -90,12 +68,15 @@ Vagrant::configure("2") do |config|
       if machines.size == 1 # only expose these ports if 1 machine, else conflicts
         config.vm.network "forwarded_port", guest: 8200, host: 8200 # vault
         config.vm.network "forwarded_port", guest: 4646, host: 4646 # nomad
-        config.vm.network "forwarded_port", guest: 9702, host: 9702 # waypoint
+        config.vm.network "forwarded_port", guest: 19702, host: 19702 # waypoint-kubernetes-minikube
+        config.vm.network "forwarded_port", guest: 9702, host: 9702 # waypoint-nomad
         config.vm.network "forwarded_port", guest: 19200, host: 19200 # boundary
         config.vm.network "forwarded_port", guest: 8500, host: 8500 # consul
         config.vm.network "forwarded_port", guest: 8600, host: 8600, protocol: 'udp' # consul dns
         config.vm.network "forwarded_port", guest: 8888, host: 8888 # ansible/roles/www
         config.vm.network "forwarded_port", guest: 8889, host: 8889 # docker/apache2
+        config.vm.network "forwarded_port", guest: 5001, host: 5001 # docker registry on minikube
+        config.vm.network "forwarded_port", guest: 5002, host: 5002 # docker registry on docker daemon
         config.vm.network "forwarded_port", guest: 389, host: 33389 # ldap
         config.vm.network "forwarded_port", guest: 4566, host: 4566 # localstack
         config.vm.network "forwarded_port", guest: 8088, host: 8088 # jenkins
@@ -108,6 +89,9 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 1433, host: 1433 # mssql
         config.vm.network "forwarded_port", guest: 9998, host: 9998 # fabio-dashboard
         config.vm.network "forwarded_port", guest: 9999, host: 9999 # fabiolb
+        config.vm.network "forwarded_port", guest: 10888, host: 10888 # minikube dashboard
+        config.vm.network "forwarded_port", guest: 31506, host: 31506 # tech-challange-minikube
+        config.vm.network "forwarded_port", guest: 18888, host: 18888 # hello minikube application
         config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
 
       end
@@ -211,9 +195,17 @@ Vagrant::configure("2") do |config|
       # vagrant up --provision-with nomad to only run this on vagrant up
       config.vm.provision "nomad", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/nomad.sh"
 
-      # install waypoint
+      # install waypoint on kubernetes using minikube
+      # vagrant up --provision-with waypoint-kubernetes-minikube to only run this on vagrant up
+      config.vm.provision "waypoint-kubernetes-minikube", run: "never", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/waypoint.sh", args: "waypoint-kubernetes-minikube"
+
+      # install waypoint on nomad
+      # vagrant up --provision-with waypoint-nomad to only run this on vagrant up
+      config.vm.provision "waypoint-nomad", run: "never", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/waypoint.sh", args: "waypoint-nomad"
+
+      # install waypoint on nomad
       # vagrant up --provision-with waypoint to only run this on vagrant up
-      config.vm.provision "waypoint", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/waypoint.sh"
+      config.vm.provision "waypoint", run: "never", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/waypoint.sh", args: "waypoint-nomad"
 
       # install boundary
       # vagrant up --provision-with boundary to only run this on vagrant up
@@ -275,6 +267,9 @@ Vagrant::configure("2") do |config|
 
 
 
+      # minikube
+      # vagrant up --provision-with minikube to only run this on vagrant up
+      config.vm.provision "minikube", run: "never", type: "shell", preserve_order: true, privileged: false, path: "minikube/minikube.sh"
 
       
 

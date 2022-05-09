@@ -1,20 +1,44 @@
-project = "custom-example-nodejs"
-app "custom-example-nodejs" {
+project = "trex-nodejs"
+
+app "trex-nodejs" {
+  labels = {
+    "service" = "trex-nodejs",
+    "env"     = "dev"
+  }
+
   build {
-    use "pack" {}
+    use "docker" {}
     registry {
       use "docker" {
-        image = "star3am/repository"
-        tag = "nodejs-example"
-        local = true
-        # { "username": "USERNAME", "password": "PASSWORD", "email": "EMAIL_ADDRESS" }
-        encoded_auth = filebase64("/etc/docker/auth.json")
+        image = "10.9.99.10:5001/trex-nodejs" # See minikube docker registry
+        tag   = "0.0.2"
+        local = false
+        #encoded_auth = filebase64("/etc/docker/auth.json") # https://www.waypointproject.io/docs/lifecycle/build#private-registries
       }
     }
   }
+
   deploy {
-    use "nomad" {
-      datacenter = "dc1"
+    use "kubernetes" {
+      probe_path   = "/"
+      replicas     = 1
+      service_port = 6001
+      probe {
+        initial_delay = 4
+      }
+      labels = {
+        env = "local"
+      }
+      annotations = {
+        demo = "yes"
+      }
+    }
+  }
+
+  release {
+    use "kubernetes" {
+      load_balancer = true
+      port          = 6001
     }
   }
 }

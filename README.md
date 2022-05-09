@@ -89,19 +89,7 @@ Now that docker has been installed we need to ensure that your docker environmen
 
 ![Docker Desktop Resources](images/docker_installed_resources.png?raw=true "Docker Desktop Resources")
 
-* Please ensure that you give your docker daemon at least __10G of RAM__ and sufficient disk space
-
-##### Docker Desktop Experimental Features
-
-![Docker Desktop Experimental Features](images/docker_installed_experimental_features.png?raw=true "Docker Desktop Experimental Features")
-
-https://www.docker.com/blog/speed-boost-achievement-unlocked-on-docker-desktop-4-6-for-mac/
-
-The latest version of Docker on Mac has some signaficant performance improvements, you should consider updating. 
-
-Improvements have been made to the way that files are synced between the macOS host and Docker VM. During testing with our amazing macOS community of users, we have observed that these changes have reduced the time taken to complete filesystem operations by up to 98%.
-
-For developers, these incredible gains in speed mean less time waiting for filesystem operations to complete (or building project-specific workarounds to improve performance) and more time focusing on innovation!
+* Please ensure that you give your docker daemon at least __12G of RAM__ and sufficient disk space
 
 ## Consul DNS
 __Local DNS via Consul__ <br />
@@ -166,6 +154,7 @@ and re-run `vagrant up --provision`
 * [__Oracle MySQL__](database/#oracle-mysql) - MySQL is an open-source relational database management system (RDBMS)
 * [__Microsoft MSSQL__](database/#microsoft-sql-mssql-express) - Microsoft SQL Server is a relational database management system developed by Microsoft
 * [__PostgreSQL__](database/#postgresql) - PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and SQL compliance.
+* [__Minikube__](minikube/#minikube) - Run Kubernetes locally
 * [__Docsify__](docsify/#docsify) - A magical documentation site generator
 
 Once the stack is up you will have a large number of services running and available on `localhost` <br />
@@ -187,6 +176,7 @@ For Documentation please open http://localhost:3333 in your browser
 * Jenkins http://localhost:8088
 * Oracle MySQL localhost:3306
 * Microsoft SQL localhost:1433
+* Minikube http://10.9.99.10:10888/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#/overview?namespace=default
 
 ### Vagrant Basic Usage
 * vagrant up --provision OR vagrant up --provision-with bootstrap|nomad|consul|vault|docker|ldap

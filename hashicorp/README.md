@@ -1271,6 +1271,33 @@ https://www.waypointproject.io/
 ![Hashicorp Waypoint](images/waypoint.png?raw=true "Hashicorp Waypoint")
 ![Hashicorp Waypoint](images/waypoint-nodejs-deployment.png?raw=true "Hashicorp Waypoint")
 
+Waypoint is a wonderful project and it's a firstclass citizen of Hashicorp and runs flawlessly on Nomad. 
+To run Waypoint on Nomad do: 
+
+```
+vagrant up --provision-with basetools --provider docker
+vagrant up --provision-with docker --provider docker
+vagrant up --provision-with consul --provider docker
+vagrant up --provision-with nomad --provider docker
+vagrant up --provision-with waypoint-nomad --provider docker
+```
+
+Waypoint cab also run on Kubernetes and we can test Waypoint using Minikube
+To run Waypoint on Kubernetes (Minikube) do: 
+
+```
+vagrant up --provision-with basetools --provider docker
+vagrant up --provision-with docker --provider docker
+vagrant up --provision-with minikube --provider docker
+vagrant up --provision-with waypoint-kubernetes-minikube --provider docker
+```
+
+To access the documentation site you can run: 
+
+```
+vagrant up --provision-with docsify --provider docker
+```
+
 `vagrant up --provision-with waypoint`
 ```
 Bringing machine 'hashiqube0.service.consul' up with 'virtualbox' provider...
