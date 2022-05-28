@@ -24,6 +24,10 @@ Thanks to the flexibility of the HashiCorp products there is no need wonder how 
 |------|--------|------------|---------|
 | amd64 | ✓ | ✓ | ✘ |
 | arm64 | ✓ | ✘ | ✘ |
+| linux | ✓ | ✓ | ✘ |
+| windows | ✓ | ✘ | ✘ |
+| mac intel | ✓ | ✓ | ✘ |
+| mac apple | ✓ | ✘ | ✘ |
 
 ## Instructions
 * Please download __Virtualbox__ from https://www.virtualbox.org/wiki/Downloads and __Vagrant__ from https://www.vagrantup.com/downloads.html and install
