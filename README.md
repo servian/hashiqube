@@ -19,10 +19,16 @@ The original use case was born the desire to demystify DevSecOps utilising Terra
 
 Thanks to the flexibility of the HashiCorp products there is no need wonder how to achieve the goals of bringing software to market in a more secure and timely fashion, just Vagrant up!
 
+## Operating Systems and Chipsets Supported
+| Name | Docker | Virtualbox | Hyper-V
+|------|--------|------------|---------|
+| amd64 | ✓ | ✓ | ✘ |
+| arm64 | ✓ | ✘ | ✘ |
+
 ## Instructions
 * Please download __Virtualbox__ from https://www.virtualbox.org/wiki/Downloads and __Vagrant__ from https://www.vagrantup.com/downloads.html and install
 * Using `git` - clone this repo `git clone $repo .` [__What is Git?__](git/#git)
-* Inside the local repo folder, do `vagrant up --provision` - This will setup, Vault, Nomad, Consul, Terraform, Localstack and Docker as well as giving you access the docsify website at http://localhost:3333
+* Inside the local repo folder, do `vagrant up --provision --provider docker` - This will setup, Vault, Nomad, Consul, Terraform, Localstack and Docker as well as giving you access the docsify website at http://localhost:3333
 
 :bulb: If you see this error message
 
@@ -47,7 +53,7 @@ Please create the following file: __/etc/vbox/networks.conf__ with the following
 * 2001::/64
 ``` 
 
-and re-run `vagrant up --provision`
+and re-run `vagrant up --provision --provider docker`
 
 ## Dependencies
 To get started we are now going to install some core dependencies to get the Lab started, you need to install
@@ -106,7 +112,7 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 * Admin rights / sudo (you will be asked to update ETC Host file)
 * Virtualbox
 * Vagrant
-* `vagrant up --provision`
+* `vagrant up --provision --provider docker`
 
 
 If you see this error message
@@ -132,7 +138,7 @@ Please create the following file: __/etc/vbox/networks.conf__ with the following
 * 2001::/64
 ``` 
 
-and re-run `vagrant up --provision`
+and re-run `vagrant up --provision --provider docker`
 
 ## Additional Information
 * [__Multi Cloud__](multi-cloud/#terraform-hashicorp-hashiqube) - Hashiqube on AWS, GCP and Azure (Clustered) https://registry.terraform.io/modules/star3am/hashiqube/hashicorp/latest
@@ -179,7 +185,7 @@ For Documentation please open http://localhost:3333 in your browser
 * Minikube http://10.9.99.10:10888/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#/overview?namespace=default
 
 ### Vagrant Basic Usage
-* vagrant up --provision OR vagrant up --provision-with bootstrap|nomad|consul|vault|docker|ldap
+* vagrant up --provision OR vagrant up --provision-with bootstrap|nomad|consul|vault|docker|ldap --provider docker
 * vagrant global-status # to see which VMs are active
 * vagrant global-status --prune # to remove stale VMs from Vagrant cache
 * vagrant status # vagrant status

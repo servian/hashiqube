@@ -17,6 +17,7 @@ vbox_config = [
   { '--natdnsproxy1' => 'on' },
   { '--nictype1' => 'virtio' },
   { '--audio' => 'none' },
+  { '--uartmode1' => 'disconnected' },
 ]
 
 # machine(s) hash
@@ -28,8 +29,8 @@ machines = [
     :disksize => '10GB',
     :vbox_config => vbox_config,
     :synced_folders => [
-      { :vm_path => '/osdata', :ext_rel_path => '../../', :vm_owner => 'ubuntu' },
-      { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'ubuntu' },
+      { :vm_path => '/osdata', :ext_rel_path => '../../', :vm_owner => 'vagrant' },
+      { :vm_path => '/var/jenkins_home', :ext_rel_path => './jenkins/jenkins_home', :vm_owner => 'vagrant' },
     ],
   }
 ]
@@ -56,12 +57,15 @@ Vagrant::configure("2") do |config|
 
   machines.each_with_index do |machine, index|
 
-    config.vm.box = "ubuntu/focal64"
+    #config.vm.box = "ubuntu/focal64"
+    config.vm.box = "generic/ubuntu2004"
     config.vm.define machine[:name] do |config|
 
       # config.disksize.size = machine[:disksize] # deprecated
       config.ssh.forward_agent = true
       config.ssh.insert_key = true
+      config.ssh.connect_timeout = 60
+      config.ssh.host = "127.0.0.1" # docker on windows tries to ssh to 0.0.0.0
       config.vm.network "private_network", ip: "#{machine[:ip]}"
       config.vm.network "forwarded_port", guest: 22, host: machine[:ssh_port], id: 'ssh', auto_correct: true
 
@@ -108,9 +112,17 @@ Vagrant::configure("2") do |config|
         end
       end
       
+      config.vm.provider "hyperv" do |hv|
+        hv.cpus = "4"
+        hv.memory = "10240"
+        hv.maxmemory = "12240"
+        hv.enable_enhanced_session_mode = true
+      end
+
       # IMPORTANT:
       # if you are on Apple M chip you need to use docker provider do:
       # vagrant up --provision-with basetools --provider docker
+      # I have not been able to get docker provider to run on Windows, also not inside WSL2, remains a work in progress
       # https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container
       # https://github.com/containers/podman/issues/3295
       # --tmpfs /tmp : Create a temporary filesystem in /tmp
@@ -128,8 +140,12 @@ Vagrant::configure("2") do |config|
         docker.remains_running = true
         docker.has_ssh         = true
         docker.privileged      = true
-        docker.volumes         = ['/sys/fs/cgroup:/sys/fs/cgroup:rw']
-        docker.create_args     = ['--cgroupns=host', '--tmpfs=/tmp:exec', '--tmpfs=/var/lib/docker:mode=0777,dev,size=15g,suid,exec', '--tmpfs=/run', '--tmpfs=/run/lock'] # '--memory=10g', '--memory-swap=14g', '--oom-kill-disable'
+        # BUG: https://github.com/hashicorp/vagrant/issues/12602
+        # moved to create_args
+        # docker.volumes         = ['/sys/fs/cgroup:/sys/fs/cgroup:rw']
+        docker.create_args     = ['-v', '/sys/fs/cgroup:/sys/fs/cgroup:rw', '--cgroupns=host', '--tmpfs=/tmp:exec', '--tmpfs=/var/lib/docker:mode=0777,dev,size=15g,suid,exec', '--tmpfs=/run', '--tmpfs=/run/lock'] # '--memory=10g', '--memory-swap=14g', '--oom-kill-disable'
+        # Uncomment to force arm64 for testing images on Intel
+        # docker.create_args = ["--platform=linux/arm64"]
         docker.env             = { "PROVIDER": "docker", "NAME": "hashiqube" }
       end
 
