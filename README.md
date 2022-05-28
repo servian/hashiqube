@@ -30,9 +30,25 @@ Thanks to the flexibility of the HashiCorp products there is no need wonder how 
 | mac apple | ✓ | ✘ | ✘ |
 
 ## Instructions
-* Please download __Virtualbox__ from https://www.virtualbox.org/wiki/Downloads and __Vagrant__ from https://www.vagrantup.com/downloads.html and install
+* Vagrant - Please download __Vagrant__ from https://www.vagrantup.com/downloads.html and install
+* Docker - Please download __Docker__ from https://www.docker.com/products/docker-desktop and install
+* Virtualbox (Optional) - Please download __Virtualbox__ from https://www.virtualbox.org/wiki/Downloads and install
 * Using `git` - clone this repo `git clone $repo .` [__What is Git?__](git/#git)
-* Inside the local repo folder, do `vagrant up --provision --provider docker` - This will setup, Vault, Nomad, Consul, Terraform, Localstack and Docker as well as giving you access the docsify website at http://localhost:3333
+* Inside the local repo folder, do `vagrant up --provision --provider docker` - This will setup, Vault, Nomad, Consul, Terraform, Localstack and Docker
+* Documentation locally available at http://localhost:3333
+
+## Components
+HashiQube is made up out of a number of components and some rely on each other. 
+
+For example you can run componenets seperately as demonstrated below.
+```
+vagrant up --provision-with basetools --provider docker
+vagrant up --provision-with docker --provider docker
+vagrant up --provision-with docsify --provider docker
+vagrant up --provision-with vault --provider docker
+vagrant up --provision-with nomad --provider docker
+vagrant up --provision-with minikube --provider docker
+```
 
 :bulb: If you see this error message
 
