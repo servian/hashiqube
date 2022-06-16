@@ -1,5 +1,5 @@
 # HashiQube Overview
-HashiQube is a VM with a Docker daemon inside. It runs all HashiCorp products. __Vault, Terraform, Nomad, Consul, Waypoint, Boundary, Vagrant, Packer and Sentinel.__
+HashiQube is a VM OR a Docker Container with a Docker daemon inside. It runs all HashiCorp products. __Vault, Terraform, Nomad, Consul, Waypoint, Boundary, Vagrant, Packer and Sentinel.__
 It also runs a host of other popular Open Source DevOps / DevSecOps applications showcasing how simple integration with HashiCorp products can result in tangible learnings and benefits for all its users
 Once the Qube is up an internet connection is no longer needed meaning sales pitches and demos for potential and existing customers is greatly aided.
 
@@ -134,44 +134,19 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 * Vagrant
 * `vagrant up --provision --provider docker`
 
-
-If you see this error message
-
-```
-The IP address configured for the host-only network is not within the
-allowed ranges. Please update the address used to be within the allowed
-ranges and run the command again.
-
-Address: 10.9.99.10
-Ranges: 192.168.56.0/21
-
-Valid ranges can be modified in the /etc/vbox/networks.conf file. 
-For more information including valid format see
-
-https://www.virtualbox.org/manual/ch06.html#network_hostonly
-```
-
-Please create the following file: __/etc/vbox/networks.conf__ with the following contents
-
-```
-* 10.0.0.0/8 192.168.0.0/16
-* 2001::/64
-``` 
-
-and re-run `vagrant up --provision --provider docker`
-
 ## Additional Information
 * [__Multi Cloud__](multi-cloud/#terraform-hashicorp-hashiqube) - Hashiqube on AWS, GCP and Azure (Clustered) https://registry.terraform.io/modules/star3am/hashiqube/hashicorp/latest
 * [__Vagrant__](hashicorp/#vagrant) - Development Environments Made Easy
 * [__Vault__](hashicorp/#vault) - Manage Secrets and Protect Sensitive Data
 * [__Consul__](hashicorp/#consul) - Secure Service Networking
 * [__Nomad__](hashicorp/#nomad) - Deploy and Manage Any Containerized, Legacy, or Batch Application
+* [__Traefik__](hashicorp/#traefik-load-balancer-for-nomad) - Traefik is a modern HTTP reverse proxy and load balancer that seamlessly integrates with Nomad
+* [__Fabio__](hashicorp/#fabio-load-balancer-for-nomad) - Fabio is an HTTP and TCP reverse proxy that configures itself with data from Consul
 * [__Terraform__](hashicorp/#terraform) - Use Infrastructure as Code to provision and manage any cloud, infrastructure, or service
 * [__Packer__](hashicorp/#packer) - Build Automated Machine Images
 * [__Sentinel__](hashicorp/#sentinel) - Sentinel is an embedded policy-as-code framework
 * [__Waypoint__](hashicorp/#waypoint) - Waypoint is an open source solution that provides a modern workflow for build, deploy, and release across platforms
 * [__Boundary__](hashicorp/#boundary) - Simple and secure remote access to any system from anywhere based on user identity.
-* [__Fabio__](hashicorp/#fabio-load-balancer) - Fabio is an HTTP and TCP reverse proxy that configures itself with data from Consul
 * [__Docker__](docker/#docker) - Securely build, share and run any application, anywhere
 * [__Localstack__](localstack/#localstack) - A fully functional local AWS cloud stack
 * [__Ansible__](ansible/#ansible) - Automation for everyone
@@ -202,7 +177,9 @@ For Documentation please open http://localhost:3333 in your browser
 * Jenkins http://localhost:8088
 * Oracle MySQL localhost:3306
 * Microsoft SQL localhost:1433
-* Minikube http://10.9.99.10:10888/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#/overview?namespace=default
+* Minikube http://localhost:10888
+* Traefik http://localhost:8181
+* Fabio http://localhost:9999
 
 ### Vagrant Basic Usage
 * vagrant up --provision OR vagrant up --provision-with bootstrap|nomad|consul|vault|docker|ldap --provider docker
