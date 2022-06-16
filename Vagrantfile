@@ -72,6 +72,8 @@ Vagrant::configure("2") do |config|
       if machines.size == 1 # only expose these ports if 1 machine, else conflicts
         config.vm.network "forwarded_port", guest: 8200, host: 8200 # vault
         config.vm.network "forwarded_port", guest: 4646, host: 4646 # nomad
+        config.vm.network "forwarded_port", guest: 8080, host: 8080 # nomad-traefik
+        config.vm.network "forwarded_port", guest: 8181, host: 8181 # nomad-traefik-admin
         config.vm.network "forwarded_port", guest: 19702, host: 19702 # waypoint-kubernetes-minikube
         config.vm.network "forwarded_port", guest: 9702, host: 9702 # waypoint-nomad
         config.vm.network "forwarded_port", guest: 19200, host: 19200 # boundary

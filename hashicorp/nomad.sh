@@ -122,6 +122,10 @@ cd /vagrant/hashicorp/nomad/jobs;
 #nomad run --address=http://localhost:4646 countdashboardtest.nomad
 nomad plan --address=http://localhost:4646 fabio.nomad
 nomad run --address=http://localhost:4646 fabio.nomad
+nomad plan --address=http://localhost:4646 traefik.nomad
+nomad run --address=http://localhost:4646 traefik.nomad
+nomad plan --address=http://localhost:4646 traefik-whoami.nomad
+nomad run --address=http://localhost:4646 traefik-whoami.nomad
 # curl -v -H 'Host: fabio.service.consul' http://${VAGRANT_IP}:9999/
 echo -e '\e[38;5;198m'"++++ Nomad http://localhost:4646"
 }
