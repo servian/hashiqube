@@ -1,6 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# set default provider to docker
+ENV['VAGRANT_DEFAULT_PROVIDER'] = "docker"
+
 # create local domain name e.g user.local.dev
 user = ENV["USER"].downcase
 fqdn = ENV["fqdn"] || "service.consul"
