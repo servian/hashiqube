@@ -107,3 +107,10 @@ Or you can SSH into the VM by doing `vagrant ssh` and then using `sudo` do:
 NAME       STATUS   ROLES    AGE   VERSION
 minikube   Ready    master   63m   v1.17.0
 ```
+
+## Traefik on Minikube
+https://doc.traefik.io/traefik/v1.7/user-guide/kubernetes/
+
+This guide explains how to use Traefik as an Ingress controller for a Kubernetes cluster.
+
+![Traefik on Minikube](imagesminikube-traefik-dashboard.png?raw=true "Traefik on Minikube")

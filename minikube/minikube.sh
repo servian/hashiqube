@@ -148,11 +148,29 @@ function minikube-install() {
   echo -e '\e[38;5;198m'"++++ helm search repo bitnami"
   sudo --preserve-env=PATH -u vagrant helm search repo bitnami
 
+  # https://doc.traefik.io/traefik/getting-started/install-traefik/
+  echo -e '\e[38;5;198m'"++++ Installing Traefik using Helm Chart"
+  echo -e '\e[38;5;198m'"++++ helm repo add traefik https://helm.traefik.io/traefik"
+  sudo --preserve-env=PATH -u vagrant helm repo add traefik https://helm.traefik.io/traefik
+  sudo --preserve-env=PATH -u vagrant helm repo update
+  echo -e '\e[38;5;198m'"++++ helm install traefik traefik/traefik"
+  sudo --preserve-env=PATH -u vagrant helm install traefik traefik/traefik
+  sleep 30;
+  echo -e '\e[38;5;198m'"++++ kubectl port-forward 18181:9000"
+  sudo --preserve-env=PATH -u vagrant kubectl port-forward $(kubectl get pods --selector "app.kubernetes.io/name=traefik" --output=name) 18181:9000 --address="0.0.0.0" > /dev/null 2>&1 &
+  echo -e '\e[38;5;198m'"++++ kubectl port-forward 18080:9000"
+  sudo --preserve-env=PATH -u vagrant kubectl port-forward $(kubectl get pods --selector "app.kubernetes.io/name=traefik" --output=name) 18080:9000 --address="0.0.0.0" > /dev/null 2>&1 &
+  echo -e '\e[38;5;198m'"Get all Pods and Services"
+  echo -e '\e[38;5;198m'"kubectl get pod,svc -A"
+  sudo --preserve-env=PATH -u vagrant kubectl get pod,svc -A
+
   echo -e '\e[38;5;198m'"++++ Docker stats"
   sudo --preserve-env=PATH -u vagrant docker stats --no-stream -a
-  
+
   echo -e '\e[38;5;198m'"++++ Minikube dashboard: http://localhost:10888"
   echo -e '\e[38;5;198m'"++++ Hello Minikube application: http://localhost:18888"
+  echo -e '\e[38;5;198m'"++++ Traefik Dashboard: http://localhost:18181/dashboard/"
+  echo -e '\e[38;5;198m'"++++ Traefik Loadbalancer: http://localhost:18080"
 }
 
 minikube-install
