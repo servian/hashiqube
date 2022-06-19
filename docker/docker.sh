@@ -15,7 +15,7 @@ fi
 echo -e '\e[38;5;198m'"CPU is $ARCH"
 sudo add-apt-repository "deb [arch=$ARCH] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes docker-ce docker-ce-cli containerd.io
+sudo DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes docker-ce docker-ce-cli containerd.io docker-compose-plugin
 sudo usermod -aG docker vagrant
 sudo mkdir -p /etc/docker
 sudo echo '{
