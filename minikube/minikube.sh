@@ -9,8 +9,11 @@ function minikube-install() {
   arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
   if [[ $arch == x86_64* ]]; then
       ARCH="amd64"
+      HELLO_MINIKUBE_IMAGE="k8s.gcr.io/echoserver:1.4"
+
   elif  [[ $arch == aarch64 ]]; then
       ARCH="arm64"
+      HELLO_MINIKUBE_IMAGE="preslavmihaylov/kubehelloworld:2.0.0"
   fi
   echo -e '\e[38;5;198m'"CPU is $ARCH"
   
@@ -101,20 +104,20 @@ function minikube-install() {
 
   # https://kubernetes.io/docs/tutorials/hello-minikube/
   echo -e '\e[38;5;198m'"Deploy hello-minikube application"
-  echo -e '\e[38;5;198m'"Create a sample deployment and expose it on port 8080:"
-  echo -e '\e[38;5;198m'"kubectl create deployment hello-minikube --image=k8s.gcr.io/echoserver:1.4"
-  echo -e '\e[38;5;198m'"kubectl expose deployment hello-minikube --type=NodePort --port=8080"
-  sudo --preserve-env=PATH -u vagrant kubectl create deployment hello-minikube --image=k8s.gcr.io/echoserver:1.4
-  sudo --preserve-env=PATH -u vagrant kubectl expose deployment hello-minikube --type=NodePort --port=8080
+  echo -e '\e[38;5;198m'"Create a sample deployment and expose it on port 3000:"
+  echo -e '\e[38;5;198m'"kubectl create deployment hello-minikube --image=$HELLO_MINIKUBE_IMAGE"
+  echo -e '\e[38;5;198m'"kubectl expose deployment hello-minikube --type=NodePort --port=3000"
+  sudo --preserve-env=PATH -u vagrant kubectl create deployment hello-minikube --image=$HELLO_MINIKUBE_IMAGE
+  sudo --preserve-env=PATH -u vagrant kubectl expose deployment hello-minikube --type=NodePort --port=3000
   echo -e '\e[38;5;198m'"It may take a moment, but your deployment will soon show up when you run:"
   echo -e '\e[38;5;198m'"kubectl get services hello-minikube"
   sleep 15;
   sudo --preserve-env=PATH -u vagrant kubectl get services hello-minikube
   
   echo -e '\e[38;5;198m'"The easiest way to access this service is to let kubectl to forward the port:"
-  echo -e '\e[38;5;198m'"kubectl port-forward service/hello-minikube 18888:8080"
-  sleep 15;
-  sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/hello-minikube 18888:8080 --address="0.0.0.0" > /dev/null 2>&1 &
+  echo -e '\e[38;5;198m'"kubectl port-forward service/hello-minikube 18888:3000"
+  sleep 25;
+  sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/hello-minikube 18888:3000 --address="0.0.0.0" > /dev/null 2>&1 &
   echo -e '\e[38;5;198m'"Tada! Your application is now available at http://localhost:18888/"
 
   echo -e '\e[38;5;198m'"Browse the catalog of easily installed Kubernetes services:"

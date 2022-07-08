@@ -103,6 +103,7 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 18181, host: 18181 # minikube-traefik-admin
         config.vm.network "forwarded_port", guest: 31506, host: 31506 # tech-challange-minikube
         config.vm.network "forwarded_port", guest: 18888, host: 18888 # hello minikube application
+        config.vm.network "forwarded_port", guest: 18889, host: 18889 # apache airflow
         config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
 
       end
@@ -294,6 +295,7 @@ Vagrant::configure("2") do |config|
       # minikube
       # vagrant up --provision-with minikube to only run this on vagrant up
       config.vm.provision "minikube", run: "never", type: "shell", preserve_order: true, privileged: false, path: "minikube/minikube.sh"
+
 
       
 
