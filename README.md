@@ -156,6 +156,7 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 * [__Microsoft MSSQL__](database/#microsoft-sql-mssql-express) - Microsoft SQL Server is a relational database management system developed by Microsoft
 * [__PostgreSQL__](database/#postgresql) - PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and SQL compliance.
 * [__Minikube__](minikube/#minikube) - Run Kubernetes locally
+* [__Newrelic Kubernetes Monitoring__](newrelic-kubernetes-monitoring/#newrelic-kubernetes-monitoring) - Monitor Kubernetes Clusters and Workloads with Newrelic
 * [__Docsify__](docsify/#docsify) - A magical documentation site generator
 
 Once the stack is up you will have a large number of services running and available on `localhost` <br />
