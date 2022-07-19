@@ -24,7 +24,7 @@ You should now be able to open Minikube dashboard: http://localhost:10888
 
 For more extensive details on how to run Minikube on Hashiqube please visit: [__Minikube__](minikube/#minikube)
 
-## Newreic
+## Newrelic
 
 Now we deploy the Newrelic integration ontop of Kubernetes (Minikube) using Helm
 
