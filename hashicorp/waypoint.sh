@@ -9,7 +9,7 @@ function waypoint-all() {
   if [[ $arch == x86_64* ]]; then
       ARCH="amd64"
   elif  [[ $arch == aarch64 ]]; then
-      ARCH="arm64"
+      ARCH="arm"
   fi
   echo -e '\e[38;5;198m'"CPU is $ARCH"
 
@@ -217,6 +217,7 @@ EOF
   sudo --preserve-env=PATH -u vagrant waypoint deploy
   echo -e '\e[38;5;198m'"++++ Waypoint Server https://localhost:9702 and enter the following Token displayed below"
   echo $WAYPOINT_TOKEN_NOMAD
+  echo -e '\e[38;5;198m'"++++ Waypoint Documentation http://localhost:3333/#/hashicorp/README?id=waypoint"
   echo -e '\e[38;5;198m'"++++ Nomad http://localhost:4646"
 }
 

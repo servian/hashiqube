@@ -128,6 +128,13 @@ nomad plan --address=http://localhost:4646 traefik-whoami.nomad
 nomad run --address=http://localhost:4646 traefik-whoami.nomad
 # curl -v -H 'Host: fabio.service.consul' http://${VAGRANT_IP}:9999/
 echo -e '\e[38;5;198m'"++++ Nomad http://localhost:4646"
+echo -e '\e[38;5;198m'"++++ Nomad Documentation http://localhost:3333/#/hashicorp/README?id=nomad"
+echo -e '\e[38;5;198m'"++++ Fabio Dashboard http://localhost:9998"
+echo -e '\e[38;5;198m'"++++ Fabio Loadbalancer http://localhost:9998"
+echo -e '\e[38;5;198m'"++++ Fabio Documentation http://localhost:3333/#/hashicorp/README?id=fabio-load-balancer-for-nomad"
+echo -e '\e[38;5;198m'"++++ Treafik Dashboard http://localhost:8181"
+echo -e '\e[38;5;198m'"++++ Traefik Loadbalancer: http://localhost:8080"
+echo -e '\e[38;5;198m'"++++ Traefik Documentation: http://localhost:3333/#/hashicorp/README?id=traefik-load-balancer-for-nomad"
 }
 
 nomad-install

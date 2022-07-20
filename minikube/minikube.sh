@@ -170,10 +170,12 @@ function minikube-install() {
   echo -e '\e[38;5;198m'"++++ Docker stats"
   sudo --preserve-env=PATH -u vagrant docker stats --no-stream -a
 
-  echo -e '\e[38;5;198m'"++++ Minikube dashboard: http://localhost:10888"
+  echo -e '\e[38;5;198m'"++++ Minikube Dashboard: http://localhost:10888"
+  echo -e '\e[38;5;198m'"++++ Minikube Documentation: http://localhost:3333/#/minikube/README"
   echo -e '\e[38;5;198m'"++++ Hello Minikube application: http://localhost:18888"
   echo -e '\e[38;5;198m'"++++ Traefik Dashboard: http://localhost:18181/dashboard/"
   echo -e '\e[38;5;198m'"++++ Traefik Loadbalancer: http://localhost:18080"
+  echo -e '\e[38;5;198m'"++++ Traefik Documentation: http://localhost:3333/#/minikube/README?id=traefik-on-minikube"
 }
 
 minikube-install

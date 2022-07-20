@@ -152,6 +152,7 @@ EOF
   host consul.service.consul
 
   echo -e '\e[38;5;198m'"++++ Consul http://localhost:8500"
+  echo -e '\e[38;5;198m'"++++ Consul Documentation http://localhost:3333/#/hashicorp/README?id=consul"
 }
 
 consul-install

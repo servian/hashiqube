@@ -172,6 +172,8 @@ else
   for i in `cat /etc/vault/init.file | grep Unseal | cut -d " " -f4 | head -n 3`; do vault operator unseal $i; done
   vault status
   cat /etc/vault/init.file
+  echo -e '\e[38;5;198m'"++++ Vault http://localhost:8200/ui and enter the Root Token displayed above"
+  echo -e '\e[38;5;198m'"++++ Vault Documentation http://localhost:3333/#/hashicorp/README?id=vault"
 fi
 
 # TODO: FIXME
