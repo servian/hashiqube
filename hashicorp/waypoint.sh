@@ -44,7 +44,7 @@ function waypoint-kubernetes-minikube() {
   sudo --preserve-env=PATH -u vagrant waypoint install -platform=kubernetes -k8s-advertise-internal -k8s-context minikube -context-create=minikube -accept-tos
   sudo --preserve-env=PATH -u vagrant kubectl get all
   eval $(sudo --preserve-env=PATH -u vagrant minikube docker-env)
-  sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/waypoint 19702:9702 --address="0.0.0.0" > /dev/null 2>&1 &
+  sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/waypoint-server 19702:9702 --address="0.0.0.0" > /dev/null 2>&1 &
   
   echo -e '\e[38;5;198m'"++++ Set Waypoint Context Kubernetes (Minikube)"
   export WAYPOINT_TOKEN_MINIKUBE=$(sudo --preserve-env=PATH -u vagrant waypoint user token)
@@ -59,16 +59,16 @@ function waypoint-kubernetes-minikube() {
   sudo --preserve-env=PATH -u vagrant waypoint context list
   sudo --preserve-env=PATH -u vagrant waypoint context verify
   echo -e '\e[38;5;198m'"++++ Waypoint Init and Up T-Rex Nodejs Example"
-  echo -e '\e[38;5;198m'"++++ Found here /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs"
-  cd /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs
-  echo -e '\e[38;5;198m'"++++ Write /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs/waypoint.hcl"
-  rm -rf /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs/waypoint.hcl
-  cat <<EOF | sudo tee /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs/waypoint.hcl
-project = "trex-nodejs"
+  echo -e '\e[38;5;198m'"++++ Found here /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs"
+  cd /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs
+  echo -e '\e[38;5;198m'"++++ Write /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs/waypoint.hcl"
+  rm -rf /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs/waypoint.hcl
+  cat <<EOF | sudo tee /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs/waypoint.hcl
+project = "kubernetes-trex-nodejs"
 
-app "trex-nodejs" {
+app "kubernetes-trex-nodejs" {
   labels = {
-    "service" = "trex-nodejs",
+    "service" = "kubernetes-trex-nodejs",
     "env"     = "dev"
   }
 
@@ -176,16 +176,16 @@ function waypoint-nomad() {
   # waypoint init
   # waypoint up
   echo -e '\e[38;5;198m'"++++ Waypoint Init and Up T-Rex Nodejs Example"
-  echo -e '\e[38;5;198m'"++++ Found here /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs"
-  cd /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs
-  echo -e '\e[38;5;198m'"++++ Write /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs/waypoint.hcl"
-  rm -rf /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs/waypoint.hcl
-  cat <<EOF | sudo tee /vagrant/hashicorp/waypoint/custom-examples/trex-nodejs/waypoint.hcl
-project = "trex-nodejs"
+  echo -e '\e[38;5;198m'"++++ Found here /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs"
+  cd /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs
+  echo -e '\e[38;5;198m'"++++ Write /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs/waypoint.hcl"
+  rm -rf /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs/waypoint.hcl
+  cat <<EOF | sudo tee /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs/waypoint.hcl
+project = "nomad-trex-nodejs"
 
-app "trex-nodejs" {
+app "nomad-trex-nodejs" {
   labels = {
-    "service" = "trex-nodejs",
+    "service" = "nomad-trex-nodejs",
     "env"     = "dev"
   }
 
