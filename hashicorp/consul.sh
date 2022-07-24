@@ -93,8 +93,8 @@ EOF
     sleep 5
     # die mofo!
     sudo pkill -9 consul
-    sudo killall consul
-    sudo killall consul
+    sudo pkill consul
+    sudo pkill consul
     touch /var/log/consul.log
     sudo nohup consul agent -dev -client="0.0.0.0" -bind="0.0.0.0" -enable-script-checks -config-file=/etc/consul/server.hcl -config-dir=/etc/consul.d > /var/log/consul.log 2>&1 &
     sh -c 'sudo tail -f /var/log/consul.log | { sed "/agent: Synced/ q" && kill $$ ;}'

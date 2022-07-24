@@ -1,10 +1,11 @@
 #!/bin/bash
 
+# BUG: https://github.com/kubernetes/minikube/issues/7511 - gave me lots of issues
 # https://www.waypointproject.io/docs/server/install#nomad-platform
 # https://www.waypointproject.io/docs/getting-started
 # https://learn.hashicorp.com/tutorials/waypoint/get-started-nomad?in=waypoint/get-started-nomad
 
-function waypoint-all() {
+function waypoint-install() {
   arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
   if [[ $arch == x86_64* ]]; then
       ARCH="amd64"
@@ -18,7 +19,7 @@ function waypoint-all() {
   yes | sudo docker system prune --volumes
 
   echo -e '\e[38;5;198m'"Waypoint Install"
-    # check if waypoint is installed, start and exit
+  # check if waypoint is installed, start and exit
   if [ -f /usr/local/bin/waypoint ]; then
     echo -e '\e[38;5;198m'"++++ Waypoint already installed at /usr/local/bin/waypoint"
     echo -e '\e[38;5;198m'"++++ `/usr/local/bin/waypoint version`"
@@ -34,16 +35,26 @@ function waypoint-all() {
 }
 
 function waypoint-kubernetes-minikube() {
-  # https://www.waypointproject.io/docs/troubleshooting#waypoint-server-in-kubernetes
-  echo -e '\e[38;5;198m'"++++ Waypoint Install on Platform Kubernetes (Minikube)"
+  echo -e '\e[38;5;198m'"++++ Ensure Minikube is running"
+  sudo bash /vagrant/minikube/minikube.sh
+
+  echo -e '\e[38;5;198m'"++++ Waypoint Delete and Cleanup"
   sudo --preserve-env=PATH -u vagrant kubectl config get-contexts
   sudo --preserve-env=PATH -u vagrant kubectl delete statefulset waypoint-server
   sudo --preserve-env=PATH -u vagrant kubectl delete pvc data-waypoint-server-0
   sudo --preserve-env=PATH -u vagrant kubectl delete svc waypoint
   sudo --preserve-env=PATH -u vagrant kubectl delete deployments waypoint-runner
-  sudo --preserve-env=PATH -u vagrant waypoint install -platform=kubernetes -k8s-advertise-internal -k8s-context minikube -context-create=minikube -accept-tos
+  echo -e '\e[38;5;198m'"++++ Waypoint Context Clear"
+  sudo --preserve-env=PATH -u vagrant waypoint context clear
+  sudo --preserve-env=PATH -u vagrant waypoint context delete minikube
+  sudo --preserve-env=PATH -u vagrant waypoint context list
+
+  # https://www.waypointproject.io/docs/troubleshooting#waypoint-server-in-kubernetes
+  echo -e '\e[38;5;198m'"++++ Waypoint Install on Platform Kubernetes (Minikube)"
+  sudo --preserve-env=PATH -u vagrant waypoint install -platform=kubernetes -k8s-context=minikube -context-create=minikube -k8s-storageclassname=standard -k8s-helm-version=v0.1.8 -accept-tos
   sudo --preserve-env=PATH -u vagrant kubectl get all
   eval $(sudo --preserve-env=PATH -u vagrant minikube docker-env)
+  sleep 120;
   sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/waypoint-server 19702:9702 --address="0.0.0.0" > /dev/null 2>&1 &
   
   echo -e '\e[38;5;198m'"++++ Set Waypoint Context Kubernetes (Minikube)"
@@ -120,61 +131,35 @@ EOF
 }
 
 function waypoint-nomad() {
+  echo -e '\e[38;5;198m'"++++ Ensure Nomad is running"
+  sudo bash /vagrant/hashicorp/nomad.sh
   echo -e '\e[38;5;198m'"++++ Docker pull Waypoint Server container"
   docker pull hashicorp/waypoint:latest
   docker stop waypoint-server
   docker rm waypoint-server
+  echo -e '\e[38;5;198m'"++++ Waypoint Job stop"
+  for i in $(nomad job status | grep -e trex -e waypoint | tr -s " " | cut -d " " -f1); do nomad job stop $i; done
+  echo -e '\e[38;5;198m'"++++ Waypoint Job Status"
+  nomad job status
+  echo -e '\e[38;5;198m'"++++ Nomad System GC"
   nomad system gc
+  echo -e '\e[38;5;198m'"++++ Waypoint Context Clear"
+  sudo --preserve-env=PATH -u vagrant waypoint context list
+  sudo --preserve-env=PATH -u vagrant waypoint context clear
+  # remove the previous waypoint db so that new context can be created
+  sudo rm -rf /opt/nomad/data/volume/waypoint/*
   echo -e '\e[38;5;198m'"++++ Waypoint Install on Platform Hashicorp Nomad"
-  export NOMAD_ADDR='http://localhost:4646'  
-  sudo --preserve-env=PATH -u vagrant waypoint install -platform=nomad -nomad-dc=dc1 -accept-tos -nomad-host-volume="waypoint" -context-create=nomad
-  #sudo --preserve-env=PATH -u vagrant waypoint server bootstrap -server-addr=0.0.0.0:29701 -server-tls-skip-verify
-  nomad status
+  export NOMAD_ADDR='http://localhost:4646'
+  sudo --preserve-env=PATH -u vagrant waypoint install -platform=nomad -nomad-dc=dc1 -accept-tos -nomad-host-volume=waypoint -context-create=nomad -runner=false
   sleep 60;
+  nomad job status
+  nomad status
   echo -e '\e[38;5;198m'"++++ Set Waypoint Context Nomad"
+  sudo --preserve-env=PATH -u vagrant waypoint context use nomad
   export WAYPOINT_TOKEN_NOMAD=$(sudo --preserve-env=PATH -u vagrant waypoint user token)
-  # TODO: the waypoint contexts keeps getting overwritten between kubernetes and nomad 
-  # sudo --preserve-env=PATH -u vagrant waypoint context create \
-  #   -server-addr=10.9.99.10:9702 \
-  #   -server-auth-token=$WAYPOINT_TOKEN_NOMAD \
-  #   -server-tls=false \
-  #   -server-platform=nomad \
-  #   -set-default nomad
   echo -e '\e[38;5;198m'"++++ Waypoint Context"
   sudo --preserve-env=PATH -u vagrant waypoint context list
   sudo --preserve-env=PATH -u vagrant waypoint context verify
-#   echo -e '\e[38;5;198m'"++++ Git Clone Waypoint examples"
-#   rm -rf /vagrant/hashicorp/waypoint/examples
-#   mkdir -p /vagrant/hashicorp/waypoint
-#   git clone https://github.com/hashicorp/waypoint-examples.git /vagrant/hashicorp/waypoint/examples
-#   cd /vagrant/hashicorp/waypoint/examples/docker/nodejs
-#   sed -i '/<\/h1>/a <p>The files are located in \/vagrant\/hashicorp\/waypoint\/examples\/docker\/nodejs, and this file is views/pages/index.ejs<\/p>' /vagrant/hashicorp/waypoint/examples/docker/nodejs/views/pages/index.ejs
-#   echo -e '\e[38;5;198m'"++++ Write /vagrant/hashicorp/waypoint/examples/docker/nodejs/waypoint.hcl"
-#   rm -rf /vagrant/hashicorp/waypoint/examples/docker/nodejs/waypoint.hcl
-#   cat <<EOF | sudo tee /vagrant/hashicorp/waypoint/examples/docker/nodejs/waypoint.hcl
-# project = "example-nodejs"
-# app "example-nodejs" {
-#   build {
-#     use "pack" {}
-#     registry {
-#       use "docker" {
-#         image = "nodejs-example"
-#         tag = "1"
-#         local = true
-#       }
-#     }
-#   }
-#   deploy {
-#     use "nomad" {
-#       datacenter = "dc1"
-#     }
-#   }
-# }
-# EOF
-  # echo -e '\e[38;5;198m'"++++ Stop the Nodejs example job if running"
-  # nomad job stop $(nomad job status | grep running | grep example | cut -d ' ' -f1)
-  # waypoint init
-  # waypoint up
   echo -e '\e[38;5;198m'"++++ Waypoint Init and Up T-Rex Nodejs Example"
   echo -e '\e[38;5;198m'"++++ Found here /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs"
   cd /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs
@@ -221,5 +206,5 @@ EOF
   echo -e '\e[38;5;198m'"++++ Nomad http://localhost:4646"
 }
 
-waypoint-all
+waypoint-install
 $1

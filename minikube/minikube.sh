@@ -27,7 +27,7 @@ function minikube-install() {
   fi
 
   echo -e '\e[38;5;198m'"++++ Delete Minikube"
-  for mkd in $(ps aux | grep -e dashboard -e kubectl | grep -v grep | tr -s " " | cut -d " " -f2); do bash -c "sudo kill -9 $mkd || true"; done
+  for mkd in $(ps aux | grep -e dashboard -e kubectl | grep -v grep | grep -v nomad | tr -s " " | cut -d " " -f2); do bash -c "sudo kill -9 $mkd || true"; done
   sleep 10;
   echo -e '\e[38;5;198m'"++++ Check minikube proccesses"
   bash -c "ps aux | grep -e dashboard -e kubectl || true"
@@ -35,6 +35,7 @@ function minikube-install() {
   echo -e '\e[38;5;198m'"++++ docker system prune -a"
   yes | sudo docker system prune -a
   yes | sudo docker system prune --volumes
+  sudo docker volume prune -f
 
   sudo --preserve-env=PATH -u vagrant minikube delete --all --purge
 
@@ -43,13 +44,18 @@ function minikube-install() {
   sudo apt-get install --assume-yes conntrack ethtool socat
 
   echo -e '\e[38;5;198m'"++++ Launching Minikube"
-  sudo rm -rf /home/vagrant/.kube
-  sudo --preserve-env=PATH -u vagrant mkdir /home/vagrant/.kube
+  # sudo rm -rf /home/vagrant/.kube
+  # sudo rm -rf /home/vagrant/.minikube
+  # BUG: https://github.com/kubernetes/minikube/issues/7511 - gave me lots of issues
+  sudo rm -rf /var/lib/docker/volumes/minikube
+  # sudo --preserve-env=PATH -u vagrant mkdir /home/vagrant/.kube
+  # sudo chmod -R 777 /home/vagrant/.kube
   # https://minikube.sigs.k8s.io/docs/commands/start/
   # https://unofficial-kubernetes.readthedocs.io/en/latest/admin/admission-controllers/
   # https://github.com/kubernetes/minikube/issues/604
-  sudo --preserve-env=PATH -u vagrant CHANGE_MINIKUBE_NONE_USER=true minikube start --driver=docker --force-systemd=true --insecure-registry="10.9.99.0/24" --cpus 4 --memory 8192 \
-  --extra-config=apiserver.enable-admission-plugins="DefaultStorageClass" # "ResourceQuota,ServiceAccount,MutatingAdmissionWebhook,LimitRanger,NamespaceExists,NamespaceLifecycle," --kubelet.node-ip=10.9.99.10 --apiserver-name=0.0.0.0 --apiserver-ips=0.0.0.0
+  sudo --preserve-env=PATH -u vagrant CHANGE_MINIKUBE_NONE_USER=true minikube start --driver=docker --force-systemd=true --insecure-registry="10.9.99.0/24" --cpus 4 --memory 8192 --disk-size=2g --extra-config=apiserver.enable-admission-plugins="DefaultStorageClass"
+  # --extra-config=apiserver.enable-admission-plugins="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook"
+  # "ResourceQuota,ServiceAccount,MutatingAdmissionWebhook,LimitRanger,NamespaceExists,NamespaceLifecycle," --kubelet.node-ip=10.9.99.10 --apiserver-name=0.0.0.0 --apiserver-ips=0.0.0.0
 
   sudo --preserve-env=PATH -u vagrant curl -sLO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/$ARCH/kubectl
   sudo --preserve-env=PATH -u vagrant chmod +x kubectl
@@ -71,6 +77,9 @@ function minikube-install() {
   sudo --preserve-env=PATH -u vagrant minikube addons enable registry
   sleep 30;
   sudo --preserve-env=PATH -u vagrant kubectl port-forward -n kube-system service/registry 5001:80 --address="0.0.0.0" > /dev/null 2>&1 &
+
+  echo -e '\e[38;5;198m'"++++ Enable Minikube Default Storage Class Addon"
+  sudo --preserve-env=PATH -u vagrant minikube addons enable default-storageclass
 
   # https://minikube.sigs.k8s.io/docs/commands/dashboard/
   echo -e '\e[38;5;198m'"++++ Starting Minikube dashboard"

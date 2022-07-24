@@ -1,8 +1,8 @@
-project = "trex-nodejs"
+project = "nomad-trex-nodejs"
 
-app "trex-nodejs" {
+app "nomad-trex-nodejs" {
   labels = {
-    "service" = "trex-nodejs",
+    "service" = "nomad-trex-nodejs",
     "env"     = "dev"
   }
 
@@ -10,35 +10,18 @@ app "trex-nodejs" {
     use "docker" {}
     registry {
       use "docker" {
-        image = "10.9.99.10:5001/trex-nodejs" # See minikube docker registry
+        image = "trex-nodejs" # See docker registry in docker/docker.sh
         tag   = "0.0.2"
-        local = false
+        local = true
         #encoded_auth = filebase64("/etc/docker/auth.json") # https://www.waypointproject.io/docs/lifecycle/build#private-registries
       }
     }
   }
 
   deploy {
-    use "kubernetes" {
-      probe_path   = "/"
-      replicas     = 1
-      service_port = 6001
-      probe {
-        initial_delay = 4
-      }
-      labels = {
-        env = "local"
-      }
-      annotations = {
-        demo = "yes"
-      }
+    use "nomad" {
+      datacenter = "dc1"
     }
   }
 
-  release {
-    use "kubernetes" {
-      load_balancer = true
-      port          = 6001
-    }
-  }
 }
