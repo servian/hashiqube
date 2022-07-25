@@ -42,12 +42,12 @@ HashiQube is made up out of a number of components and some rely on each other.
 
 For example you can run componenets seperately as demonstrated below.
 ```
-vagrant up --provision-with basetools --provider docker
-vagrant up --provision-with docker --provider docker
-vagrant up --provision-with docsify --provider docker
-vagrant up --provision-with vault --provider docker
-vagrant up --provision-with nomad --provider docker
-vagrant up --provision-with minikube --provider docker
+vagrant up --provision-with basetools
+vagrant up --provision-with docker
+vagrant up --provision-with docsify
+vagrant up --provision-with vault
+vagrant up --provision-with nomad
+vagrant up --provision-with minikube
 ```
 
 :bulb: If you see this error message
