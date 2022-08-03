@@ -10,7 +10,7 @@ function waypoint-install() {
   if [[ $arch == x86_64* ]]; then
       ARCH="amd64"
   elif  [[ $arch == aarch64 ]]; then
-      ARCH="arm"
+      ARCH="arm64"
   fi
   echo -e '\e[38;5;198m'"CPU is $ARCH"
 
@@ -35,8 +35,8 @@ function waypoint-install() {
 }
 
 function waypoint-kubernetes-minikube() {
-  echo -e '\e[38;5;198m'"++++ Ensure Minikube is running"
-  sudo bash /vagrant/minikube/minikube.sh
+  # echo -e '\e[38;5;198m'"++++ Ensure Minikube is running"
+  # sudo bash /vagrant/minikube/minikube.sh
 
   echo -e '\e[38;5;198m'"++++ Waypoint Delete and Cleanup"
   sudo --preserve-env=PATH -u vagrant kubectl config get-contexts
@@ -46,7 +46,7 @@ function waypoint-kubernetes-minikube() {
   sudo --preserve-env=PATH -u vagrant kubectl delete deployments waypoint-runner
   echo -e '\e[38;5;198m'"++++ Waypoint Context Clear"
   sudo --preserve-env=PATH -u vagrant waypoint context clear
-  sudo --preserve-env=PATH -u vagrant waypoint context delete minikube
+  #sudo --preserve-env=PATH -u vagrant waypoint context delete minikube
   sudo --preserve-env=PATH -u vagrant waypoint context list
 
   # https://www.waypointproject.io/docs/troubleshooting#waypoint-server-in-kubernetes
@@ -59,13 +59,6 @@ function waypoint-kubernetes-minikube() {
   
   echo -e '\e[38;5;198m'"++++ Set Waypoint Context Kubernetes (Minikube)"
   export WAYPOINT_TOKEN_MINIKUBE=$(sudo --preserve-env=PATH -u vagrant waypoint user token)
-  # TODO: the waypoint contexts keeps getting overwritten between kubernetes and nomad 
-  # sudo --preserve-env=PATH -u vagrant waypoint context create \
-  #   -server-addr=localhost:19702 \
-  #   -server-auth-token=$WAYPOINT_TOKEN_MINIKUBE \
-  #   -server-tls=false \
-  #   -server-platform=kubernetes \
-  #   -set-default minikube
   echo -e '\e[38;5;198m'"++++ Waypoint Context"
   sudo --preserve-env=PATH -u vagrant waypoint context list
   sudo --preserve-env=PATH -u vagrant waypoint context verify
@@ -131,8 +124,8 @@ EOF
 }
 
 function waypoint-nomad() {
-  echo -e '\e[38;5;198m'"++++ Ensure Nomad is running"
-  sudo bash /vagrant/hashicorp/nomad.sh
+  # echo -e '\e[38;5;198m'"++++ Ensure Nomad is running"
+  # sudo bash /vagrant/hashicorp/nomad.sh
   echo -e '\e[38;5;198m'"++++ Docker pull Waypoint Server container"
   docker pull hashicorp/waypoint:latest
   docker stop waypoint-server

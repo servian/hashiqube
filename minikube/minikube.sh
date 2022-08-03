@@ -5,15 +5,15 @@
 # https://minikube.sigs.k8s.io/docs/handbook/persistent_volumes/
 
 function minikube-install() {
-  #Determine CPU Architecture
+  # Determine CPU Architecture
   arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
   if [[ $arch == x86_64* ]]; then
-      ARCH="amd64"
-      HELLO_MINIKUBE_IMAGE="k8s.gcr.io/echoserver:1.4"
-
+    ARCH="amd64"
+    HELLO_MINIKUBE_IMAGE="k8s.gcr.io/echoserver:1.4"
   elif  [[ $arch == aarch64 ]]; then
-      ARCH="arm64"
-      HELLO_MINIKUBE_IMAGE="preslavmihaylov/kubehelloworld:2.0.0"
+    ARCH="arm64"
+    # https://github.com/kubernetes/minikube/issues/11107
+    HELLO_MINIKUBE_IMAGE="preslavmihaylov/kubehelloworld:latest"
   fi
   echo -e '\e[38;5;198m'"CPU is $ARCH"
   
