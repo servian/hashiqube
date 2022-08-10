@@ -8,15 +8,16 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 #echo -e '\e[38;5;198m'"CPU is $PROCESSOR_ARCHITECTURE"
 arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
 if [[ $arch == x86_64* ]]; then
-    ARCH="amd64"
+  ARCH="amd64"
 elif  [[ $arch == aarch64 ]]; then
-    ARCH="arm64"
+  ARCH="arm64"
 fi
 echo -e '\e[38;5;198m'"CPU is $ARCH"
 sudo add-apt-repository "deb [arch=$ARCH] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 sudo apt-get update
-# BUG: error reopening /dev/null https://bugs.launchpad.net/ubuntu/+source/docker.io/+bug/1950071 so we pin docker-ce=5:20.10.16~3-0~ubuntu-focal
-sudo DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes docker-ce=5:20.10.16~3-0~ubuntu-focal docker-ce-cli containerd.io docker-compose-plugin
+# BUG: error reopening /dev/null https://bugs.launchpad.net/ubuntu/+source/docker.io/+bug/1950071 so we pin docker-ce=5:20.10.16~3-0~ubuntu-focal and containerd.io=1.5.11-1
+# INFO: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error reopening /dev/null inside container: open /dev/null: operation not permitted: unknown
+sudo DEBIAN_FRONTEND=noninteractive apt-get install --allow-downgrades --assume-yes docker-ce=5:20.10.9~3-0~ubuntu-focal docker-ce-cli containerd.io=1.5.11-1 docker-compose-plugin
 sudo usermod -aG docker vagrant
 sudo mkdir -p /etc/docker
 sudo echo '{
