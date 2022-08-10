@@ -35,8 +35,14 @@ function waypoint-install() {
 }
 
 function waypoint-kubernetes-minikube() {
-  echo -e '\e[38;5;198m'"++++ Ensure Minikube is running"
-  sudo bash /vagrant/minikube/minikube.sh
+  
+  if pgrep -x "minikube" >/dev/null
+  then
+    echo "Minikube is running"
+  else
+    echo -e '\e[38;5;198m'"++++ Ensure Minikube is running"
+    sudo bash /vagrant/minikube/minikube.sh
+  fi
 
   echo -e '\e[38;5;198m'"++++ Waypoint Delete and Cleanup"
   # https://www.waypointproject.io/docs/troubleshooting#waypoint-server-in-kubernetes
@@ -45,7 +51,7 @@ function waypoint-kubernetes-minikube() {
   sudo --preserve-env=PATH -u vagrant kubectl delete pvc data-waypoint-server-0
   sudo --preserve-env=PATH -u vagrant kubectl delete svc waypoint
   sudo --preserve-env=PATH -u vagrant kubectl delete deployments waypoint-runner
-  sudo --preserve-env=PATH -u vagrant waypoint server uninstall
+  # sudo --preserve-env=PATH -u vagrant waypoint server uninstall
   sudo --preserve-env=PATH -u vagrant helm uninstall waypoint
   echo -e '\e[38;5;198m'"++++ Waypoint Context Clear"
   sudo --preserve-env=PATH -u vagrant waypoint context clear
@@ -153,8 +159,13 @@ EOF
 }
 
 function waypoint-nomad() {
-  echo -e '\e[38;5;198m'"++++ Ensure Nomad is running"
-  sudo bash /vagrant/hashicorp/nomad.sh
+  if pgrep -x "nomad" >/dev/null
+  then
+    echo "Nomad is running"
+  else
+    echo -e '\e[38;5;198m'"++++ Ensure Nomad is running"
+    sudo bash /vagrant/hashicorp/nomad.sh
+  fi
 
   echo -e '\e[38;5;198m'"++++ Docker pull Waypoint Server container"
   docker pull hashicorp/waypoint:latest
@@ -162,10 +173,10 @@ function waypoint-nomad() {
   docker rm waypoint-server
   echo -e '\e[38;5;198m'"++++ Waypoint Job stop"
   for i in $(nomad job status | grep -e trex -e waypoint | tr -s " " | cut -d " " -f1); do nomad job stop $i; done
-  echo -e '\e[38;5;198m'"++++ Waypoint Job Status"
-  nomad job status
   echo -e '\e[38;5;198m'"++++ Nomad System GC"
-  nomad system gc
+  sudo --preserve-env=PATH -u vagrant nomad system gc
+  echo -e '\e[38;5;198m'"++++ Waypoint Job Status"
+  sudo --preserve-env=PATH -u vagrant nomad job status
   echo -e '\e[38;5;198m'"++++ Waypoint Context Clear"
   sudo --preserve-env=PATH -u vagrant waypoint context list
   sudo --preserve-env=PATH -u vagrant waypoint context clear
@@ -200,6 +211,9 @@ app "nomad-trex-nodejs" {
   }
 
   build {
+    # TODO: Waypoint application has trouble connecting to Waypoint server
+    # https://www.waypointproject.io/docs/entrypoint/disable#disable-the-waypoint-entrypoint
+    # disable_entrypoint = true
     use "docker" {}
     # docker registry in docker/docker.sh
     registry {
