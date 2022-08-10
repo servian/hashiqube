@@ -32,24 +32,26 @@ function minikube-install() {
   echo -e '\e[38;5;198m'"++++ Check minikube proccesses"
   bash -c "ps aux | grep -e dashboard -e kubectl || true"
   sleep 5;
+
+  sudo --preserve-env=PATH -u vagrant minikube delete --all --purge
+  sleep 30;
+  sudo rm -rf /home/vagrant/.kube
+  sudo rm -rf /home/vagrant/.minikube
+  # BUG: https://github.com/kubernetes/minikube/issues/7511 - gave me lots of issues
+  sudo rm -rf /var/lib/docker/volumes/minikube
+  # sudo --preserve-env=PATH -u vagrant mkdir /home/vagrant/.kube
+  # sudo chmod -R 777 /home/vagrant/.kube
+
   echo -e '\e[38;5;198m'"++++ docker system prune -a"
   yes | sudo docker system prune -a
   yes | sudo docker system prune --volumes
   sudo docker volume prune -f
-
-  sudo --preserve-env=PATH -u vagrant minikube delete --all --purge
 
   # BUG: https://github.com/kubernetes/minikube/issues/7179
   echo -e '\e[38;5;198m'"++++ Installing Contrack"
   sudo apt-get install --assume-yes conntrack ethtool socat
 
   echo -e '\e[38;5;198m'"++++ Launching Minikube"
-  # sudo rm -rf /home/vagrant/.kube
-  # sudo rm -rf /home/vagrant/.minikube
-  # BUG: https://github.com/kubernetes/minikube/issues/7511 - gave me lots of issues
-  sudo rm -rf /var/lib/docker/volumes/minikube
-  # sudo --preserve-env=PATH -u vagrant mkdir /home/vagrant/.kube
-  # sudo chmod -R 777 /home/vagrant/.kube
   # https://minikube.sigs.k8s.io/docs/commands/start/
   # https://unofficial-kubernetes.readthedocs.io/en/latest/admin/admission-controllers/
   # https://github.com/kubernetes/minikube/issues/604

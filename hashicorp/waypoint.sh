@@ -8,9 +8,9 @@
 function waypoint-install() {
   arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
   if [[ $arch == x86_64* ]]; then
-      ARCH="amd64"
+    ARCH="amd64"
   elif  [[ $arch == aarch64 ]]; then
-      ARCH="arm64"
+    ARCH="arm64"
   fi
   echo -e '\e[38;5;198m'"CPU is $ARCH"
 
@@ -35,30 +35,58 @@ function waypoint-install() {
 }
 
 function waypoint-kubernetes-minikube() {
-  # echo -e '\e[38;5;198m'"++++ Ensure Minikube is running"
-  # sudo bash /vagrant/minikube/minikube.sh
+  echo -e '\e[38;5;198m'"++++ Ensure Minikube is running"
+  sudo bash /vagrant/minikube/minikube.sh
 
   echo -e '\e[38;5;198m'"++++ Waypoint Delete and Cleanup"
+  # https://www.waypointproject.io/docs/troubleshooting#waypoint-server-in-kubernetes
   sudo --preserve-env=PATH -u vagrant kubectl config get-contexts
   sudo --preserve-env=PATH -u vagrant kubectl delete statefulset waypoint-server
   sudo --preserve-env=PATH -u vagrant kubectl delete pvc data-waypoint-server-0
   sudo --preserve-env=PATH -u vagrant kubectl delete svc waypoint
   sudo --preserve-env=PATH -u vagrant kubectl delete deployments waypoint-runner
+  sudo --preserve-env=PATH -u vagrant waypoint server uninstall
+  sudo --preserve-env=PATH -u vagrant helm uninstall waypoint
   echo -e '\e[38;5;198m'"++++ Waypoint Context Clear"
   sudo --preserve-env=PATH -u vagrant waypoint context clear
-  #sudo --preserve-env=PATH -u vagrant waypoint context delete minikube
+  # sudo --preserve-env=PATH -u vagrant waypoint context delete minikube
   sudo --preserve-env=PATH -u vagrant waypoint context list
 
   # https://www.waypointproject.io/docs/troubleshooting#waypoint-server-in-kubernetes
   echo -e '\e[38;5;198m'"++++ Waypoint Install on Platform Kubernetes (Minikube)"
-  sudo --preserve-env=PATH -u vagrant waypoint install -platform=kubernetes -k8s-context=minikube -context-create=minikube -k8s-storageclassname=standard -k8s-helm-version=v0.1.8 -accept-tos
+  # sudo --preserve-env=PATH -u vagrant waypoint install -platform=kubernetes -k8s-context=minikube -context-create=minikube -accept-tos # -k8s-storageclassname=standard -k8s-helm-version=v0.1.8
+  # https://github.com/hashicorp/waypoint-helm
+  # https://www.waypointproject.io/docs/kubernetes/install#installing-the-waypoint-server-with-helm
+  sudo --preserve-env=PATH -u vagrant helm repo add hashicorp https://helm.releases.hashicorp.com
+  sudo --preserve-env=PATH -u vagrant helm install waypoint hashicorp/waypoint --set server.resources.requests.memory=1024Mi --set server.resources.requests.cpu=750m --set runner.enabled=false
   sudo --preserve-env=PATH -u vagrant kubectl get all
-  eval $(sudo --preserve-env=PATH -u vagrant minikube docker-env)
-  sleep 120;
+  # eval $(sudo --preserve-env=PATH -u vagrant minikube docker-env)
+
+  attempts=0
+  max_attempts=15
+  while ! ( sudo --preserve-env=PATH -u vagrant kubectl get po | grep waypoint-server | tr -s " " | cut -d " " -f3 | grep Running ) && (( $attempts < $max_attempts )); do
+    attempts=$((attempts+1))
+    sleep 60;
+    echo -e '\e[38;5;198m'"++++ Waiting for Waypoint to become available, (${attempts}/${max_attempts}) sleep 60s"
+    sudo --preserve-env=PATH -u vagrant kubectl get po
+    sudo --preserve-env=PATH -u vagrant kubectl get events | grep -e Memory -e OOM
+  done
+
+  echo -e '\e[38;5;198m'"++++ Kubectl port-forward for Waypoint"
+  sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/waypoint-server 19701:9701 --address="0.0.0.0" > /dev/null 2>&1 &
+
   sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/waypoint-server 19702:9702 --address="0.0.0.0" > /dev/null 2>&1 &
   
+  echo -e '\e[38;5;198m'"++++ Waypoint Login from on Platform Kubernetes (Minikube)"
+  sudo --preserve-env=PATH -u vagrant waypoint login -from-kubernetes -server-tls-skip-verify https://10.9.99.10:19701
+  echo -e '\e[38;5;198m'"++++ Waypoint Context Rename"
+  sudo --preserve-env=PATH -u vagrant waypoint context rename $(sudo --preserve-env=PATH -u vagrant waypoint context list | grep login | cut -d " " -f5) minikube
+  sudo --preserve-env=PATH -u vagrant waypoint context list
+
   echo -e '\e[38;5;198m'"++++ Set Waypoint Context Kubernetes (Minikube)"
-  export WAYPOINT_TOKEN_MINIKUBE=$(sudo --preserve-env=PATH -u vagrant waypoint user token)
+  export WAYPOINT_TOKEN_MINIKUBE=$(sudo --preserve-env=PATH -u vagrant kubectl get secret waypoint-server-token -o jsonpath="{.data.token}" | base64 --decode)
+  echo -e '\e[38;5;198m'"++++ Waypoint Server https://localhost:19702 and enter the following Token displayed below"
+  echo $WAYPOINT_TOKEN_MINIKUBE
   echo -e '\e[38;5;198m'"++++ Waypoint Context"
   sudo --preserve-env=PATH -u vagrant waypoint context list
   sudo --preserve-env=PATH -u vagrant waypoint context verify
@@ -78,6 +106,7 @@ app "kubernetes-trex-nodejs" {
 
   build {
     use "docker" {}
+    # registry via minikube addon in minikube/minikube.sh
     registry {
       use "docker" {
         image = "10.9.99.10:5001/trex-nodejs" # See minikube docker registry
@@ -124,8 +153,9 @@ EOF
 }
 
 function waypoint-nomad() {
-  # echo -e '\e[38;5;198m'"++++ Ensure Nomad is running"
-  # sudo bash /vagrant/hashicorp/nomad.sh
+  echo -e '\e[38;5;198m'"++++ Ensure Nomad is running"
+  sudo bash /vagrant/hashicorp/nomad.sh
+
   echo -e '\e[38;5;198m'"++++ Docker pull Waypoint Server container"
   docker pull hashicorp/waypoint:latest
   docker stop waypoint-server
@@ -150,6 +180,8 @@ function waypoint-nomad() {
   echo -e '\e[38;5;198m'"++++ Set Waypoint Context Nomad"
   sudo --preserve-env=PATH -u vagrant waypoint context use nomad
   export WAYPOINT_TOKEN_NOMAD=$(sudo --preserve-env=PATH -u vagrant waypoint user token)
+  echo -e '\e[38;5;198m'"++++ Waypoint Server https://localhost:9702 and enter the following Token displayed below"
+  echo $WAYPOINT_TOKEN_NOMAD
   echo -e '\e[38;5;198m'"++++ Waypoint Context"
   sudo --preserve-env=PATH -u vagrant waypoint context list
   sudo --preserve-env=PATH -u vagrant waypoint context verify
@@ -169,12 +201,13 @@ app "nomad-trex-nodejs" {
 
   build {
     use "docker" {}
+    # docker registry in docker/docker.sh
     registry {
       use "docker" {
-        image = "trex-nodejs" # See docker registry in docker/docker.sh
+        image = "10.9.99.10:5000/trex-nodejs" # See docker registry in docker/docker.sh
         tag   = "0.0.2"
         local = true
-        #encoded_auth = filebase64("/etc/docker/auth.json") # https://www.waypointproject.io/docs/lifecycle/build#private-registries
+        encoded_auth = filebase64("/etc/docker/auth.json") # https://www.waypointproject.io/docs/lifecycle/build#private-registries
       }
     }
   }

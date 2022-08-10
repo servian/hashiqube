@@ -8,6 +8,7 @@ app "kubernetes-trex-nodejs" {
 
   build {
     use "docker" {}
+    # registry via minikube addon in minikube/minikube.sh
     registry {
       use "docker" {
         image = "10.9.99.10:5001/trex-nodejs" # See minikube docker registry
