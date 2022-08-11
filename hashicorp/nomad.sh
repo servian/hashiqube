@@ -2,22 +2,26 @@
 
 function nomad-install() {
 
-# ensure localstack is running
-echo -e '\e[38;5;198m'"++++ Ensure Consul is running.."
-sudo bash /vagrant/hashicorp/consul.sh
+  if pgrep -x "consul" >/dev/null
+  then
+    echo "Consul is running"
+  else
+    echo -e '\e[38;5;198m'"++++ Ensure Consul is running.."
+    sudo bash /vagrant/hashicorp/consul.sh
+  fi
 
-arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
-if [[ $arch == x86_64* ]]; then
+  arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
+  if [[ $arch == x86_64* ]]; then
     ARCH="amd64"
-elif  [[ $arch == aarch64 ]]; then
+  elif  [[ $arch == aarch64 ]]; then
     ARCH="arm64"
-fi
-echo -e '\e[38;5;198m'"CPU is $ARCH"
+  fi
+  echo -e '\e[38;5;198m'"CPU is $ARCH"
 
-sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install curl unzip jq
-yes | sudo docker system prune -a
-yes | sudo docker system prune --volumes
-mkdir -p /etc/nomad
+  sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install curl unzip jq
+  yes | sudo docker system prune -a
+  yes | sudo docker system prune --volumes
+  mkdir -p /etc/nomad
 cat <<EOF | sudo tee /etc/nomad/server.conf
 data_dir  = "/var/lib/nomad"
 
@@ -115,26 +119,26 @@ EOF
     nomad server members
     nomad node status
   fi
-cd /vagrant/hashicorp/nomad/jobs;
-#nomad plan --address=http://localhost:4646 countdashboard.nomad
-#nomad run --address=http://localhost:4646 countdashboard.nomad
-#nomad plan --address=http://localhost:4646 countdashboardtest.nomad
-#nomad run --address=http://localhost:4646 countdashboardtest.nomad
-nomad plan --address=http://localhost:4646 fabio.nomad
-nomad run --address=http://localhost:4646 fabio.nomad
-nomad plan --address=http://localhost:4646 traefik.nomad
-nomad run --address=http://localhost:4646 traefik.nomad
-nomad plan --address=http://localhost:4646 traefik-whoami.nomad
-nomad run --address=http://localhost:4646 traefik-whoami.nomad
-# curl -v -H 'Host: fabio.service.consul' http://${VAGRANT_IP}:9999/
-echo -e '\e[38;5;198m'"++++ Nomad http://localhost:4646"
-echo -e '\e[38;5;198m'"++++ Nomad Documentation http://localhost:3333/#/hashicorp/README?id=nomad"
-echo -e '\e[38;5;198m'"++++ Fabio Dashboard http://localhost:9998"
-echo -e '\e[38;5;198m'"++++ Fabio Loadbalancer http://localhost:9998"
-echo -e '\e[38;5;198m'"++++ Fabio Documentation http://localhost:3333/#/hashicorp/README?id=fabio-load-balancer-for-nomad"
-echo -e '\e[38;5;198m'"++++ Treafik Dashboard http://localhost:8181"
-echo -e '\e[38;5;198m'"++++ Traefik Loadbalancer: http://localhost:8080"
-echo -e '\e[38;5;198m'"++++ Traefik Documentation: http://localhost:3333/#/hashicorp/README?id=traefik-load-balancer-for-nomad"
+  cd /vagrant/hashicorp/nomad/jobs;
+  #nomad plan --address=http://localhost:4646 countdashboard.nomad
+  #nomad run --address=http://localhost:4646 countdashboard.nomad
+  #nomad plan --address=http://localhost:4646 countdashboardtest.nomad
+  #nomad run --address=http://localhost:4646 countdashboardtest.nomad
+  nomad plan --address=http://localhost:4646 fabio.nomad
+  nomad run --address=http://localhost:4646 fabio.nomad
+  nomad plan --address=http://localhost:4646 traefik.nomad
+  nomad run --address=http://localhost:4646 traefik.nomad
+  nomad plan --address=http://localhost:4646 traefik-whoami.nomad
+  nomad run --address=http://localhost:4646 traefik-whoami.nomad
+  # curl -v -H 'Host: fabio.service.consul' http://${VAGRANT_IP}:9999/
+  echo -e '\e[38;5;198m'"++++ Nomad http://localhost:4646"
+  echo -e '\e[38;5;198m'"++++ Nomad Documentation http://localhost:3333/#/hashicorp/README?id=nomad"
+  echo -e '\e[38;5;198m'"++++ Fabio Dashboard http://localhost:9998"
+  echo -e '\e[38;5;198m'"++++ Fabio Loadbalancer http://localhost:9998"
+  echo -e '\e[38;5;198m'"++++ Fabio Documentation http://localhost:3333/#/hashicorp/README?id=fabio-load-balancer-for-nomad"
+  echo -e '\e[38;5;198m'"++++ Treafik Dashboard http://localhost:8181"
+  echo -e '\e[38;5;198m'"++++ Traefik Loadbalancer: http://localhost:8080"
+  echo -e '\e[38;5;198m'"++++ Traefik Documentation: http://localhost:3333/#/hashicorp/README?id=traefik-load-balancer-for-nomad"
 }
 
 nomad-install
