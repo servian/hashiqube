@@ -14,7 +14,7 @@ app "kubernetes-trex-nodejs" {
         image = "10.9.99.10:5001/trex-nodejs" # See minikube docker registry
         tag   = "0.0.2"
         local = false
-        #encoded_auth = filebase64("/etc/docker/auth.json") # https://www.waypointproject.io/docs/lifecycle/build#private-registries
+        # encoded_auth = filebase64("/etc/docker/auth.json") # https://www.waypointproject.io/docs/lifecycle/build#private-registries
       }
     }
   }

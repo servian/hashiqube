@@ -99,55 +99,7 @@ function waypoint-kubernetes-minikube() {
   echo -e '\e[38;5;198m'"++++ Waypoint Init and Up T-Rex Nodejs Example"
   echo -e '\e[38;5;198m'"++++ Found here /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs"
   cd /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs
-  echo -e '\e[38;5;198m'"++++ Write /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs/waypoint.hcl"
-  rm -rf /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs/waypoint.hcl
-  cat <<EOF | sudo tee /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs/waypoint.hcl
-project = "kubernetes-trex-nodejs"
-
-app "kubernetes-trex-nodejs" {
-  labels = {
-    "service" = "kubernetes-trex-nodejs",
-    "env"     = "dev"
-  }
-
-  build {
-    use "docker" {}
-    # registry via minikube addon in minikube/minikube.sh
-    registry {
-      use "docker" {
-        image = "10.9.99.10:5001/trex-nodejs" # See minikube docker registry
-        tag   = "0.0.2"
-        local = false
-        #encoded_auth = filebase64("/etc/docker/auth.json") # https://www.waypointproject.io/docs/lifecycle/build#private-registries
-      }
-    }
-  }
-
-  deploy {
-    use "kubernetes" {
-      probe_path   = "/"
-      replicas     = 1
-      service_port = 6001
-      probe {
-        initial_delay = 4
-      }
-      labels = {
-        env = "local"
-      }
-      annotations = {
-        demo = "yes"
-      }
-    }
-  }
-
-  release {
-    use "kubernetes" {
-      load_balancer = true
-      port          = 6001
-    }
-  }
-}
-EOF
+  echo -e '\e[38;5;198m'"++++ Waypoint Config /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs/waypoint.hcl"
   echo -e '\e[38;5;198m'"++++ Waypoint Init"
   sudo --preserve-env=PATH -u vagrant waypoint init
   echo -e '\e[38;5;198m'"++++ Waypoint Up"
@@ -199,41 +151,7 @@ function waypoint-nomad() {
   echo -e '\e[38;5;198m'"++++ Waypoint Init and Up T-Rex Nodejs Example"
   echo -e '\e[38;5;198m'"++++ Found here /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs"
   cd /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs
-  echo -e '\e[38;5;198m'"++++ Write /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs/waypoint.hcl"
-  rm -rf /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs/waypoint.hcl
-  cat <<EOF | sudo tee /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs/waypoint.hcl
-project = "nomad-trex-nodejs"
-
-app "nomad-trex-nodejs" {
-  labels = {
-    "service" = "nomad-trex-nodejs",
-    "env"     = "dev"
-  }
-
-  build {
-    # TODO: Waypoint application has trouble connecting to Waypoint server
-    # https://www.waypointproject.io/docs/entrypoint/disable#disable-the-waypoint-entrypoint
-    # disable_entrypoint = true
-    use "docker" {}
-    # docker registry in docker/docker.sh
-    registry {
-      use "docker" {
-        image = "10.9.99.10:5000/trex-nodejs" # See docker registry in docker/docker.sh
-        tag   = "0.0.2"
-        local = true
-        encoded_auth = filebase64("/etc/docker/auth.json") # https://www.waypointproject.io/docs/lifecycle/build#private-registries
-      }
-    }
-  }
-
-  deploy {
-    use "nomad" {
-      datacenter = "dc1"
-    }
-  }
-
-}
-EOF
+  echo -e '\e[38;5;198m'"++++ Waypoint config /vagrant/hashicorp/waypoint/custom-examples/nomad-trex-nodejs/waypoint.hcl"
   echo -e '\e[38;5;198m'"++++ Waypoint Init"
   sudo --preserve-env=PATH -u vagrant waypoint init
   echo -e '\e[38;5;198m'"++++ Waypoint Up"
