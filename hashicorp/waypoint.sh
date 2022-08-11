@@ -86,7 +86,7 @@ function waypoint-kubernetes-minikube() {
   echo -e '\e[38;5;198m'"++++ Waypoint Login from on Platform Kubernetes (Minikube)"
   sudo --preserve-env=PATH -u vagrant waypoint login -from-kubernetes -server-tls-skip-verify https://10.9.99.10:19701
   echo -e '\e[38;5;198m'"++++ Waypoint Context Rename"
-  sudo --preserve-env=PATH -u vagrant waypoint context rename $(sudo --preserve-env=PATH -u vagrant waypoint context list | grep login | cut -d " " -f5) minikube
+  sudo --preserve-env=PATH -u vagrant waypoint context rename $(sudo --preserve-env=PATH -u vagrant waypoint context list | grep login | tr -s " " | cut -d " " -f3) minikube
   sudo --preserve-env=PATH -u vagrant waypoint context list
 
   echo -e '\e[38;5;198m'"++++ Set Waypoint Context Kubernetes (Minikube)"
