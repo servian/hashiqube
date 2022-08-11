@@ -52,6 +52,8 @@ function waypoint-kubernetes-minikube() {
   sudo --preserve-env=PATH -u vagrant kubectl delete svc waypoint
   sudo --preserve-env=PATH -u vagrant kubectl delete deployments waypoint-runner
   # sudo --preserve-env=PATH -u vagrant waypoint server uninstall
+  sudo pkill $(sudo netstat -nlp | grep 19702 | tr -s " " | cut -d " " -f7 | cut -d "/" -f1)
+  sudo pkill $(sudo netstat -nlp | grep 19701 | tr -s " " | cut -d " " -f7 | cut -d "/" -f1)
   sudo --preserve-env=PATH -u vagrant helm uninstall waypoint
   echo -e '\e[38;5;198m'"++++ Waypoint Context Clear"
   sudo --preserve-env=PATH -u vagrant waypoint context clear
@@ -79,23 +81,39 @@ function waypoint-kubernetes-minikube() {
   done
 
   echo -e '\e[38;5;198m'"++++ Kubectl port-forward for Waypoint"
-  sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/waypoint-server 19701:9701 --address="0.0.0.0" > /dev/null 2>&1 &
+  attempts=0
+  max_attempts=15
+  while ! ( sudo netstat -nlp | grep 19701 ) && (( $attempts < $max_attempts )); do
+    attempts=$((attempts+1))
+    sleep 10;
+    echo -e '\e[38;5;198m'"++++ kubectl port-forward -n default service/waypoint-server 19701:9701 --address=\"0.0.0.0\", (${attempts}/${max_attempts}) sleep 10s"
+    sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/waypoint-server 19701:9701 --address="0.0.0.0" > /dev/null 2>&1 &
+  done
 
-  sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/waypoint-server 19702:9702 --address="0.0.0.0" > /dev/null 2>&1 &
+  attempts=0
+  max_attempts=15
+  while ! ( sudo netstat -nlp | grep 19702 ) && (( $attempts < $max_attempts )); do
+    attempts=$((attempts+1))
+    sleep 10;
+    echo -e '\e[38;5;198m'"++++ kubectl port-forward -n default service/waypoint-server 19702:9702 --address=\"0.0.0.0\", (${attempts}/${max_attempts}) sleep 10s"
+    sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/waypoint-server 19702:9702 --address="0.0.0.0" > /dev/null 2>&1 &
+  done
   
   echo -e '\e[38;5;198m'"++++ Waypoint Login from on Platform Kubernetes (Minikube)"
   sudo --preserve-env=PATH -u vagrant waypoint login -from-kubernetes -server-tls-skip-verify https://10.9.99.10:19701
   echo -e '\e[38;5;198m'"++++ Waypoint Context Rename"
   sudo --preserve-env=PATH -u vagrant waypoint context rename $(sudo --preserve-env=PATH -u vagrant waypoint context list | grep login | tr -s " " | cut -d " " -f3) minikube
   sudo --preserve-env=PATH -u vagrant waypoint context list
+  sudo --preserve-env=PATH -u vagrant waypoint context verify minikube
 
   echo -e '\e[38;5;198m'"++++ Set Waypoint Context Kubernetes (Minikube)"
-  export WAYPOINT_TOKEN_MINIKUBE=$(sudo --preserve-env=PATH -u vagrant kubectl get secret waypoint-server-token -o jsonpath="{.data.token}" | base64 --decode)
+  # export WAYPOINT_TOKEN_MINIKUBE=$(sudo --preserve-env=PATH -u vagrant kubectl get secret waypoint-server-token -o jsonpath="{.data.token}" | base64 --decode)
+  export WAYPOINT_TOKEN_MINIKUBE=$(sudo --preserve-env=PATH -u vagrant grep auth_token /home/vagrant/.config/waypoint/context/minikube.hcl | cut -d '"' -f2)
   echo -e '\e[38;5;198m'"++++ Waypoint Server https://localhost:19702 and enter the following Token displayed below"
   echo $WAYPOINT_TOKEN_MINIKUBE
   echo -e '\e[38;5;198m'"++++ Waypoint Context"
   sudo --preserve-env=PATH -u vagrant waypoint context list
-  sudo --preserve-env=PATH -u vagrant waypoint context verify
+  sudo --preserve-env=PATH -u vagrant waypoint context verify minikube
   echo -e '\e[38;5;198m'"++++ Waypoint Init and Up T-Rex Nodejs Example"
   echo -e '\e[38;5;198m'"++++ Found here /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs"
   cd /vagrant/hashicorp/waypoint/custom-examples/kubernetes-trex-nodejs
