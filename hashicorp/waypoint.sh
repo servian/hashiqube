@@ -136,7 +136,7 @@ function waypoint-nomad() {
   sudo rm -rf /opt/nomad/data/volume/waypoint/*
   echo -e '\e[38;5;198m'"++++ Waypoint Install on Platform Hashicorp Nomad"
   export NOMAD_ADDR='http://localhost:4646'
-  sudo --preserve-env=PATH -u vagrant waypoint install -platform=nomad -nomad-dc=dc1 -accept-tos -nomad-host-volume=waypoint -context-create=nomad -runner=false
+  sudo --preserve-env=PATH -u vagrant waypoint install -platform=nomad -nomad-dc=dc1 -accept-tos -nomad-host-volume=waypoint -nomad-consul-service=true -context-create=nomad -runner=false
   sleep 60;
   nomad job status
   nomad status

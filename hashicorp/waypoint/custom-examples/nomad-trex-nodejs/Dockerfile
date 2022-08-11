@@ -10,6 +10,8 @@ RUN npm install
 
 COPY . .
 
+RUN echo "nameserver 10.9.99.10" > /etc/resolv.conf
+
 EXPOSE 6001
 
 CMD [ "node", "index.js" ]

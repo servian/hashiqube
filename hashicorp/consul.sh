@@ -5,9 +5,9 @@ function consul-install() {
 
 arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
 if [[ $arch == x86_64* ]]; then
-    ARCH="amd64"
+  ARCH="amd64"
 elif  [[ $arch == aarch64 ]]; then
-    ARCH="arm64"
+  ARCH="arm64"
 fi
 echo -e '\e[38;5;198m'"CPU is $ARCH"
 
@@ -123,33 +123,36 @@ EOF
   consul kv put fabio/config/countdashtest1 "route add countdashtest fabio.service.consul:9999/countdashtest http://10.9.99.10:9022/ opts \"strip=/countdashtest\""
   consul kv put fabio/config/docsify "route add docsify docsify.service.consul:9999/ http://10.9.99.10:3333"
 
-  echo -e '\e[38;5;198m'"++++ Adding Consul for DNS lookups"
-  # https://learn.hashicorp.com/tutorials/consul/dns-forwarding#systemd-resolved-setup
-  mkdir -p /etc/systemd/resolved.conf.d/
-  cat <<EOF | sudo tee /etc/systemd/resolved.conf.d/consul.conf
-[Resolve]
-DNS=127.0.0.1
-DNSSEC=false
-Domains=~consul
-EOF
-  
-  iptables --table nat --append OUTPUT --destination localhost --protocol udp --match udp --dport 53 --jump REDIRECT --to-ports 8600
-  iptables --table nat --append OUTPUT --destination localhost --protocol tcp --match tcp --dport 53 --jump REDIRECT --to-ports 8600
-  iptables -vnL -t nat| grep 8600
-  
-  echo -e '\e[38;5;198m'"++++ Restart systemd-resolved"
-  systemctl restart systemd-resolved
+  echo -e '\e[38;5;198m'"++++ Install DNSMasq"
+  sudo systemctl disable systemd-resolved
+  sudo systemctl stop systemd-resolved
+  sleep 10;
+  sudo apt-get install -y dnsmasq
+  echo -e '\e[38;5;198m'"++++ Adding DNSMasq config for Consul for DNS lookups"
+  # https://learn.hashicorp.com/tutorials/consul/dns-forwarding#dnsmasq-setup
+  cat <<EOF | sudo tee /etc/dnsmasq.d/10-consul
+# Enable forward lookup of the 'consul' domain:
+server=/consul/10.9.99.10#8600
 
-  echo -e '\e[38;5;198m'"++++ Validate the systemd-resolved configuration"
+# Uncomment and modify as appropriate to enable reverse DNS lookups for
+# common netblocks found in RFC 1918, 5735, and 6598:
+#rev-server=0.0.0.0/8,127.0.0.1#8600
+#rev-server=10.0.0.0/8,127.0.0.1#8600
+#rev-server=100.64.0.0/10,127.0.0.1#8600
+#rev-server=127.0.0.1/8,127.0.0.1#8600
+#rev-server=169.254.0.0/16,127.0.0.1#8600
+#rev-server=172.16.0.0/12,127.0.0.1#8600
+#rev-server=192.168.0.0/16,127.0.0.1#8600
+#rev-server=224.0.0.0/4,127.0.0.1#8600
+#rev-server=240.0.0.0/4,127.0.0.1#8600
+EOF
+  sudo systemctl restart dnsmasq
+
+  echo -e '\e[38;5;198m'"++++ Set /etc/resolv.conf configuration"
   cat <<EOF | sudo tee /etc/resolv.conf
-nameserver 127.0.0.1
+nameserver 10.9.99.10
 nameserver 8.8.8.8
 EOF
-  systemctl is-active systemd-resolved
-  resolvectl domain
-  resolvectl query consul.service.consul
-  ls -l /etc/resolv.conf
-  host consul.service.consul
 
   echo -e '\e[38;5;198m'"++++ Consul http://localhost:8500"
   echo -e '\e[38;5;198m'"++++ Consul Documentation http://localhost:3333/#/hashicorp/README?id=consul"
