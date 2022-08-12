@@ -5,6 +5,82 @@
 # https://www.waypointproject.io/docs/getting-started
 # https://learn.hashicorp.com/tutorials/waypoint/get-started-nomad?in=waypoint/get-started-nomad
 
+# BUG: sometimes Waypooint pvc stays in state pending, I don't know why yet, below are some output of when it did work
+# $ kubectl get pv
+# NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                    STORAGECLASS   REASON   AGE
+# pvc-e16cd296-58a5-474b-8daa-7f34451d7839   10Gi       RWO            Delete           Bound    default/data-default-waypoint-server-0   standard                36m
+# $ kubectl get pvc
+# NAME                             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+# data-default-waypoint-server-0   Bound    pvc-e16cd296-58a5-474b-8daa-7f34451d7839   10Gi       RWO            standard       36m
+# vagrant@hashiqube0:~$ kubectl get pv pvc-e16cd296-58a5-474b-8daa-7f34451d7839 -o yaml
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   annotations:
+#     hostPathProvisionerIdentity: 52652bca-e1df-4de9-a8c1-4e084a386a28
+#     pv.kubernetes.io/provisioned-by: k8s.io/minikube-hostpath
+#   creationTimestamp: "2022-08-12T21:43:49Z"
+#   finalizers:
+#   - kubernetes.io/pv-protection
+#   name: pvc-e16cd296-58a5-474b-8daa-7f34451d7839
+#   resourceVersion: "2247"
+#   uid: a6a0d96b-754f-468c-bd8f-4be53b871fb7
+# spec:
+#   accessModes:
+#   - ReadWriteOnce
+#   capacity:
+#     storage: 10Gi
+#   claimRef:
+#     apiVersion: v1
+#     kind: PersistentVolumeClaim
+#     name: data-default-waypoint-server-0
+#     namespace: default
+#     resourceVersion: "2232"
+#     uid: e16cd296-58a5-474b-8daa-7f34451d7839
+#   hostPath:
+#     path: /tmp/hostpath-provisioner/default/data-default-waypoint-server-0
+#     type: ""
+#   persistentVolumeReclaimPolicy: Delete
+#   storageClassName: standard
+#   volumeMode: Filesystem
+# status:
+#   phase: Bound
+# vagrant@hashiqube0:~$ kubectl get pvc data-default-waypoint-server-0 -o yaml
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   annotations:
+#     pv.kubernetes.io/bind-completed: "yes"
+#     pv.kubernetes.io/bound-by-controller: "yes"
+#     volume.beta.kubernetes.io/storage-provisioner: k8s.io/minikube-hostpath
+#     volume.kubernetes.io/storage-provisioner: k8s.io/minikube-hostpath
+#   creationTimestamp: "2022-08-12T21:43:48Z"
+#   finalizers:
+#   - kubernetes.io/pvc-protection
+#   labels:
+#     app.kubernetes.io/instance: waypoint
+#     app.kubernetes.io/name: waypoint
+#     component: server
+#   name: data-default-waypoint-server-0
+#   namespace: default
+#   resourceVersion: "2250"
+#   uid: e16cd296-58a5-474b-8daa-7f34451d7839
+# spec:
+#   accessModes:
+#   - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 10Gi
+#   storageClassName: standard
+#   volumeMode: Filesystem
+#   volumeName: pvc-e16cd296-58a5-474b-8daa-7f34451d7839
+# status:
+#   accessModes:
+#   - ReadWriteOnce
+#   capacity:
+#     storage: 10Gi
+#   phase: Bound
+
 function waypoint-install() {
   arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
   if [[ $arch == x86_64* ]]; then
