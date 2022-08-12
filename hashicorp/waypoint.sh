@@ -66,7 +66,7 @@ function waypoint-kubernetes-minikube() {
   # https://github.com/hashicorp/waypoint-helm
   # https://www.waypointproject.io/docs/kubernetes/install#installing-the-waypoint-server-with-helm
   sudo --preserve-env=PATH -u vagrant helm repo add hashicorp https://helm.releases.hashicorp.com
-  sudo --preserve-env=PATH -u vagrant helm install waypoint hashicorp/waypoint --set server.resources.requests.memory=1024Mi --set server.resources.requests.cpu=750m --set runner.enabled=false
+  sudo --preserve-env=PATH -u vagrant helm install waypoint hashicorp/waypoint --set ui.service.type=ClusterIP --set server.resources.requests.memory=1024Mi --set server.resources.requests.cpu=750m --set server.storage.storageClass=standard --set runner.enabled=false --version v0.1.10
   sudo --preserve-env=PATH -u vagrant kubectl get all
   # eval $(sudo --preserve-env=PATH -u vagrant minikube docker-env)
 
@@ -102,7 +102,7 @@ function waypoint-kubernetes-minikube() {
   echo -e '\e[38;5;198m'"++++ Waypoint Login from on Platform Kubernetes (Minikube)"
   sudo --preserve-env=PATH -u vagrant waypoint login -from-kubernetes -server-tls-skip-verify https://10.9.99.10:19701
   echo -e '\e[38;5;198m'"++++ Waypoint Context Rename"
-  sudo --preserve-env=PATH -u vagrant waypoint context rename $(sudo --preserve-env=PATH -u vagrant waypoint context list | grep login | tr -s " " | cut -d " " -f3) minikube
+  sudo --preserve-env=PATH -u vagrant waypoint context rename $(sudo --preserve-env=PATH -u vagrant waypoint context list | grep login | tr -s " " | cut -d "|" -f2 | xargs) minikube
   sudo --preserve-env=PATH -u vagrant waypoint context list
   sudo --preserve-env=PATH -u vagrant waypoint context verify minikube
 
@@ -110,6 +110,7 @@ function waypoint-kubernetes-minikube() {
   # export WAYPOINT_TOKEN_MINIKUBE=$(sudo --preserve-env=PATH -u vagrant kubectl get secret waypoint-server-token -o jsonpath="{.data.token}" | base64 --decode)
   export WAYPOINT_TOKEN_MINIKUBE=$(sudo --preserve-env=PATH -u vagrant grep auth_token /home/vagrant/.config/waypoint/context/minikube.hcl | cut -d '"' -f2)
   echo -e '\e[38;5;198m'"++++ Waypoint Server https://localhost:19702 and enter the following Token displayed below"
+  echo $WAYPOINT_TOKEN_MINIKUBE > /home/vagrant/.waypoint-minikube-token
   echo $WAYPOINT_TOKEN_MINIKUBE
   echo -e '\e[38;5;198m'"++++ Waypoint Context"
   sudo --preserve-env=PATH -u vagrant waypoint context list
@@ -162,6 +163,7 @@ function waypoint-nomad() {
   sudo --preserve-env=PATH -u vagrant waypoint context use nomad
   export WAYPOINT_TOKEN_NOMAD=$(sudo --preserve-env=PATH -u vagrant waypoint user token)
   echo -e '\e[38;5;198m'"++++ Waypoint Server https://localhost:9702 and enter the following Token displayed below"
+  echo $WAYPOINT_TOKEN_NOMAD > /home/vagrant/.waypoint-nomad-token
   echo $WAYPOINT_TOKEN_NOMAD
   echo -e '\e[38;5;198m'"++++ Waypoint Context"
   sudo --preserve-env=PATH -u vagrant waypoint context list
