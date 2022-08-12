@@ -78,7 +78,15 @@ function minikube-install() {
   echo -e '\e[38;5;198m'"++++ Enable Minikube Docker Registry Addon"
   sudo --preserve-env=PATH -u vagrant minikube addons enable registry
   sleep 30;
-  sudo --preserve-env=PATH -u vagrant kubectl port-forward -n kube-system service/registry 5001:80 --address="0.0.0.0" > /dev/null 2>&1 &
+
+  attempts=0
+  max_attempts=15
+  while ! ( sudo netstat -nlp | grep 5001 ) && (( $attempts < $max_attempts )); do
+    attempts=$((attempts+1))
+    sleep 10;
+    echo -e '\e[38;5;198m'"++++ kubectl port-forward -n kube-system service/registry 5001:80 --address=\"0.0.0.0\", (${attempts}/${max_attempts}) sleep 10s"
+    sudo --preserve-env=PATH -u vagrant kubectl port-forward -n kube-system service/registry 5001:80 --address="0.0.0.0" > /dev/null 2>&1 &
+  done
 
   echo -e '\e[38;5;198m'"++++ Enable Minikube Default Storage Class Addon"
   sudo --preserve-env=PATH -u vagrant minikube addons enable default-storageclass
@@ -87,8 +95,17 @@ function minikube-install() {
   echo -e '\e[38;5;198m'"++++ Starting Minikube dashboard"
   sudo --preserve-env=PATH -u vagrant nohup minikube dashboard --url &
   sleep 30;
+
   # via port-forward
-  sudo --preserve-env=PATH -u vagrant kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 10888:80 --address="0.0.0.0" > /dev/null 2>&1 &
+  attempts=0
+  max_attempts=15
+  while ! ( sudo netstat -nlp | grep 10888 ) && (( $attempts < $max_attempts )); do
+    attempts=$((attempts+1))
+    sleep 10;
+    echo -e '\e[38;5;198m'"++++ kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 10888:80 --address=\"0.0.0.0\", (${attempts}/${max_attempts}) sleep 10s"
+    sudo --preserve-env=PATH -u vagrant kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 10888:80 --address="0.0.0.0" > /dev/null 2>&1 &
+  done
+
   # via kube proxy
   #sudo --preserve-env=PATH -u vagrant nohup kubectl proxy --address="0.0.0.0" -p 10888 --disable-filter=true --accept-hosts='^*$' &
   echo -e '\e[38;5;198m'"Tada! Minikube Dashboard is now available at http://localhost:10888"
@@ -128,7 +145,15 @@ function minikube-install() {
   echo -e '\e[38;5;198m'"The easiest way to access this service is to let kubectl to forward the port:"
   echo -e '\e[38;5;198m'"kubectl port-forward service/hello-minikube 18888:3000"
   sleep 25;
-  sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/hello-minikube 18888:3000 --address="0.0.0.0" > /dev/null 2>&1 &
+
+  attempts=0
+  max_attempts=15
+  while ! ( sudo netstat -nlp | grep 18888 ) && (( $attempts < $max_attempts )); do
+    attempts=$((attempts+1))
+    sleep 10;
+    echo -e '\e[38;5;198m'"++++ kubectl port-forward -n default service/hello-minikube 18888:3000 --address=\"0.0.0.0\", (${attempts}/${max_attempts}) sleep 10s"
+    sudo --preserve-env=PATH -u vagrant kubectl port-forward -n default service/hello-minikube 18888:3000 --address="0.0.0.0" > /dev/null 2>&1 &
+  done
   echo -e '\e[38;5;198m'"Tada! Your application is now available at http://localhost:18888/"
 
   echo -e '\e[38;5;198m'"Browse the catalog of easily installed Kubernetes services:"
