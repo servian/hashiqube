@@ -62,6 +62,9 @@ function minikube-install() {
   sudo --preserve-env=PATH -u vagrant curl -sLO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/$ARCH/kubectl
   sudo --preserve-env=PATH -u vagrant chmod +x kubectl
   sudo install kubectl /usr/local/bin/
+
+  echo "installing k9s"
+  sudo curl -sS https://webinstall.dev/k9s | bash
   
   echo -e '\e[38;5;198m'"++++ Initially, some services such as the storage-provisioner, may not yet be in a Running state. This is a normal condition during cluster bring-up, and will resolve itself momentarily. For additional insight into your cluster state, minikube bundles the Kubernetes Dashboard, allowing you to get easily acclimated to your new environment:\nSleep 30s.."
   sleep 30;

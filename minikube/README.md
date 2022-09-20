@@ -108,6 +108,25 @@ NAME       STATUS   ROLES    AGE   VERSION
 minikube   Ready    master   63m   v1.17.0
 ```
 
+## K9s for Minikube (CLI alternative to kubectl)
+k9s is a CLI tool for interacting with k8s clusters. It wraps kubectl functionality to provide a terminal interface for interaction with clusters in an intuitive way. 
+
+With the minikube installation k9s is also installed on the Vagrant machine. To run, after provisioning minikube run the following commands:
+```
+ssh vagrant
+k9s
+```
+You should be greeted with the following in your terminal:
+![k9s](images/k9s_screenshot1.png?raw=true "k9s")
+
+Press "0" to display all namespaces. 
+![k9s_2](images/k9s_screenshot2.png?raw=true "k9s_2")
+### Helpful k9s tips
+- Press ":" to bring up command prompt. You can enter commands to change screens. e.g. "deployments" takes you to list of deployments.
+- You can navigate around with arrow keys then press buttons as listed in the top right to interact with the highlighted item. e.g "l" to show logs of selected pod. 
+- For full instructions and preview video see the k9s website: https://k9scli.io/
+  
+
 ## Traefik on Minikube
 https://doc.traefik.io/traefik/v1.7/user-guide/kubernetes/
 
