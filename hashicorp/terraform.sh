@@ -3,8 +3,8 @@
 function terraform-install() {
   
   # ensure localstack is running
-  echo -e '\e[38;5;198m'"++++ Ensure Localstack is running.."
-  sudo bash /vagrant/localstack/localstack.sh
+  # echo -e '\e[38;5;198m'"++++ Ensure Localstack is running.."
+  # sudo bash /vagrant/localstack/localstack.sh
 
   arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
   if [[ $arch == x86_64* ]]; then

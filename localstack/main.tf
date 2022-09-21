@@ -39,14 +39,14 @@ provider "aws" {
   }
 }
 
-resource "aws_s3_bucket" "test-bucket" {
-  bucket = "my-bucket"
-}
+# resource "aws_s3_bucket" "beth-bucket" {
+#   bucket = "my-new-bucket"
+# }
 
-resource "aws_s3_bucket_acl" "test-bucket-acl" {
-  bucket = aws_s3_bucket.test-bucket.id
-  acl    = "private"
-}
+# resource "aws_s3_bucket_acl" "test-bucket-acl" {
+#   bucket = aws_s3_bucket.beth-bucket.id
+#   acl    = "private"
+# }
 
 /*
 resource "aws_api_gateway_authorizer" "demo" {
