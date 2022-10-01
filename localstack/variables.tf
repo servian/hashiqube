@@ -19,86 +19,86 @@ variable "ec2_instance" {
   )
   default = [
     {
-      ami_id        = 123
+      ami_id        = "ami-02e8cbf7681c3ae51"
       instance_type = "t1.micro"
-      az            = 123
+      az            = "ap-southeast-2"
       set_public_ip = false
-      subnet_id     = "oneal3j42rawefz"
+      subnet_id     = "subnet-07e73ebcae662e4a3"
       security_group = [
-        "onealwijer"
+        "dev-node"
       ]
       tags = {
-        apple = "onebanana"
-        pear  = "onepear"
+        Name        = "dev-node"
+        Environment = "dev"
       }
       ebs_disks = [
         {
-          disksize   = 123
+          disksize   = 128
           encryption = true
-          disktype   = "oneone342ewrgs4"
-          devicename = "oneonealij32krwe"
+          disktype   = "gp3"
+          devicename = "/dev/sdg"
         },
         {
-          disksize   = 12
+          disksize   = 64
           encryption = false
-          disktype   = "onetwo342ewrgs4"
-          devicename = "onetwoalij32krwe"
+          disktype   = "gp2"
+          devicename = "/dev/sdf"
         }
       ]
     },
     {
-      ami_id        = 123333
-      instance_type = "t1.micro"
-      az            = 123333
+      ami_id        = "ami-02e8cbf7681c3ae51"
+      instance_type = "t2.micro"
+      az            = "ap-southeast-2"
       set_public_ip = false
-      subnet_id     = "twoal3j42rawefz"
+      subnet_id     = "subnet-07e73ebcae662e4a3"
       security_group = [
-        "twoalwijer"
+        "dev-node"
       ]
       tags = {
-        apple = "twobanana"
-        pear  = "twopear"
+        Name        = "dev-node"
+        Environment = "dev"
       }
       ebs_disks = [
         {
-          disksize   = 123
+          disksize   = 128
           encryption = true
-          disktype   = "twoone342ewrgs4"
-          devicename = "twoonealij32krwe"
+          disktype   = "gp3"
+          devicename = "/dev/sdf"
         },
         {
-          disksize   = 12
+          disksize   = 64
           encryption = false
-          disktype   = "twotwo342ewrgs4"
-          devicename = "twotwoalij32krwe"
+          disktype   = "gp2"
+          devicename = "/dev/sdg"
         }
       ]
     },
     {
-      ami_id        = 126666
-      instance_type = "t1.micro"
-      az            = 126666
+      ami_id        = "ami-02e8cbf7681c3ae51"
+      instance_type = "t3.micro"
+      az            = "ap-southeast-2"
       set_public_ip = false
-      subnet_id     = "threeal3j42rawefz"
+      subnet_id     = "subnet-07e73ebcae662e4a3"
       security_group = [
-        "threealwijer"
+        "dev-node"
       ]
       tags = {
-        apple = "threebanana"
-        pear  = "threepear"
+        Name        = "dev-node"
+        Environment = "dev"
       }
       ebs_disks = [
         {
-          disksize   = 123
+          disksize   = 128
           encryption = true
-          disktype   = "threene342ewrgs4"
-          devicename = "threeonealij32krwe"
+          disktype   = "gp3"
+          devicename = "/dev/sdf"
         },
         {
-          disksize   = 12
+          disksize   = 64
           encryption = false
-          disktype   = "threetwo342ewrgs4"
-          devicename = "threetwoalij32krwe"
+          disktype   = "gp2"
+          devicename = "/dev/sdg"
         }
       ]
     }

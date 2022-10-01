@@ -9,4 +9,4 @@
         owner: root
     - name: Return all kv v2 secrets from a path
       debug:
-        msg: "{{ lookup('hashi_vault', 'secret=kv/ansible token=s.4iQgdlmLwXQUFFxTsM9gLQtg url=http://localhost:8200') }}"
+        msg: "{{ lookup('hashi_vault', 'secret=kv/ansible token=hvs.CAESIK2fsE_LCBTs3Ikw0d0O4QD9acJSMHZBA873CMnkMOGVGh4KHGh2cy5uOTFGQUFESkhsOWI4RUY5UHFoYlY3U1c url=http://localhost:8200') }}"

@@ -1,6 +1,23 @@
 #!/bin/bash
 
 function packer-install() {
+
+  arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
+  if [[ $arch == x86_64* ]]; then
+    ARCH="amd64"
+  elif  [[ $arch == aarch64 ]]; then
+    ARCH="arm64"
+  fi
+  echo -e '\e[38;5;198m'"CPU is $ARCH"
+
+  if pgrep -x "vault" >/dev/null
+  then
+    echo "Vault is running"
+  else
+    echo -e '\e[38;5;198m'"++++ Ensure Vault is running.."
+    sudo bash /vagrant/hashicorp/vault.sh
+  fi
+
   grep -q "PACKER_LOG=1" /etc/environment
   if [ $? -eq 1 ]; then
     echo "PACKER_LOG=1" >> /etc/environment
@@ -11,7 +28,7 @@ function packer-install() {
   if [ $? -eq 1 ]; then
     echo "PACKER_LOG_PATH=/var/log/packer.log" >> /etc/environment
   else
-    sudo sed 's/PACKER_LOG_PATH=.*/PACKER_LOG_PATH=/var/log/packer.log/g' /etc/environment
+    sudo sed 's/PACKER_LOG_PATH=.*/PACKER_LOG_PATH=\/var\/log\/packer.log/g' /etc/environment
   fi
   sudo touch /var/log/packer.log
   sudo chmod 777 /var/log/packer.log
@@ -19,7 +36,7 @@ function packer-install() {
   if [ -f /usr/local/bin/packer ]; then
     echo -e '\e[38;5;198m'"++++ `/usr/local/bin/packer version` already installed at /usr/local/bin/packer"
   else
-    LATEST_URL=$(curl --silent https://releases.hashicorp.com/index.json | jq '{packer}' | egrep "linux_amd.*64" | sort -rh | head -1 | awk -F[\"] '{print $4}')
+    LATEST_URL=$(curl --silent https://releases.hashicorp.com/index.json | jq '{packer}' | egrep "linux.*$ARCH" | sort -rh | head -1 | awk -F[\"] '{print $4}')
     wget -q $LATEST_URL -O /tmp/packer.zip
     sudo mkdir -p /usr/local/bin
     (cd /usr/local/bin && unzip /tmp/packer.zip)
@@ -95,16 +112,10 @@ EOF
   if [ -f /usr/bin/docker ]; then
     echo -e '\e[38;5;198m'"++++ `/usr/bin/docker -v` already installed at /usr/bin/docker"
   else
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-    sudo -i
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-    sudo apt-get update
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes docker-ce docker-ce-cli containerd.io
-    sudo usermod -aG docker vagrant
+    sudo bash /vagrant/docker/docker.sh
   fi
   echo -e '\e[38;5;198m'"++++ Packer build Linux Docker container configured with Ansible"
-  packer build /vagrant/hashicorp/packer/linux/ubuntu/ubuntu16.04.json
+  packer build /vagrant/hashicorp/packer/linux/ubuntu/ubuntu20.04.json
 }
 
 packer-install

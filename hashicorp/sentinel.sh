@@ -1,11 +1,19 @@
 #!/bin/bash
 
 function sentinel-install() {
-sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install curl unzip jq
+  arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
+  if [[ $arch == x86_64* ]]; then
+    ARCH="amd64"
+  elif  [[ $arch == aarch64 ]]; then
+    ARCH="arm64"
+  fi
+  echo -e '\e[38;5;198m'"CPU is $ARCH"
+
+  sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install curl unzip jq
   if [ -f /usr/local/bin/sentinel ]; then
     echo -e '\e[38;5;198m'"++++ `/usr/local/bin/sentinel version` already installed at /usr/local/bin/sentinel"
   else
-    LATEST_URL=$(curl --silent https://releases.hashicorp.com/index.json | jq '{sentinel}' | egrep "linux_amd.*64" | sort -rh | head -1 | awk -F[\"] '{print $4}')
+    LATEST_URL=$(curl --silent https://releases.hashicorp.com/index.json | jq '{sentinel}' | egrep "linux.*$ARCH" | sort -rh | head -1 | awk -F[\"] '{print $4}')
     wget -q $LATEST_URL -O /tmp/sentinel.zip
     mkdir -p /usr/local/bin
     (cd /usr/local/bin && unzip /tmp/sentinel.zip)
