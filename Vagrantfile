@@ -200,10 +200,6 @@ Vagrant::configure("2") do |config|
       # vagrant up --provision-with docsify to only run this on vagrant up
       config.vm.provision "docsify", type: "shell", preserve_order: true, privileged: false, path: "docsify/docsify.sh"
 
-      # install terraform
-      # vagrant up --provision-with terraform to only run this on vagrant up
-      config.vm.provision "terraform", preserve_order: true, type: "shell", privileged: true, path: "hashicorp/terraform.sh"
-
 
       # blast-radius
 
@@ -242,6 +238,10 @@ Vagrant::configure("2") do |config|
       # install sentinel
       # vagrant up --provision-with sentinel to only run this on vagrant up
       config.vm.provision "sentinel", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/sentinel.sh"
+
+      # install terraform
+      # vagrant up --provision-with terraform to only run this on vagrant up
+      config.vm.provision "terraform", preserve_order: true, type: "shell", privileged: true, path: "hashicorp/terraform.sh"
 
       # install localstack
       # vagrant up --provision-with localstack to only run this on vagrant up

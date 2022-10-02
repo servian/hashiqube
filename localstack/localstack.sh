@@ -12,13 +12,12 @@ elif  [[ $arch == aarch64 ]]; then
 fi
 echo -e '\e[38;5;198m'"CPU is $ARCH"
 
-sudo -i -u vagrant
 pip3 install --upgrade awscli-local
-rm awscliv2.zip
+sudo rm -rf awscliv2.zip
 # https://aws.amazon.com/blogs/developer/aws-cli-v2-now-available-for-linux-arm/ aarch64
 curl -s "https://awscli.amazonaws.com/awscli-exe-linux-${arch}.zip" -o "awscliv2.zip"
-rm -rf aws
-unzip -q awscliv2.zip
+sudo rm -rf aws
+sudo unzip -q awscliv2.zip
 yes | sudo ./aws/install --update
 echo -e '\e[38;5;198m'"aws --version"
 aws --version
@@ -28,3 +27,22 @@ sudo -E docker stop localstack_main
 yes | sudo docker system prune --volumes
 sudo docker run --rm -it -d -p 4566:4566 -p 4571:4571 --rm --privileged --memory 256M --name localstack_main localstack/localstack
 sudo docker ps | grep localstack
+
+cd /vagrant/localstack/
+export PATH=$HOME/.local/bin:$PATH
+echo -e '\e[38;5;198m'"++++ removing previous state files.."
+rm -rf ./terraform.tfstate*
+echo -e '\e[38;5;198m'"++++ terraform init.."
+terraform init
+echo -e '\e[38;5;198m'"++++ terraform fmt.."
+terraform fmt
+echo -e '\e[38;5;198m'"++++ terraform validate.."
+terraform validate
+echo -e '\e[38;5;198m'"++++ terraform plan.."
+terraform plan
+echo -e '\e[38;5;198m'"++++ terraform apply.."
+terraform apply --auto-approve
+echo -e '\e[38;5;198m'"++++ awslocal s3 ls.."
+awslocal s3 ls || true
+echo -e '\e[38;5;198m'"++++ terraform destroy.."
+terraform destroy --auto-approve
