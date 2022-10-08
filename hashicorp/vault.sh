@@ -30,15 +30,19 @@ echo -e '\e[38;5;198m'"CPU is $ARCH"
 sudo DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install curl unzip jq
 # only do if vault is not found
 if [ ! -f /usr/local/bin/vault ]; then
-
+  
+  echo -e '\e[38;5;198m'"++++ "
   echo -e '\e[38;5;198m'"++++ Vault not installed, installing.."
+  echo -e '\e[38;5;198m'"++++ "
 
   LATEST_URL=$(curl -sL https://releases.hashicorp.com/vault/index.json | jq -r '.versions[].builds[].url' | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n | egrep -v 'rc|ent|beta' | egrep "linux.*$ARCH" | sort -V | tail -n 1)
   wget -q $LATEST_URL -O /tmp/vault.zip
 
   mkdir -p /usr/local/bin
   (cd /usr/local/bin && unzip /tmp/vault.zip)
+  echo -e '\e[38;5;198m'"++++ "
   echo -e '\e[38;5;198m'"++++ Installed `/usr/local/bin/vault --version`"
+  echo -e '\e[38;5;198m'"++++ "
 
   # enable command autocompletion
   vault -autocomplete-install
@@ -130,8 +134,11 @@ EOF
   sleep 20
   vault operator init > /etc/vault/init.file
 
+  echo -e '\e[38;5;198m'"++++ "
   echo -e '\e[38;5;198m'"++++ Vault http://localhost:8200/ui and enter the following codes displayed below"
+  echo -e '\e[38;5;198m'"++++ "
   echo -e '\e[38;5;198m'"++++ Auto unseal vault"
+  echo -e '\e[38;5;198m'"++++ "
   for i in $(cat /etc/vault/init.file | grep Unseal | cut -d " " -f4 | head -n 3); do vault operator unseal $i; done
   vault status
   cat /etc/vault/init.file
@@ -164,11 +171,15 @@ else
   else
     sed -i "s%VAULT_ADDR=.*%VAULT_ADDR=http://127.0.0.1:8200%g" /etc/environment
   fi
+  echo -e '\e[38;5;198m'"++++ "
   echo -e '\e[38;5;198m'"++++ Vault already installed and running"
   echo -e '\e[38;5;198m'"++++ Vault http://localhost:8200/ui and enter the following codes displayed below"
+  echo -e '\e[38;5;198m'"++++ "
   # check vault status
   # vault status
+  echo -e '\e[38;5;198m'"++++ "
   echo -e '\e[38;5;198m'"++++ Auto unseal vault"
+  echo -e '\e[38;5;198m'"++++ "
   for i in `cat /etc/vault/init.file | grep Unseal | cut -d " " -f4 | head -n 3`; do vault operator unseal $i; done
   vault status
   cat /etc/vault/init.file

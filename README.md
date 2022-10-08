@@ -8,6 +8,7 @@ HashiCorp blog post about HashiQube: https://www.hashicorp.com/resources/hashiqu
 HashiQube website: https://servian.github.io/hashiqube <br />
 HashiQube github: https://github.com/servian/hashiqube <br />
 HashiQube youtube: https://www.youtube.com/watch?v=6jGDAGWaFiw
+HashiQube medium: https://medium.com/search?q=hashiqube
 
 ## HashiQube runs all HashiCorp's products 
 ![HashiQube](images/thestack.png?raw=true "HashiQube")
@@ -30,11 +31,13 @@ Thanks to the flexibility of the HashiCorp products there is no need wonder how 
 | mac apple | ✓ | ✘ | ✘ |
 
 ## Instructions
-* Vagrant - Please download __Vagrant__ from https://www.vagrantup.com/downloads.html and install
+:bulb: Docker is the Default and preferred way to run Hashiqube
+
 * Docker - Please download __Docker__ from https://www.docker.com/products/docker-desktop and install
+* Vagrant - Please download __Vagrant__ from https://www.vagrantup.com/downloads.html and install
 * Virtualbox (Optional) - Please download __Virtualbox__ from https://www.virtualbox.org/wiki/Downloads and install
 * Using `git` - clone this repo `git clone $repo .` [__What is Git?__](git/#git)
-* Inside the local repo folder, do `vagrant up --provision --provider docker` - This will setup, Vault, Nomad, Consul, Terraform, Localstack and Docker
+* Inside the local repo folder, do `vagrant up --provision` - This will setup, Vault, Nomad, Consul, Terraform, Localstack and Docker
 * Documentation locally available at http://localhost:3333
 
 ## Components
@@ -73,29 +76,7 @@ Please create the following file: __/etc/vbox/networks.conf__ with the following
 * 2001::/64
 ``` 
 
-and re-run `vagrant up --provision --provider docker`
-
-## Dependencies
-To get started we are now going to install some core dependencies to get the Lab started, you need to install
-below dependencies before you can do anything
-
-__Mac Users only, Windows Users can skip this step__
-Let's first check if we have an __M1 Mac__, if that is the case the __virtualbox__ provider will not work.
-
-Click on the Apple Icon top left
-![About this Mac](images/mac_apple_icon.png?raw=true "About this Mac")
-
-and click on __About this Mac__
-
-If you see an __Intel__ chip, you can proceed with the `virtualbox` provider.
-![About this Mac Intel](images/mac_intel.png?raw=true "About this Mac Intel")
-
-If you see an __Apple M1__ chip, please ensure you specify the environment variable and the provider to be docker.
-```
-vagrant plugin uninstall vagrant-hostsupdater # the hostsupdator plugin does not work with the docker provider
-```
-
-![About this Mac M1](images/mac_m1.png?raw=true "About this Mac M1")
+and re-run `vagrant up --provision`
 
 #### Docker Desktop
 Docker Desktop is an easy-to-install application for your Mac or Windows environment that enables you to build and share containerized applications and microservices. It's a graphical user interface for the docker service.
@@ -115,7 +96,7 @@ Now that docker has been installed we need to ensure that your docker environmen
 
 ![Docker Desktop Resources](images/docker_installed_resources.png?raw=true "Docker Desktop Resources")
 
-* Please ensure that you give your docker daemon at least __12G of RAM__ and sufficient disk space
+* Please ensure that you give your docker daemon at least __8G of RAM__ and sufficient disk space
 
 ## Consul DNS
 __Local DNS via Consul__ <br />
@@ -128,11 +109,11 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 
 ## Pre-requisites
 * 10GB of disk space
-* 4GB RAM
+* 8GB RAM
 * Admin rights / sudo (you will be asked to update ETC Host file)
 * Virtualbox
 * Vagrant
-* `vagrant up --provision --provider docker`
+* `vagrant up --provision`
 
 ## Additional Information
 * [__Multi Cloud__](multi-cloud/#terraform-hashicorp-hashiqube) - Hashiqube on AWS, GCP and Azure (Clustered) https://registry.terraform.io/modules/star3am/hashiqube/hashicorp/latest
@@ -166,7 +147,7 @@ For Documentation please open http://localhost:3333 in your browser
 * Vault http://localhost:8200
 * Nomad http://localhost:4646
 * Consul http://localhost:8500
-* Localstack http://localhost:8080
+* Docsify http://localhost:3333
 
 ## HashiQube runs all HashiCorp's products
 ![HashiQube](images/hashicorp_products.png?raw=true "HashiQube")
@@ -183,7 +164,7 @@ For Documentation please open http://localhost:3333 in your browser
 * Fabio http://localhost:9999
 
 ### Vagrant Basic Usage
-* vagrant up --provision OR vagrant up --provision-with bootstrap|nomad|consul|vault|docker|ldap --provider docker
+* vagrant up --provision OR vagrant up --provision-with bootstrap|nomad|consul|vault|docker|ldap
 * vagrant global-status # to see which VMs are active
 * vagrant global-status --prune # to remove stale VMs from Vagrant cache
 * vagrant status # vagrant status
@@ -255,6 +236,7 @@ __Solution__ Ensure the following contents are present in `/etc/vbox/networks.co
 For suggestions, feedback and queries please branch or and submit a Pull Request or directly contact the architects of the HashiQube via email:
 
 Lead Automation Architect [riaan.nolan@servian.com](mailto:riaan.nolan@servian.com)
+https://www.linkedin.com/in/riaannolan/
 
 ## Contributors and Special mentions
 A Very special mention to HashiQube's contributors, Thank You All for your help, suggestions and contributions no matter how small <3
@@ -264,6 +246,8 @@ A Very special mention to HashiQube's contributors, Thank You All for your help,
  - Ringo Chan
  - Ehsan Mirzaei
  - Greg Luxford
+ - Byron Tuckett
+ - Lane Birmingham
 
 ## Videos
 Videos were made with asciinema https://asciinema.org/
