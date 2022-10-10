@@ -11,7 +11,7 @@ HashiQube youtube: https://www.youtube.com/watch?v=6jGDAGWaFiw
 HashiQube medium: https://medium.com/search?q=hashiqube
 
 ## HashiQube runs all HashiCorp's products 
-![HashiQube](images/thestack.png?raw=true "HashiQube")
+![HashiQube](images/servian-thestack.png?raw=true "HashiQube")
 
 ## Purpose
 HashiQube has been created to enable anyone who is interested in secure automation pipelines the ability to run a suite of ‘best in class’ tools their local machines at the cost of a small amount of system resources.
