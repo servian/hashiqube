@@ -7,7 +7,7 @@ Once the Qube is up an internet connection is no longer needed meaning sales pit
 HashiCorp blog post about HashiQube: https://www.hashicorp.com/resources/hashiqube-a-development-lab-using-all-the-hashicorp-products <br />
 HashiQube website: https://servian.github.io/hashiqube <br />
 HashiQube github: https://github.com/servian/hashiqube <br />
-HashiQube youtube: https://www.youtube.com/watch?v=6jGDAGWaFiw
+HashiQube youtube: https://www.youtube.com/watch?v=6jGDAGWaFiw <br />
 HashiQube medium: https://medium.com/search?q=hashiqube
 
 ## HashiQube runs all HashiCorp's products 
@@ -139,6 +139,7 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 * [__Minikube__](minikube/#minikube) - Run Kubernetes locally
 * [__Newrelic Kubernetes Monitoring__](newrelic-kubernetes-monitoring/#newrelic-kubernetes-monitoring) - Monitor Kubernetes Clusters and Workloads with Newrelic
 * [__Docsify__](docsify/#docsify) - A magical documentation site generator
+* [__Ansible-Tower__](ansible-tower/#ansible-tower) - Red Hat Ansible Tower
 
 Once the stack is up you will have a large number of services running and available on `localhost` <br />
 For Documentation please open http://localhost:3333 in your browser

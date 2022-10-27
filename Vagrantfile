@@ -105,6 +105,7 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 18888, host: 18888 # hello minikube application
         config.vm.network "forwarded_port", guest: 18889, host: 18889 # apache airflow
         config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
+        config.vm.network "forwarded_port", guest: 8043, host: 8043 # ansible-tower
 
       end
 
@@ -299,6 +300,9 @@ Vagrant::configure("2") do |config|
 
       
 
+      # ansible-tower
+      # vagrant up --provision-with ansible-tower to only run this on vagrant up
+      config.vm.provision "ansible-tower", run: "never", type: "shell", preserve_order: true, privileged: false, path: "ansible-tower/ansible-tower.sh"
 
 
 
