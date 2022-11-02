@@ -6,11 +6,19 @@ export PATH=$PATH:/root/.local/bin
 
 arch=$(lscpu | grep "Architecture" | awk '{print $NF}')
 if [[ $arch == x86_64* ]]; then
-    ARCH="amd64"
+  ARCH="amd64"
 elif  [[ $arch == aarch64 ]]; then
-    ARCH="arm64"
+  ARCH="arm64"
 fi
 echo -e '\e[38;5;198m'"CPU is $ARCH"
+
+if [[ ! -f /usr/local/bin/terraform ]];
+then
+  echo -e '\e[38;5;198m'"++++ Ensure Terraform is not installed, installing"
+  sudo bash /vagrant/hashicorp/terraform.sh
+else
+  echo -e '\e[38;5;198m'"++++ Terraform is installed"
+fi
 
 pip3 install --upgrade awscli-local
 sudo rm -rf awscliv2.zip
