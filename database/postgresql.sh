@@ -42,6 +42,11 @@ else
 fi
 
 echo -e '\e[38;5;198m'"++++ "
+echo -e '\e[38;5;198m'"++++ Source /etc/environment"
+echo -e '\e[38;5;198m'"++++ "
+source /etc/environment
+
+echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Show users in database"
 echo -e '\e[38;5;198m'"++++ "
 sudo docker exec postgres psql -U root -c '\du'
