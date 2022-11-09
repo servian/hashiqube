@@ -69,7 +69,7 @@ function minikube-install() {
   # https://minikube.sigs.k8s.io/docs/commands/start/
   # https://unofficial-kubernetes.readthedocs.io/en/latest/admin/admission-controllers/
   # https://github.com/kubernetes/minikube/issues/604
-  sudo --preserve-env=PATH -u vagrant CHANGE_MINIKUBE_NONE_USER=true minikube start --driver=docker --force-systemd=true --insecure-registry="10.9.99.0/24" --cpus 4 --memory $(free -m | tr -s " " | grep Mem | cut -d " " -f2) --disk-size=2g --mount-string="/vagrant:/vagrant" --mount --extra-config=apiserver.enable-admission-plugins="DefaultStorageClass"
+  sudo --preserve-env=PATH -u vagrant CHANGE_MINIKUBE_NONE_USER=true minikube start --driver=docker --force-systemd=true --insecure-registry="10.9.99.0/24" --cpus=4 --memory=$(expr $(free -m | tr -s " " | grep Mem | cut -d " " -f2) - 2048) --disk-size=2g --mount-string="/vagrant:/vagrant" --mount --extra-config=apiserver.enable-admission-plugins="DefaultStorageClass"
   # --extra-config=apiserver.enable-admission-plugins="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook"
   # "ResourceQuota,ServiceAccount,MutatingAdmissionWebhook,LimitRanger,NamespaceExists,NamespaceLifecycle," --kubelet.node-ip=10.9.99.10 --apiserver-name=0.0.0.0 --apiserver-ips=0.0.0.0
 
