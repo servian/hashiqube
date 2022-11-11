@@ -1,0 +1,25 @@
+# https://artifacthub.io/packages/helm/airflow-helm/airflow/8.3.1
+airflow:
+  ## environment variables for airflow configs
+  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/configuration/airflow-configs.md
+  config:
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+    AIRFLOW__CORE__LOAD_EXAMPLES: "True"
+    AIRFLOW_CONN_HASHIQUBE: "ssh://vagrant:vagrant@10.9.99.10:22?timeout=10&compress=false&no_host_key_check=true&allow_host_key_change=true"
+  
+  ## extra VolumeMounts for the airflow Pods
+  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/kubernetes/mount-persistent-volumes.md
+  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/kubernetes/mount-files.md
+  extraVolumeMounts:
+    - name: dags-data-volume-mount
+      mountPath: /opt/airflow/dags
+      readOnly: false
+
+  ## extra Volumes for the airflow Pods
+  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/kubernetes/mount-persistent-volumes.md
+  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/kubernetes/mount-files.md
+  extraVolumes:
+    - name: dags-data-volume
+      persistentVolumeClaim:
+        claimName: airflow-dags
+        readOnly: false

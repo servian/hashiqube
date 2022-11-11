@@ -140,6 +140,8 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 * [__Newrelic Kubernetes Monitoring__](newrelic-kubernetes-monitoring/#newrelic-kubernetes-monitoring) - Monitor Kubernetes Clusters and Workloads with Newrelic
 * [__Docsify__](docsify/#docsify) - A magical documentation site generator
 * [__Ansible-Tower__](ansible-tower/#ansible-tower) - Red Hat Ansible Tower
+* [__Dbt__](dbt/#dbt) - Dbt is a data transformation tool that enables data analysts and engineers to transform, test and document data in the cloud data warehouse
+* [__Airflow__](apache-airflow/#apache-airflow) - Apache Airflow is an open-source workflow management platform for data engineering pipelines
 
 Once the stack is up you will have a large number of services running and available on `localhost` <br />
 For Documentation please open http://localhost:3333 in your browser

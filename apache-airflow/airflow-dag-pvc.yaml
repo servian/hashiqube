@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: airflow-dags
+  namespace: airflow
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: "/vagrant/apache-airflow/dags"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: airflow-dags
+  namespace: airflow
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  volumeName: airflow-dags
+  resources:
+    requests:
+      storage: 1Gi

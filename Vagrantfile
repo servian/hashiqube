@@ -106,6 +106,7 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 18889, host: 18889 # apache airflow
         config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
         config.vm.network "forwarded_port", guest: 8043, host: 8043 # ansible-tower
+        config.vm.network "forwarded_port", guest: 28080, host: 28080 # dbt docs serve
 
       end
 
@@ -297,6 +298,9 @@ Vagrant::configure("2") do |config|
       # vagrant up --provision-with minikube to only run this on vagrant up
       config.vm.provision "minikube", run: "never", type: "shell", preserve_order: true, privileged: false, path: "minikube/minikube.sh"
 
+      # apache-airflow
+      # vagrant up --provision-with apache-airflow to only run this on vagrant up
+      config.vm.provision "apache-airflow", run: "never", type: "shell", preserve_order: true, privileged: false, path: "apache-airflow/apache-airflow.sh"
 
       
 
@@ -309,6 +313,9 @@ Vagrant::configure("2") do |config|
 
       
       
+      # dbt 
+      # vagrant up --provision-with dbt to only run this on vagrant up
+      config.vm.provision "dbt", run: "never", type: "shell", preserve_order: true, privileged: false, path: "dbt/dbt-global.sh"
 
       # vagrant up --provision-with bootstrap to only run this on vagrant up
       config.vm.provision "welcome", preserve_order: true, type: "shell", privileged: true, inline: <<-SHELL

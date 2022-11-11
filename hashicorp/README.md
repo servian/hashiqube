@@ -5,6 +5,27 @@ http://www.hashicorp.com
 HashiCorp delivers consistent workflows to provision, secure, connect, and run any infrastructure for any application.
 HashiCorp was founded by Mitchell Hashimoto and Armon Dadgar in 2012 with the goal of revolutionizing datacenter management: application development, delivery, and maintenance. ... IaaS, PaaS, SaaS. ... Our tools manage both physical machines and virtual machines, Windows, and Linux, SaaS ...
 
+## HashiStack
+* [Terraform](/hashicorp/?id=terraform)
+* [Vault](/hashicorp/?id=vault)
+* [Consul](/hashicorp/?id=consul)
+* [Nomad](/hashicorp/?id=nomad)
+* [Boundary](/hashicorp/?id=boundary)
+* [Waypoint](/hashicorp/?id=waypoint)
+* [Vagrant](/hashicorp/?id=vagrant)
+* [Packer](/hashicorp/?id=packer)
+
+## So how do we use the HashiStack
+
+Kelsey Hightower presenting 12-Factor Apps and the HashiStack
+https://github.com/kelseyhightower/hashiapp
+
+Five years ago the world was introduced to 12 Factor apps which provided the blueprint for building applications for the cloud. 
+
+As we move beyond the cloud into Hyperscale computing applications must be designed to be globally available and always on. Building on the foundation of 12 Factor, this session will introduce key requirements for Hyperscale applications such as high performance low latency communication, and playing nice in a distributed system. Attendees will learn how to build Hyperscale applications from the ground up using the HashiStack (Nomad, Vault, and Consul).
+
+[![Kelsey Hightower: 12-Factor Apps and the HashiStack](https://img.youtube.com/vi/NVl9cIiPF80/maxresdefault.jpg)](https://www.youtube.com/watch?v=NVl9cIiPF80)
+
 ## Vagrant
 https://www.vagrantup.com/
 
@@ -753,6 +774,8 @@ https://www.terraform.io/
 
 Terraform is an open-source infrastructure as code software tool created by HashiCorp. It enables users to define and provision a datacenter infrastructure using a high-level configuration language known as Hashicorp Configuration Language, or optionally JSON.
 
+[![Armon Dadgar: Terraform Workflow at Scale, Best Practices](https://img.youtube.com/vi/9c0s93GcXVw/maxresdefault.jpg)](https://www.youtube.com/watch?v=9c0s93GcXVw)
+
 `terraform plan`
 ```
 Refreshing Terraform state in-memory prior to plan...
@@ -811,6 +834,8 @@ https://www.vaultproject.io/
 
 Manage Secrets and Protect Sensitive Data.
 Secure, store and tightly control access to tokens, passwords, certificates, encryption keys for protecting secrets and other sensitive data using a UI, CLI, or HTTP API.
+
+[![Armon Dadgar: Introduction to HashiCorp Vault](https://img.youtube.com/vi/VYfl-DpZ5wM/maxresdefault.jpg)](https://www.youtube.com/watch?v=VYfl-DpZ5wM)
 
 `vagrant up --provision-with vault`  
 ```                                                                     

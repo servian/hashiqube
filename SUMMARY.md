@@ -2,7 +2,9 @@
 
   * [Ansible](ansible/README.md)
   * [Ansible-tower](ansible-tower/README.md)
+  * [Apache-airflow](apache-airflow/README.md)
   * [Database](database/README.md)
+  * [Dbt](dbt/README.md)
   * [Docker](docker/README.md)
   * [Docsify](docsify/README.md)
   * [Git](git/README.md)
@@ -13,3 +15,4 @@
   * [Minikube](minikube/README.md)
   * [Multi-cloud](multi-cloud/README.md)
   * [Newrelic-kubernetes-monitoring](newrelic-kubernetes-monitoring/README.md)
+  * [Typography](typography/README.md)
