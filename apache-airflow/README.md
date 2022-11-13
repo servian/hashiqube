@@ -10,7 +10,7 @@ Airflow is a platform created by the community to programmatically author, sched
 
 In order to provision apache airflow you need bastetools, docker, minikube as dependencies. 
 
-```
+```bash
 vagrant up --provision-with basetools,docker,minikube,postgresql,dbt,apache-airflow
 ```
 

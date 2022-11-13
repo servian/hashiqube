@@ -1,10 +1,10 @@
 # Ansible Tower
 ## AWX Ansible Tower
-https://github.com/ansible/awx
-https://www.ansible.com/blog/ansible-tower-feature-spotlight-custom-credentials
-https://github.com/ybalt/ansible-tower
-https://www.ansible.com/products/tower
-https://www.ansible.com/
+https://github.com/ansible/awx <br />
+https://www.ansible.com/blog/ansible-tower-feature-spotlight-custom-credentials <br />
+https://github.com/ybalt/ansible-tower <br />
+https://www.ansible.com/products/tower <br />
+https://www.ansible.com/ <br />
 
 ## About
 AWX provides a web-based user interface, REST API, and task engine built on top of Ansible. It is one of the upstream projects for Red Hat Ansible Automation Platform.

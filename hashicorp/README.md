@@ -774,7 +774,47 @@ https://www.terraform.io/
 
 Terraform is an open-source infrastructure as code software tool created by HashiCorp. It enables users to define and provision a datacenter infrastructure using a high-level configuration language known as Hashicorp Configuration Language, or optionally JSON.
 
+### Why Terraform
+- Provides a high-level abstraction of infrastructure (IaC)
+- Allows for composition and combination
+- Supports parallel management of resources (graph, fast)
+- Separates planning from execution (dry-run)
+
+Because of this flexibility, Terraform can be used to solve many different problems.
+
+### Introduction to Terraform
+[![Armon Dadgar: Introduction to Terraform](https://img.youtube.com/vi/h970ZBgKINg/maxresdefault.jpg)](https://www.youtube.com/watch?v=h970ZBgKINg)
+
+### Terraform lifecycle
+The Terraform lifecycle consists of the following four phases
+
+```bash
+terraform init -> terraform plan -> terraform apply -> terraform destroy
+```
+
+### Terraform Workflow at Scale, Best Practices
 [![Armon Dadgar: Terraform Workflow at Scale, Best Practices](https://img.youtube.com/vi/9c0s93GcXVw/maxresdefault.jpg)](https://www.youtube.com/watch?v=9c0s93GcXVw)
+
+### Terraform Language
+HashiCorp Configuration Language (HCL)
+- Variables
+- Outputs
+- Resources
+- Providers
+
+Providers extend the language functionality
+- Infrastructure as Code (IaC)
+
+### Terraform Modules and Providers
+Modules build and extend on the resources defined by providers.
+
+|Modules | Providers|
+|--------|----------|
+|Container of multiple resources used together | Defines resource types that Terraform manages|
+|Sourced through a registry or local files | Configure a specific infrastructue platform|
+|Consists of .tf and/or .tf.json files | Contains instructions for API interactions|
+|Re-usable Terraform configuration | Written in Go Lanaguage|
+|Built on top of providers | Foundation for modules|
 
 `terraform plan`
 ```

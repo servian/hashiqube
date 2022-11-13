@@ -4,13 +4,13 @@ It also runs a host of other popular Open Source DevOps / DevSecOps applications
 Once the Qube is up an internet connection is no longer needed meaning sales pitches and demos for potential and existing customers is greatly aided.
 
 ## Links
-HashiCorp blog post about HashiQube: https://www.hashicorp.com/resources/hashiqube-a-development-lab-using-all-the-hashicorp-products <br />
+HashiCorp blog post: https://www.hashicorp.com/resources/hashiqube-a-development-lab-using-all-the-hashicorp-products <br />
 HashiQube website: https://servian.github.io/hashiqube <br />
 HashiQube github: https://github.com/servian/hashiqube <br />
 HashiQube youtube: https://www.youtube.com/watch?v=6jGDAGWaFiw <br />
 HashiQube medium: https://medium.com/search?q=hashiqube
 
-## HashiQube runs all HashiCorp's products 
+## HashiQube runs all HashiCorp's products and more
 ![HashiQube](images/thestack.png?raw=true "HashiQube")
 
 ## Purpose
@@ -44,7 +44,7 @@ Thanks to the flexibility of the HashiCorp products there is no need wonder how 
 HashiQube is made up out of a number of components and some rely on each other. 
 
 For example you can run componenets seperately as demonstrated below.
-```
+```bash
 vagrant up --provision-with basetools
 vagrant up --provision-with docker
 vagrant up --provision-with docsify
@@ -53,30 +53,10 @@ vagrant up --provision-with nomad
 vagrant up --provision-with minikube
 ```
 
-:bulb: If you see this error message
-
+Or one-shot as as demonstrated below.
+```bash
+vagrant up --provision-with basetools,docker,minikube,postgresql,dbt,apache-airflow
 ```
-The IP address configured for the host-only network is not within the
-allowed ranges. Please update the address used to be within the allowed
-ranges and run the command again.
-
-Address: 10.9.99.10
-Ranges: 192.168.56.0/21
-
-Valid ranges can be modified in the /etc/vbox/networks.conf file. For
-more information including valid format see:
-
-https://www.virtualbox.org/manual/ch06.html#network_hostonly
-```
-
-Please create the following file: __/etc/vbox/networks.conf__ with the following contents
-
-```
-* 10.0.0.0/8 192.168.0.0/16
-* 2001::/64
-``` 
-
-and re-run `vagrant up --provision`
 
 #### Docker Desktop
 Docker Desktop is an easy-to-install application for your Mac or Windows environment that enables you to build and share containerized applications and microservices. It's a graphical user interface for the docker service.
@@ -182,19 +162,32 @@ For Documentation please open http://localhost:3333 in your browser
 * docker ps
 * docker stop
 
-### Hostnames and DNS can  be faked via /etc/hosts
-
-```
-==> user.local.dev: [vagrant-hostsupdater] Checking for host entries
-==> user.local.dev: [vagrant-hostsupdater]   found entry for: 10.9.99.10 user.local.dev
-==> user.local.dev: [vagrant-hostsupdater]   found entry for: 10.9.99.10 user.local.dev
-==> user.local.dev: [vagrant-hostsupdater]   found entry for: 10.9.99.10 consul-user.local.dev
-==> user.local.dev: [vagrant-hostsupdater]   found entry for: 10.9.99.10 vault-user.local.dev
-==> user.local.dev: [vagrant-hostsupdater]   found entry for: 10.9.99.10 nomad-user.local.dev
-==> user.local.dev: Setting hostname...
-```
-
 ### Errors you might encounter
+:bulb: If you see this error message
+
+```
+The IP address configured for the host-only network is not within the
+allowed ranges. Please update the address used to be within the allowed
+ranges and run the command again.
+
+Address: 10.9.99.10
+Ranges: 192.168.56.0/21
+
+Valid ranges can be modified in the /etc/vbox/networks.conf file. For
+more information including valid format see:
+
+https://www.virtualbox.org/manual/ch06.html#network_hostonly
+```
+
+Please create the following file: __/etc/vbox/networks.conf__ with the following contents
+
+```
+* 10.0.0.0/8 192.168.0.0/16
+* 2001::/64
+``` 
+
+and re-run `vagrant up --provision`
+
 __Error__ response from daemon: cannot stop container: 6c0c8135620ff47efe12df417a0df0e57d7a81a7f7ca06d011323fbb52e573db: tried to kill container, but did not receive an exit event <br />
 __Command__ `vagrant destroy` <br />
 __Solution__ run `vagrant destroy` again <br />
