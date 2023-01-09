@@ -12,6 +12,7 @@
   * [Jenkins](jenkins/README.md)
   * [Ldap](ldap/README.md)
   * [Localstack](localstack/README.md)
+  * [Markdown-quiz-generator](markdown-quiz-generator/README.md)
   * [Minikube](minikube/README.md)
   * [Multi-cloud](multi-cloud/README.md)
   * [Newrelic-kubernetes-monitoring](newrelic-kubernetes-monitoring/README.md)

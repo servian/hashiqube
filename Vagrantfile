@@ -107,6 +107,7 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
         config.vm.network "forwarded_port", guest: 8043, host: 8043 # ansible-tower
         config.vm.network "forwarded_port", guest: 28080, host: 28080 # dbt docs serve
+        config.vm.network "forwarded_port", guest: 8000, host: 8000 # markdown-quiz-generator
 
       end
 
@@ -316,6 +317,10 @@ Vagrant::configure("2") do |config|
       # dbt 
       # vagrant up --provision-with dbt to only run this on vagrant up
       config.vm.provision "dbt", run: "never", type: "shell", preserve_order: true, privileged: false, path: "dbt/dbt-global.sh"
+
+      # markdown-quiz-generator 
+      # vagrant up --provision-with markdown-quiz-generator to only run this on vagrant up
+      config.vm.provision "markdown-quiz-generator", run: "never", type: "shell", preserve_order: true, privileged: false, path: "markdown-quiz-generator/markdown-quiz-generator.sh"
 
       # vagrant up --provision-with bootstrap to only run this on vagrant up
       config.vm.provision "welcome", preserve_order: true, type: "shell", privileged: true, inline: <<-SHELL
