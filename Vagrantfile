@@ -78,7 +78,9 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 8080, host: 8080 # nomad-traefik
         config.vm.network "forwarded_port", guest: 8181, host: 8181 # nomad-traefik-admin
         config.vm.network "forwarded_port", guest: 19702, host: 19702 # waypoint-kubernetes-minikube
+        config.vm.network "forwarded_port", guest: 19701, host: 19701 # waypoint-api-kubernetes-minikube
         config.vm.network "forwarded_port", guest: 9702, host: 9702 # waypoint-nomad
+        config.vm.network "forwarded_port", guest: 9701, host: 9701 # waypoint-api-nomad
         config.vm.network "forwarded_port", guest: 19200, host: 19200 # boundary
         config.vm.network "forwarded_port", guest: 8500, host: 8500 # consul
         config.vm.network "forwarded_port", guest: 8600, host: 8600, protocol: 'udp' # consul dns
