@@ -24,4 +24,4 @@ vault kv get kv1/secret/testing/value_one
 vault kv get kv1/secret/testing/value_two
 echo -e '\e[38;5;198m'"++++ To use Jenkins please open in your browser"
 echo -e '\e[38;5;198m'"++++ http://localhost:8088"
-echo -e '\e[38;5;198m'"Login with `sudo cat /var/jenkins_home/secrets/initialAdminPassword`"
+echo -e '\e[38;5;198m'"++++ Login with `sudo cat /var/jenkins_home/secrets/initialAdminPassword`"
