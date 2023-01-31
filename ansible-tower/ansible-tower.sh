@@ -6,6 +6,7 @@
 # https://github.com/ansible/awx/blob/devel/tools/docker-compose/README.md
 # https://github.com/ansible/awx
 # https://blog.palark.com/ready-to-use-commands-and-tips-for-kubectl/
+# https://techfrontier.me.uk/post/finally-my-own-awx-server/
 
 echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Add ~/.local/bin to PATH"
@@ -40,6 +41,14 @@ sudo --preserve-env=PATH -u vagrant python -m pip install molecule --quiet
 sudo --preserve-env=PATH -u vagrant python -m pip install junit_xml --quiet
 sudo --preserve-env=PATH -u vagrant python -m pip install awxkit --quiet
 
+# BUG: https://techfrontier.me.uk/post/finally-my-own-awx-server/
+# Back-off pulling image "quay.io/ansible/awx-ee:latest"
+# This looks to relate image "quay.io/ansible/awx-ee:latest" being large and not pulling quick enough, so we manually intervene and get it into our docker library by hand.
+echo -e '\e[38;5;198m'"++++ "
+echo -e '\e[38;5;198m'"++++ Pull quay.io/ansible/awx-ee:latest to avoid Back-off pulling image later"
+echo -e '\e[38;5;198m'"++++ "
+sudo --preserve-env=PATH -u vagrant minikube ssh docker pull quay.io/ansible/awx-ee:latest
+
 # https://github.com/ansible/awx-operator#basic-install
 echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Create kustomization.yaml"
@@ -49,17 +58,16 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   # Find the latest tag here: https://github.com/ansible/awx-operator/releases
-  - github.com/ansible/awx-operator/config/default?ref=0.30.0
+  - github.com/ansible/awx-operator/config/default?ref=1.1.4
 
 # Set the image tags to match the git version from above
 images:
   - name: quay.io/ansible/awx-operator
-    newTag: 0.30.0
+    newTag: 1.1.4
 
 # Specify a custom namespace in which to install AWX
 namespace: awx
 EOF
-cat ./kustomization.yaml
 
 echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Create awx.yaml with kubectl kustomize > awx.yaml"
@@ -74,7 +82,7 @@ sudo --preserve-env=PATH -u vagrant kubectl apply -f awx.yaml
 
 # https://github.com/ansible/awx/blob/17.0.1/INSTALL.md#post-install-1
 attempts=0
-max_attempts=15
+max_attempts=20
 while ! ( sudo --preserve-env=PATH -u vagrant kubectl get pods --namespace awx | grep controller | tr -s " " | cut -d " " -f3 | grep Running ) && (( $attempts < $max_attempts )); do
   attempts=$((attempts+1))
   sleep 60;
@@ -95,15 +103,13 @@ kind: AWX
 metadata:
   name: awx-demo
 spec:
+  ee_images:
+    - name: quay.io/ansible/awx-ee:latest
+      image: quay.io/ansible/awx-ee:latest
   service_type: nodeport
   # default nodeport_port is 30080
   nodeport_port: 30080
-# Set the image tags to 0.6.0 because latest tag is 632.1 mb (heavy to pull) from above
-images:
-  - name: quay.io/ansible/awx-ee
-    newTag: 0.6.0
 EOF
-cat ./awx-demo.yaml
 
 echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Add awx-demo.yaml to kustomization.yaml"
@@ -113,18 +119,17 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   # Find the latest tag here: https://github.com/ansible/awx-operator/releases
-  - github.com/ansible/awx-operator/config/default?ref=0.30.0
+  - github.com/ansible/awx-operator/config/default?ref=1.1.4
   - awx-demo.yaml
 
 # Set the image tags to match the git version from above
 images:
   - name: quay.io/ansible/awx-operator
-    newTag: 0.30.0
+    newTag: 1.1.4
 
 # Specify a custom namespace in which to install AWX
 namespace: awx
 EOF
-cat ./kustomization.yaml
 
 echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Create awx.yaml with kubectl kustomize > awx.yaml"
@@ -137,7 +142,7 @@ echo -e '\e[38;5;198m'"++++ "
 sudo --preserve-env=PATH -u vagrant kubectl apply -f awx.yaml
 
 attempts=0
-max_attempts=15
+max_attempts=20
 while ! ( sudo --preserve-env=PATH -u vagrant kubectl get pods --namespace awx | grep demo | grep -v postgres | tr -s " " | cut -d " " -f3 | grep Running ) && (( $attempts < $max_attempts )); do
   attempts=$((attempts+1))
   sleep 60;
@@ -158,7 +163,7 @@ echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Check that AWX Ansible Tower web interface is available"
 echo -e '\e[38;5;198m'"++++ "
 attempts=0
-max_attempts=15
+max_attempts=20
 while ! ( kubectl exec $(kubectl get po -n awx | grep -v operator | grep -v postgres | grep awx | tr -s " " | cut -d " " -f1) --container="redis" -n awx -- /bin/bash -c "apt-get -qqq update && apt-get -qqq install -y procps curl net-tools && netstat -nlp | grep 8052" ) && (( $attempts < $max_attempts )); do
   attempts=$((attempts+1))
   sleep 60;
@@ -167,7 +172,7 @@ while ! ( kubectl exec $(kubectl get po -n awx | grep -v operator | grep -v post
 done
 
 attempts=0
-max_attempts=15
+max_attempts=20
 while ! ( sudo netstat -nlp | grep 8043 ) && (( $attempts < $max_attempts )); do
   attempts=$((attempts+1))
   sleep 60;
@@ -244,12 +249,12 @@ echo -e '\e[38;5;198m'"++++ Add credentials ansible"
 echo -e '\e[38;5;198m'"++++ "
 sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx credentials create --credential_type 'Machine' --organization 'Default' --name 'ansible' --inputs '{"username": "vagrant", "password": "vagrant"}' $AWX_COMMON
 
-# https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-job-templates
-echo -e '\e[38;5;198m'"++++ "
-echo -e '\e[38;5;198m'"++++ Associate credential with job_templates Demo Job Template"
-echo -e '\e[38;5;198m'"++++ "
-sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates disassociate --credential "Demo Credential" --name "Demo Job Template" --wait $AWX_COMMON || true
-sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates associate --credential "ansible" --name "Demo Job Template" --wait $AWX_COMMON || true
+# # https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-job-templates
+# echo -e '\e[38;5;198m'"++++ "
+# echo -e '\e[38;5;198m'"++++ Associate credential with job_templates Demo Job Template"
+# echo -e '\e[38;5;198m'"++++ "
+# sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates disassociate --credential "Demo Credential" --name "Demo Job Template" --wait $AWX_COMMON || true
+# sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates associate --credential "ansible" --name "Demo Job Template" --wait $AWX_COMMON || true
 
 # https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-job-templates
 echo -e '\e[38;5;198m'"++++ "
@@ -257,23 +262,23 @@ echo -e '\e[38;5;198m'"++++ Associate credential with job_templates ansible-role
 echo -e '\e[38;5;198m'"++++ "
 sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates associate --credential "ansible" --name "ansible-role-example-role" $AWX_COMMON
 
-# https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-projects-update
-echo -e '\e[38;5;198m'"++++ "
-echo -e '\e[38;5;198m'"++++ Update the project"
-echo -e '\e[38;5;198m'"++++ "
-sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx projects update "Demo Project" --wait $AWX_COMMON
+# # https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-projects-update
+# echo -e '\e[38;5;198m'"++++ "
+# echo -e '\e[38;5;198m'"++++ Update the project"
+# echo -e '\e[38;5;198m'"++++ "
+# sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx projects update "Demo Project" --wait $AWX_COMMON
 
-# https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-projects-modify
-echo -e '\e[38;5;198m'"++++ "
-echo -e '\e[38;5;198m'"++++ Disable project update"
-echo -e '\e[38;5;198m'"++++ "
-sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx projects modify 'Demo Project' --scm_update_on_launch false --wait $AWX_COMMON
+# # https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-projects-modify
+# echo -e '\e[38;5;198m'"++++ "
+# echo -e '\e[38;5;198m'"++++ Disable project update"
+# echo -e '\e[38;5;198m'"++++ "
+# sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx projects modify 'Demo Project' --scm_update_on_launch false --wait $AWX_COMMON
 
 # https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-workflow-job-templates-modify
-echo -e '\e[38;5;198m'"++++ "
-echo -e '\e[38;5;198m'"++++ Modify job_templates Demo Job Template"
-echo -e '\e[38;5;198m'"++++ "
-sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates modify "Demo Job Template" --name "Demo Job Template" --ask_limit_on_launch true --ask_tags_on_launch true $AWX_COMMON
+# echo -e '\e[38;5;198m'"++++ "
+# echo -e '\e[38;5;198m'"++++ Modify job_templates Demo Job Template"
+# echo -e '\e[38;5;198m'"++++ "
+# sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates modify "Demo Job Template" --name "Demo Job Template" --ask_limit_on_launch true --ask_tags_on_launch true $AWX_COMMON
 
 echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Configure SSH to allow login with password"

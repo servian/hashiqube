@@ -244,6 +244,8 @@ A Very special mention to HashiQube's contributors, Thank You All for your help,
  - Greg Luxford
  - Byron Tuckett
  - Lane Birmingham
+ - Devang Dhameliya
+ - Rajesh Cholleti
 
 ## Videos
 Videos were made with asciinema https://asciinema.org/
