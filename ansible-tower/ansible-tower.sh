@@ -98,6 +98,10 @@ spec:
   service_type: nodeport
   # default nodeport_port is 30080
   nodeport_port: 30080
+# Set the image tags to 0.6.0 because latest tag is 632.1 mb (heavy to pull) from above
+images:
+  - name: quay.io/ansible/awx-ee
+    newTag: 0.6.0
 EOF
 cat ./awx-demo.yaml
 
@@ -198,6 +202,30 @@ verbose = True
 password = $AWX_ADMIN_PASSWORD
 EOF
 
+# https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-organizations-list
+echo -e '\e[38;5;198m'"++++ "
+echo -e '\e[38;5;198m'"++++ Check if Default organisation exists"
+echo -e '\e[38;5;198m'"++++ "
+sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx organizations list --wait $AWX_COMMON | grep -q "Default"
+if [ $? -eq 1 ]; then
+  echo -e '\e[38;5;198m'"++++ Organization 'Default' doesn't exist, creating"
+  sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx organizations create --name "Default" --description "Default" --wait $AWX_COMMON
+else
+  echo -e '\e[38;5;198m'"++++ Organization 'Default' exists"
+fi
+
+# https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-inventory-list
+echo -e '\e[38;5;198m'"++++ "
+echo -e '\e[38;5;198m'"++++ Check if 'Demo Inventory' exists"
+echo -e '\e[38;5;198m'"++++ "
+sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx inventory list --wait $AWX_COMMON | grep -q 'Demo Inventory'
+if [ $? -eq 1 ]; then
+  echo -e '\e[38;5;198m'"++++ 'Demo Inventory' doesn't exist, creating"
+  sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx inventory create --name 'Demo Inventory' --description 'Demo Inventory' --organization 'Default' --wait $AWX_COMMON
+else
+  echo -e '\e[38;5;198m'"++++ 'Demo Inventory' exists"
+fi
+
 # https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-projects-create
 echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Create projects ansible-role-example-role"
@@ -220,8 +248,8 @@ sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx credentials cre
 echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Associate credential with job_templates Demo Job Template"
 echo -e '\e[38;5;198m'"++++ "
-sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates disassociate --credential "Demo Credential" --name "Demo Job Template" --wait $AWX_COMMON
-sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates associate --credential "ansible" --name "Demo Job Template" --wait $AWX_COMMON
+sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates disassociate --credential "Demo Credential" --name "Demo Job Template" --wait $AWX_COMMON || true
+sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates associate --credential "ansible" --name "Demo Job Template" --wait $AWX_COMMON || true
 
 # https://docs.ansible.com/ansible-tower/latest/html/towercli/reference.html#awx-job-templates
 echo -e '\e[38;5;198m'"++++ "
@@ -263,7 +291,7 @@ sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx hosts create --
 echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Run Ansible Tower job_template"
 echo -e '\e[38;5;198m'"++++ "
-sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates launch 9 \
+sudo --preserve-env=PATH -u vagrant /home/vagrant/.local/bin/awx job_templates launch ansible-role-example-role \
   --limit 10.9.99.10 \
   --monitor \
   --filter status $AWX_COMMON \
