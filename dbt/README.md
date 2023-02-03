@@ -109,6 +109,9 @@ Once the provisioner is done you will be able to access the DBT Web interface at
 # DBT Database
 ![DBT](images/dbt_database.png?raw=true "DBT")
 
+# DBT Lineage Graph
+![DBT](images/dbt_lineage_graph.png?raw=true "DBT")
+
 # Tips
 When the dbt project grows, DBT RUN and DBT TEST become expensive. An alternative to reduce the cost of running the project is to have the content of the folder .dbt/targeton persistent storage to reuse later
 
