@@ -237,15 +237,13 @@ Lead Automation Architect [riaan.nolan@servian.com](mailto:riaan.nolan@servian.c
 https://www.linkedin.com/in/riaannolan/
 
 ## About me
-My name is Riaan Nolan and I was born in South Africa. I started out as a Web Developer and from there progressed into Systems Administration, with a strong focus on Automation, Infrastrtucture and Configuration as Code.
+My name is Riaan Nolan and I was born in South Africa. I started out as a Web Developer in 2000 and from there progressed into Systems Administration, with a strong focus on Automation, Infrastrtucture and Configuration as Code.
 
-I have been selected as a Hashicorp Ambassador for 2021, 2022. 
-![Hashicorp Ambassador 2021](images/hashicorp_ambassador_badge_2021.png?raw=true "Hashicorp Ambassador 2021")
-![Hashicorp Ambassador 2022](images/hashicorp_ambassador_badge_2022.png?raw=true "Hashicorp Ambassador 2022")
-I became a Certified Hashicorp Terraform Instructor in late 2022. 
-![Certified Hashicorp Terraform Instructor 2022](images/hashicorp_terraform_authorized_instructor_badge_2023.png?raw=true "Certified Hashicorp Terraform Instructor 2022")
-I was selected as a Hashicorp Core Contributor for 2023. 
-![Hashicorp Core Contributor 2023](images/hashicorp_core_contributor_badge_2023.png?raw=true "Hashicorp Core Contributor 2023")
+I have worked for Multi-National companies in Portugal, Germany, China, South Africa, United States and Australia. 
+
+You are welcome to connect with me on Linkedin https://www.linkedin.com/in/riaannolan/
+
+![My Hashicorp Badges](images/hashicorp-badges.png?raw=true "My Hashicorp Badges")
 
 ## Contributors and Special mentions
 A Very special mention to HashiQube's contributors, Thank You All for your help, suggestions and contributions no matter how small <3
