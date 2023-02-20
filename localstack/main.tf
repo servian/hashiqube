@@ -39,6 +39,39 @@ provider "aws" {
   }
 }
 
+locals {
+  ec2_instance_with_index = zipmap(
+    range(length(var.ec2_instance)),
+    var.ec2_instance
+  )
+  ec2_instance_disk_allocations_basic = [
+    for instance in var.ec2_instance : [
+      for disk in instance.ebs_disks : {
+        ami_id    = instance.ami_id
+        subnet_id = instance.ami_id
+        disksize  = disk.disksize
+        disktype  = disk.disktype
+      }
+    ]
+  ]
+  ec2_instance_disk_allocations_flattened = flatten(local.ec2_instance_disk_allocations_basic)
+  ec2_instance_disk_allocations_indexed = zipmap(
+    range(length(local.ec2_instance_disk_allocations_flattened)),
+    local.ec2_instance_disk_allocations_flattened
+  )
+}
+
+resource "null_resource" "ec2_instance_disk_allocations_indexed" {
+  for_each = local.ec2_instance_disk_allocations_indexed
+  triggers = {
+    availability_zone = "melbourne"
+    ami_id            = each.value.ami_id
+    subnet_id         = each.value.subnet_id
+    disksize          = each.value.disksize
+    disktype          = each.value.disktype
+  }
+}
+
 resource "random_string" "random" {
   length           = 16
   special          = true
@@ -48,16 +81,38 @@ resource "random_string" "random" {
   min_upper        = 3
 }
 
-# resource "aws_s3_bucket" "beth-bucket" {
-#   bucket = "my-new-bucket"
-# }
+resource "aws_s3_bucket" "my-bucket" {
+  bucket = "my-bucket"
+}
 
-# resource "aws_s3_bucket_acl" "test-bucket-acl" {
-#   bucket = aws_s3_bucket.beth-bucket.id
-#   acl    = "private"
-# }
+resource "aws_s3_bucket_acl" "my-bucket-acl" {
+  bucket = aws_s3_bucket.my-bucket.id
+  acl    = "private"
+}
 
-/*
+resource "aws_security_group" "default-sec-group" {
+  name        = "default-sec-group"
+  description = "Default Security Group"
+
+  ingress {
+    # TLS (change to whatever ports you need)
+    from_port = 22
+    to_port   = 22
+    protocol  = "tcp"
+    # Please restrict your ingress to only necessary IPs and ports.
+    # Opening to 0.0.0.0/0 can lead to security vulnerabilities.
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+/* Error: error creating Lambda Function (1): InternalFailure 
 resource "aws_api_gateway_authorizer" "demo" {
   name                   = "demo"
   rest_api_id            = aws_api_gateway_rest_api.demo.id
@@ -65,7 +120,6 @@ resource "aws_api_gateway_authorizer" "demo" {
   authorizer_credentials = aws_iam_role.invocation_role.arn
   type                   = "TOKEN"
 }
-*/
 
 resource "aws_api_gateway_rest_api" "demo" {
   name = "auth-demo"
@@ -118,7 +172,6 @@ resource "aws_iam_role" "lambda" {
 EOF
 }
 
-/*
 resource "aws_lambda_function" "authorizer" {
   filename         = "lambda.zip"
   function_name    = "api_gateway_authorizer"
@@ -129,7 +182,7 @@ resource "aws_lambda_function" "authorizer" {
 }
 */
 
-/*
+/* Takes ages to launch, and never finish, disabling for now 
 resource "aws_elasticsearch_domain" "example" {
   domain_name           = "test-domain"
   elasticsearch_version = "1.5"
@@ -148,7 +201,7 @@ resource "aws_elasticsearch_domain" "example" {
 }
 */
 
-/*
+/* Error: error creating ElastiCache Cache Cluster: InternalFailure: API action 'CreateCacheCluster' for service 'elasticache' not yet implemented or pro feature
 resource "aws_elasticache_cluster" "my-redis" {
   cluster_id           = "my-redis-cluster"
   engine               = "redis"
@@ -160,7 +213,7 @@ resource "aws_elasticache_cluster" "my-redis" {
 }
 */
 
-/*
+/* Error: Error creating DB Parameter Group: InternalFailure: API action 'CreateDBParameterGroup' for service 'rds' not yet implemented or pro feature
 resource "aws_db_parameter_group" "default" {
   name   = "rds-pg"
   family = "mysql5.6"
@@ -171,73 +224,3 @@ resource "aws_db_parameter_group" "default" {
   }
 }
 */
-
-/*
-# TODO enable once fixed
-resource "aws_security_group" "eks-node" {
-  name        = "some-sg-1"
-  vpc_id      = "vpc123"
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-*/
-
-resource "aws_security_group" "default-sec-group" {
-  name        = "default-sec-group"
-  description = "Default Security Group"
-
-  ingress {
-    # TLS (change to whatever ports you need)
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-    # Please restrict your ingress to only necessary IPs and ports.
-    # Opening to 0.0.0.0/0 can lead to security vulnerabilities.
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-locals {
-  ec2_instance_with_index = zipmap(
-    range(length(var.ec2_instance)),
-    var.ec2_instance
-  )
-  ec2_instance_disk_allocations_basic = [
-    for instance in var.ec2_instance : [
-      for disk in instance.ebs_disks : {
-        ami_id    = instance.ami_id
-        subnet_id = instance.ami_id
-        disksize  = disk.disksize
-        disktype  = disk.disktype
-      }
-    ]
-  ]
-  ec2_instance_disk_allocations_flattened = flatten(local.ec2_instance_disk_allocations_basic)
-  ec2_instance_disk_allocations_indexed = zipmap(
-    range(length(local.ec2_instance_disk_allocations_flattened)),
-    local.ec2_instance_disk_allocations_flattened
-  )
-}
-
-resource "null_resource" "ec2_instance_disk_allocations_indexed" {
-  for_each = local.ec2_instance_disk_allocations_indexed
-  triggers = {
-    availability_zone = "melbourne"
-    ami_id            = each.value.ami_id
-    subnet_id         = each.value.subnet_id
-    disksize          = each.value.disksize
-    disktype          = each.value.disktype
-  }
-}

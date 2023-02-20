@@ -1,6 +1,6 @@
-# output "aws_s3_bucket_localstack-s3-bucket" {
-#   value = aws_s3_bucket.beth-bucket
-# }
+output "aws_s3_bucket_localstack-s3-bucket" {
+  value = aws_s3_bucket.my-bucket
+}
 
 output "ec2_instance_with_index_zipmap" {
   value = zipmap(range(length(var.ec2_instance)), var.ec2_instance)

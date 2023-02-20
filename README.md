@@ -89,9 +89,8 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 
 ## Pre-requisites
 * 10GB of disk space
-* 8GB RAM
 * Admin rights / sudo (you will be asked to update ETC Host file)
-* Virtualbox
+* Docker (Default) and/or Virtualbox
 * Vagrant
 * `vagrant up --provision`
 
@@ -126,19 +125,22 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 Once the stack is up you will have a large number of services running and available on `localhost` <br />
 For Documentation please open http://localhost:3333 in your browser
 
-## Hashicorp basic usage
+## Hashiqube basic usage
 * Vault http://localhost:8200
 * Nomad http://localhost:4646
 * Consul http://localhost:8500
+* Waypoint on Nomad https://localhost:9702
+* Waypoint on Minikube https://localhost:19702
+* Boundary http://localhost:19200
 * Docsify http://localhost:3333
-
-## HashiQube runs all HashiCorp's products
-![HashiQube](images/hashicorp_products.png?raw=true "HashiQube")
 
 ## Other
 * LDAP can be accessed on ldap://localhost:389
 * Localstack web http://localhost:8080
+* DBT web http://localhost:28080
+* Apache Airflow http://localhost:18889
 * Ansible provisioning Apache2 http://localhost:8888
+* Ansible AWX Tower http://localhost:8043
 * Jenkins http://localhost:8088
 * Oracle MySQL localhost:3306
 * Microsoft SQL localhost:1433
@@ -233,6 +235,17 @@ For suggestions, feedback and queries please branch or and submit a Pull Request
 
 Lead Automation Architect [riaan.nolan@servian.com](mailto:riaan.nolan@servian.com)
 https://www.linkedin.com/in/riaannolan/
+
+## About me
+My name is Riaan Nolan and I was born in South Africa. I started out as a Web Developer and from there progressed into Systems Administration, with a strong focus on Automation, Infrastrtucture and Configuration as Code.
+
+I have been selected as a Hashicorp Ambassador for 2021, 2022. 
+![Hashicorp Ambassador 2021](images/hashicorp_ambassador_badge_2021.png?raw=true "Hashicorp Ambassador 2021")
+![Hashicorp Ambassador 2022](images/hashicorp_ambassador_badge_2022.png?raw=true "Hashicorp Ambassador 2022")
+I became a Certified Hashicorp Terraform Instructor in late 2022. 
+![Certified Hashicorp Terraform Instructor 2022](images/hashicorp_terraform_authorized_instructor_badge_2023.png?raw=true "Certified Hashicorp Terraform Instructor 2022")
+I was selected as a Hashicorp Core Contributor for 2023. 
+![Hashicorp Core Contributor 2023](images/hashicorp_core_contributor_badge_2023.png?raw=true "Hashicorp Core Contributor 2023")
 
 ## Contributors and Special mentions
 A Very special mention to HashiQube's contributors, Thank You All for your help, suggestions and contributions no matter how small <3
