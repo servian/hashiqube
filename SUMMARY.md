@@ -3,6 +3,7 @@
   * [Ansible](ansible/README.md)
   * [Ansible-tower](ansible-tower/README.md)
   * [Apache-airflow](apache-airflow/README.md)
+  * [Code-server](code-server/README.md)
   * [Database](database/README.md)
   * [Dbt](dbt/README.md)
   * [Docker](docker/README.md)

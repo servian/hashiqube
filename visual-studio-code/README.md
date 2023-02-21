@@ -76,3 +76,33 @@ https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-cont
 :bulb: Remember to do `su - vagrant` and `cd /vagrant` to become the vagrant user so that you work as the vagrant user, you can then issue `kubectl` or `terraform` commands if you ran the provisioners first from a terminal on your laptop. 
 
 ![VSCode](images/vscode-hashiqube-devcontainer.png?raw=true "VSCode")
+
+# VScode Server VSCode in a Browser! 
+
+https://code.visualstudio.com/
+
+https://github.com/coder/code-server
+
+VSCode is a free, open source IDE. Code-server runs an instance of VS code that can then be accessed locally via browser. This allows us to start up a predictable VScode instance in Vagrant. 
+
+## Provision
+
+In order to provision apache airflow you need bastetools, docker as dependencies. 
+
+`vagrant up --provision-with basetools,docker,vscode-server`
+
+## Web UI Access
+
+To access the Web UI visit the following address:
+```
+http://localhost:7777/
+```
+
+The default password will be printed to console on start up. Else it can be obtained by the following command:
+```
+vagrant ssh -c "< ~/.config/code-server/config.yaml head -n "3" | tail -n +"3""
+```
+
+## Future plans
+
+In the future there is potential to add an option for starting different code-server instances. Currently it always launches with the default image. Custom images could be setup that have different things preinstalled (e.g. Image with python, usefull libaries and useful extentions pre installed).

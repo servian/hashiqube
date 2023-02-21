@@ -108,6 +108,7 @@ Vagrant::configure("2") do |config|
         config.vm.network "forwarded_port", guest: 18889, host: 18889 # apache airflow
         config.vm.network "forwarded_port", guest: 3333, host: 3333 # docsify
         config.vm.network "forwarded_port", guest: 8043, host: 8043 # ansible-tower
+        config.vm.network "forwarded_port", guest: 7777, host: 7777 # vscode-server
         config.vm.network "forwarded_port", guest: 28080, host: 28080 # dbt docs serve
         config.vm.network "forwarded_port", guest: 8000, host: 8000 # markdown-quiz-generator
 
@@ -252,6 +253,9 @@ Vagrant::configure("2") do |config|
       # vagrant up --provision-with localstack to only run this on vagrant up
       config.vm.provision "localstack", run: "never", type: "shell", preserve_order: true, privileged: false, path: "localstack/localstack.sh"
 
+      # vscode-server
+      # vagrant up --provision-with vscode-server to only run this on vagrant up
+      config.vm.provision "vscode-server", run: "never", type: "shell", preserve_order: true, privileged: false, path: "visual-studio-code/vscode-server.sh"
 
       # vagrant up --provision-with ldap to only run this on vagrant up
       # run ldap docker container for testing with vault (for example) ldap login
