@@ -1,5 +1,10 @@
 # Visual Studio Code
 
+This page has 2 sections:
+
+* [Visual Studio Code on your laptop](/visual-studio-code/?id=visual-studio-code)
+* [Visual Studio Code in your browser](/visual-studio-code/?id=vscode-server-vscode-in-a-browser)
+
 https://code.visualstudio.com/
 
 Visual Studio Code or VSCode is a Code Editor, also referred to as an IDE. It's made by Microsoft, it's completely free, very powerful and run on all Operating Systems and Architectures. 
@@ -85,9 +90,11 @@ https://github.com/coder/code-server
 
 VSCode is a free, open source IDE. Code-server runs an instance of VS code that can then be accessed locally via browser. This allows us to start up a predictable VScode instance in Vagrant. 
 
+![VSCode in a Browser](images/vscode-in-a-browser.png?raw=true "VSCode in a Browser")
+
 ## Provision
 
-In order to provision apache airflow you need bastetools, docker as dependencies. 
+In order to provision Visual Studio Code Server (Visual Studio IDE in a browser) you need bastetools, docker as dependencies. 
 
 `vagrant up --provision-with basetools,docker,vscode-server`
 
