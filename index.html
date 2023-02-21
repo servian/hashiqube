@@ -30,6 +30,9 @@
 
   <script src="docsify/lib/mermaid.min.js"></script>
   <style>
+    .app-name-link img {
+      width: 200px;
+    }
     .sidebar-nav ul ul, .sidebar nav ul ul {
       margin-left: 0px;
     }
@@ -54,16 +57,22 @@
       text-align: center;
       bottom: 10px;
     }
-    .app-name-link img {
-      width: 180px;
-    }
     #docsify-darklight-theme {
-      top: 5px;
+      position: fixed;
+      right: 70px;
+      top: 12px;
+      width: 25px;
+      height: 25px;
     }
     .github-corner svg {
       fill: transparent;
       color: #ff0090;
     }
+    /* body .docsify-pagination-container {
+      border-width: 5px;
+      border-color: red;
+      background: #282a36;
+    } */
   </style>
   <style>
     :root {
@@ -155,9 +164,9 @@
           toogleImage: 'url(https://cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/icons/moon.svg)'
         }
       },
-      pagination: {
-        crossChapter: true
-      },
+      // pagination: {
+      //   crossChapter: true
+      // },
     }
 
     var num = 0;
@@ -170,7 +179,7 @@
   <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
   <script src="//unpkg.com/prismjs/components/prism-typescript.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/index.min.js"></script>
-  <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
+  <!-- <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script> -->
   <script src="//unpkg.com/docsify-slides/dist/docsify-slides.min.js"></script>
   <script src="//unpkg.com/docsify-accordion/src/index.js"></script>
   <div class="footer">footer</div>
