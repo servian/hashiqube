@@ -1,0 +1,28 @@
+// https://code.visualstudio.com/docs/devcontainers/attach-container#:~:text=To%20attach%20to%20a%20Docker,you%20want%20to%20connect%20to
+{
+  // A command string or list of command arguments to run after VS Code attaches to the container
+  "postStartCommand": "su - vagrant",
+
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "bash"
+  },
+
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": ["dbaeumer.vscode-eslint"],
+
+  // An array port numbers to forward
+  // "forwardPorts": [8000],
+
+  // Indicates the type of shell to use to "probe" for user environment variables to include in VS Code or other connected tool's processes
+  "userEnvProbe": "loginInteractiveShell",
+
+  // Set environment variables for VS Code and sub-processes
+  "remoteEnv": { "MY_VARIABLE": "some-value" },
+  
+  // Default path to open when attaching to a new container.
+  "workspaceFolder": "/vagrant",
+
+  // Container user VS Code should use when connecting
+  "remoteUser": "vagrant"
+}

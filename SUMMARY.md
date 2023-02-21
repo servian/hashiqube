@@ -17,3 +17,4 @@
   * [Multi-cloud](multi-cloud/README.md)
   * [Newrelic-kubernetes-monitoring](newrelic-kubernetes-monitoring/README.md)
   * [Typography](typography/README.md)
+  * [Visual-studio-code](visual-studio-code/README.md)
