@@ -126,6 +126,8 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 Once the stack is up you will have a large number of services running and available on `localhost` <br />
 For Documentation please open http://localhost:3333 in your browser
 
+![Hashicorp Integrations](images/logo-qube.png?raw=true "Hashicorp Integrations")
+
 ## Hashiqube basic usage
 * Vault http://localhost:8200
 * Nomad http://localhost:4646
