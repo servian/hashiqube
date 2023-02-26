@@ -94,7 +94,7 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 * Vagrant
 * `vagrant up --provision`
 
-## Additional Information
+## Hashiqube Integrations
 * [__Multi Cloud__](multi-cloud/#terraform-hashicorp-hashiqube) - Hashiqube on AWS, GCP and Azure (Clustered) https://registry.terraform.io/modules/star3am/hashiqube/hashicorp/latest
 * [__Vagrant__](hashicorp/#vagrant) - Vagrant is an open-source software product for building and maintaining portable virtual software development environments; e.g., for VirtualBox, KVM, Hyper-V, Docker containers, VMware, and AWS. It tries to simplify the software configuration management of virtualization in order to increase development productivity
 * [__Vault__](hashicorp/#vault) - Secure, store and tightly control access to tokens, passwords, certificates, encryption keys for protecting secrets and other sensitive data using a UI, CLI, or HTTP API.
@@ -126,7 +126,7 @@ Now you can use DNS like nomad.service.consul:9999 vault.service.consul:9999 via
 Once the stack is up you will have a large number of services running and available on `localhost` <br />
 For Documentation please open http://localhost:3333 in your browser
 
-![Hashicorp Integrations](images/logo-qube.png?raw=true "Hashicorp Integrations")
+![Hashiqube Integrations](images/logo-qube.png?raw=true "Hashiqube Integrations")
 
 ## Hashiqube basic usage
 * Vault http://localhost:8200
