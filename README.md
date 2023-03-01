@@ -245,6 +245,7 @@ My name is Riaan Nolan and I was born in South Africa. I started out as a Web De
 I have worked for Multi-National companies in Portugal, Germany, China, South Africa, United States and Australia. 
 
 You are welcome to connect with me on Linkedin https://www.linkedin.com/in/riaannolan/
+Credly profile: https://www.credly.com/users/riaan-nolan.e657145c
 
 ![My Hashicorp Badges](images/hashicorp-badges.png?raw=true "My Hashicorp Badges")
 
