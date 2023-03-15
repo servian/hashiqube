@@ -1,0 +1,1 @@
+../linux/ubuntu/ubuntu-2204.pkr.hcl

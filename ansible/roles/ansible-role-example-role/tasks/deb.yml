@@ -1,0 +1,84 @@
+---
+
+#- name: "Ansible | List all known variables and facts"
+#  debug:
+#    var: hostvars[inventory_hostname]
+#    verbosity: 1
+
+- name: OS
+  debug:
+    msg: "{{ ansible_distribution }} {{ ansible_distribution_version }} {{ ansible_distribution_release }} on {{ ansible_facts['system_vendor'] }}"
+  tags:
+    - always
+
+- name: VM Name and IP
+  debug:
+    msg: "vm_name: {{ vm_name }} vm_ip: {{ vm_ip }}"
+  tags:
+    - always
+
+- set_fact:
+    cloud: "google"
+  when:
+    ansible_facts['system_vendor'] == 'Google'
+  tags:
+    - always
+
+- set_fact:
+    cloud: "azure"
+  when:
+    ansible_facts['system_vendor'] == 'Microsoft Corporation'
+  tags:
+    - always
+
+- set_fact:
+    cloud: "amazon"
+  when:
+    ansible_facts['system_vendor'] == 'Xen'
+  tags:
+    - always
+
+- set_fact:
+    cloud: "vagrant"
+  when:
+    ansible_facts['system_vendor'] == 'innotek GmbH'
+  tags:
+    - always
+
+- name: Write Ansible hostvars to file
+  copy:
+    content: "{{ hostvars[inventory_hostname] }}"
+    dest: /soe-{{ version_number }}.json
+    mode: "0644"
+  tags:
+    - day0
+
+# WARNING!! This is just a POC normally we would not enter a password in clear text
+- name: Ensure user ansible is present
+  ansible.builtin.user:
+    name: ansible
+    password: "{{ 'aix1rii3Bahshuleikei5y'|password_hash('sha512') }}"
+    #password: "$6$IBULZeGd6UP6Jkg3$QqdevUQs.VDuMnT8prurhLuz3PErfoUHXg0/culpF4uj8RdZJ7UyuOG9LAz2B16Nao1jFe5X.NIKw0eYBKyXO1"
+    update_password: on_create
+    comment: Ansible Tower
+    uid: 1040
+    shell: /bin/bash
+    groups: users,sudo
+    append: yes
+  tags:
+    - day0
+
+- name: Update apt repo and cache
+  apt:
+    update_cache: yes
+    force_apt_get: yes
+    cache_valid_time: 3600
+  tags:
+    - day1
+
+- name: Upgrade all packages
+  apt:
+    upgrade: dist
+    force_apt_get: yes
+  tags:
+    - day1

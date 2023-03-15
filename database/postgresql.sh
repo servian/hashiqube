@@ -1,14 +1,30 @@
 #!/bin/bash
 # https://hub.docker.com/_/postgres
 # https://www.vaultproject.io/docs/secrets/databases/postgresql
-
 echo -e '\e[38;5;198m'"++++ "
-echo -e '\e[38;5;198m'"++++ Ensure postgres docker container is running"
+echo -e '\e[38;5;198m'"++++ Cleanup"
 echo -e '\e[38;5;198m'"++++ "
 sudo docker stop postgres
 sudo docker rm postgres
 yes | sudo docker system prune -a
 yes | sudo docker system prune --volumes
+if pgrep -x "vault" >/dev/null
+then
+  echo -e '\e[38;5;198m'"++++ "
+  echo -e '\e[38;5;198m'"++++ Vault is running"
+  echo -e '\e[38;5;198m'"++++ "
+else
+  echo -e '\e[38;5;198m'"++++ "
+  echo -e '\e[38;5;198m'"++++ Ensure Vault is running.."
+  echo -e '\e[38;5;198m'"++++ "
+  sudo bash /vagrant/hashicorp/vault.sh
+fi
+export VAULT_ADDR=http://127.0.0.1:8200
+vault status
+
+echo -e '\e[38;5;198m'"++++ "
+echo -e '\e[38;5;198m'"++++ Ensure postgres docker container is running"
+echo -e '\e[38;5;198m'"++++ "
 sudo docker run --name postgres -e POSTGRES_USER=root \
          -e POSTGRES_PASSWORD=rootpassword \
          -d -p 5432:5432 postgres
@@ -19,27 +35,6 @@ echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Ensure postgresql-client is installed"
 echo -e '\e[38;5;198m'"++++ "
 sudo apt-get install -y postgresql-client libpq-dev python3.9-dev
-
-if pgrep -x "vault" >/dev/null
-then
-  echo -e '\e[38;5;198m'"++++ "
-  echo -e '\e[38;5;198m'"++++ Vault is running"
-  echo -e '\e[38;5;198m'"++++ "
-  echo -e '\e[38;5;198m'""
-  echo -e '\e[38;5;198m'"++++ "
-  echo -e '\e[38;5;198m'"++++ Vault status"
-  echo -e '\e[38;5;198m'"++++ "
-  vault status
-else
-  echo -e '\e[38;5;198m'"++++ "
-  echo -e '\e[38;5;198m'"++++ Ensure Vault is running.."
-  echo -e '\e[38;5;198m'"++++ "
-  sudo bash /vagrant/hashicorp/vault.sh
-  echo -e '\e[38;5;198m'"++++ "
-  echo -e '\e[38;5;198m'"++++ Vault status"
-  echo -e '\e[38;5;198m'"++++ "
-  vault status
-fi
 
 echo -e '\e[38;5;198m'"++++ "
 echo -e '\e[38;5;198m'"++++ Source /etc/environment"

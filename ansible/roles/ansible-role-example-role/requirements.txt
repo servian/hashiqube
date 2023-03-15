@@ -1,0 +1,16 @@
+vagranttoansible
+yamllint
+ansible
+ansible-lint
+wheel
+pywinrm
+requests
+docker
+molecule
+junit_xml
+# latest version has network bug https://github.com/ansible-community/molecule-vagrant/pull/105/files
+molecule-vagrant==0.6.1
+python-vagrant
+pypsrp
+hvac
+molecule-virtup

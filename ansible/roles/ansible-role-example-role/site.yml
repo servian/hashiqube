@@ -1,0 +1,9 @@
+---
+- hosts: all
+  # DO NOT specify become here, do it in the tasks because this role supports Windows and Linux
+  # become: true
+  vars:
+    is_container: false
+
+  roles:
+  - role: "{{ playbook_dir }}"

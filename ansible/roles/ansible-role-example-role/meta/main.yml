@@ -1,0 +1,38 @@
+galaxy_info:
+  role_name: ansible_role_example_role
+  author: riaan_nolan
+  description: Automation Engineer
+  company: Servian PTY Ltd
+
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+  - name: Centos
+    versions:
+    - 7.7
+    - 8.4
+  - name: Debian
+    versions:
+    - 9.0
+    - 10.0
+  - name: Ubuntu
+    versions:
+    - 18.04
+    - 20.04
+  - name: RedHat
+    versions:
+    - 8.3
+    - 7.9
+  - name: Windows
+    versions:
+    - 2019
+    - 2016
+    - 2012
+  
+  galaxy_tags: [soe, factory, hashicorp, packer]
+
+dependencies: []
+  # List your role dependencies here, one per line. Be sure to remove the '[]' above,
+  # if you add dependencies to this list.

@@ -1,0 +1,35 @@
+- src: 'https://github.com/ansible-lockdown/RHEL8-CIS'
+  version: '1.3.0'
+  scm: 'git'
+
+- src: 'https://github.com/ansible-lockdown/RHEL7-CIS'
+  version: '1.1.0'
+  scm: 'git'
+
+- src: 'https://github.com/ansible-lockdown/UBUNTU22-CIS'
+  version: 'main'
+  scm: 'git'
+
+- src: 'https://github.com/ansible-lockdown/UBUNTU20-CIS'
+  version: '1.1.0'
+  scm: 'git'
+
+- src: 'https://github.com/ansible-lockdown/UBUNTU18-CIS'
+  version: '1.3.0'
+  scm: 'git'
+
+- src: 'https://github.com/ansible-lockdown/Windows-2016-CIS'
+  version: '1.2.1'
+  scm: 'git'
+
+- src: 'https://github.com/ansible-lockdown/Windows-2019-CIS'
+  version: '1.1.1'
+  scm: 'git'
+
+- src: 'https://github.com/star3am/ansible-role-win_openssh'
+  version: 'ssh-playbook-test'
+  scm: 'git'
+
+- src: 'https://github.com/elastic/ansible-elasticsearch'
+  version: 'v7.17.0'
+  scm: 'git'

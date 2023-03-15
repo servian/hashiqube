@@ -1,0 +1,290 @@
+---
+#
+# Molecule using Vagrant + Virtualbox so we can test playbooks on Linux and Windows
+#
+#galaxy_info:
+#  role_name: ansible_role_example_role
+
+dependency:
+  name: galaxy
+
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+
+lint: |
+  set -e
+  ansible-lint tasks/main.yml
+
+platforms:
+#  - name: ansible-role-example-role-centos-83
+#    box: bento/centos-8.3
+#    memory: 512
+#    cpus: 1
+#    config_options:
+#      ssh.keep_alive: yes
+#      ssh.remote_user: "'vagrant'"
+#      ssh.password: "'vagrant'"
+#    interfaces:
+#      - network_name: forwarded_port
+#        guest: 22
+#        host: 3221
+#    provision: true
+#    state: up
+#    groups:
+#      - linux
+#  - name: ansible-role-example-role-centos-77
+#    box: bento/centos-7.7
+#    memory: 256
+#    cpus: 1
+#    config_options:
+#      ssh.keep_alive: yes
+#      ssh.remote_user: "'vagrant'"
+#      ssh.password: "'vagrant'"
+#    interfaces:
+#      - network_name: forwarded_port
+#        guest: 22
+#        host: 3222
+#    provision: true
+#    state: up
+#    groups:
+#      - linux
+#  - name: ansible-role-example-role-debian-10
+#    box: bento/debian-10
+#    memory: 512
+#    cpus: 1
+#    config_options:
+#      ssh.keep_alive: yes
+#      ssh.remote_user: "'vagrant'"
+#      ssh.password: "'vagrant'"
+#    interfaces:
+#      - network_name: forwarded_port
+#        guest: 22
+#        host: 3223
+#    provision: true
+#    state: up
+#    groups:
+#      - linux
+#  - name: ansible-role-example-role-debian-9
+#    box: bento/debian-9
+#    memory: 512
+#    cpus: 1
+#    config_options:
+#      ssh.keep_alive: yes
+#      ssh.remote_user: "'vagrant'"
+#      ssh.password: "'vagrant'"
+#    interfaces:
+#      - network_name: forwarded_port
+#        guest: 22
+#        host: 3224
+#    provision: true
+#    state: up
+#    groups:
+#      - linux
+  - name: ansible-role-example-role-ubuntu-2204
+    box: bento/ubuntu-22.04
+    memory: 1024
+    cpus: 1
+    config_options:
+      ssh.keep_alive: yes
+      ssh.remote_user: "'vagrant'"
+      ssh.password: "'vagrant'"
+    interfaces:
+      - network_name: forwarded_port
+        guest: 22
+        host: 3225
+    provision: true
+    groups:
+      - linux
+  - name: ansible-role-example-role-windows-2019
+    box: jborean93/WindowsServer2019
+    memory: 1024
+    cpus: 1
+    config_options:
+      vm.communicator: "'winrm'"
+      winrm.remote_user: "'vagrant'"
+      winrm.password: "'vagrant'"
+    interfaces:
+      - network_name: forwarded_port
+        guest: 5986
+        host: 59970
+    provision: true
+    groups:
+      - windows
+#  - name: ansible-role-example-role-ubuntu-2004
+#    box: bento/ubuntu-20.04
+#    memory: 512
+#    cpus: 1
+#    config_options:
+#      ssh.keep_alive: yes
+#      ssh.remote_user: "'vagrant'"
+#      ssh.password: "'vagrant'"
+#    interfaces:
+#      - network_name: forwarded_port
+#        guest: 22
+#        host: 3226
+#    provision: true
+#    state: up
+#    groups:
+#      - linux
+#  - name: ansible-role-example-role-ubuntu-1804
+#    box: bento/ubuntu-18.04
+#    memory: 512
+#    cpus: 1
+#    config_options:
+#      ssh.keep_alive: yes
+#      ssh.remote_user: "'vagrant'"
+#      ssh.password: "'vagrant'"
+#    interfaces:
+#      - network_name: forwarded_port
+#        guest: 22
+#        host: 3227
+#    provision: true
+#    state: up
+#    groups:
+#      - linux
+#  - name: ansible-role-example-role-redhat-83
+#    box: generic/rhel8
+#    memory: 512
+#    cpus: 1
+#    config_options:
+#      ssh.keep_alive: yes
+#      ssh.remote_user: "'vagrant'"
+#      ssh.password: "'vagrant'"
+#    interfaces:
+#      - network_name: forwarded_port
+#        guest: 22
+#        host: 3228
+#    provision: true
+#    state: up
+#    groups:
+#      - linux
+#  - name: ansible-role-example-role-redhat-79
+#    box: generic/rhel7
+#    memory: 512
+#    cpus: 1
+#    config_options:
+#      ssh.keep_alive: yes
+#      ssh.remote_user: "'vagrant'"
+#      ssh.password: "'vagrant'"
+#    interfaces:
+#      - network_name: forwarded_port
+#        guest: 22
+#        host: 3229
+#    provision: true
+#    state: up
+#    groups:
+#      - linux
+#  - name: ansible-role-example-role-windows-2016
+#    box: jborean93/WindowsServer2016
+#    memory: 1024
+#    cpus: 1
+#    config_options:
+#      vm.communicator: "'winrm'"
+#      winrm.remote_user: "'vagrant'"
+#      winrm.password: "'vagrant'"
+#    interfaces:
+#      - network_name: forwarded_port
+#        guest: 5986
+#        host: 59967
+#    provision: true
+#    state: up
+#    groups:
+#      - windows
+provisioner:
+  name: ansible
+  connection_options:
+    ansible_ssh_user: vagrant
+  log: true
+  inventory:
+    host_vars:
+      ansible-role-example-role-windows-2019:
+        ansible_become: false
+        ansible_user: vagrant
+        ansible_password: vagrant
+        ansible_port: 59970
+        ansible_host: 127.0.0.1
+        ansible_connection: winrm
+        ansible_winrm_scheme: https
+        ansible_winrm_server_cert_validation: ignore
+      ansible-role-example-role-ubuntu-2204:
+       ansible_connection: ssh
+       ansible_port: 3225
+       ansible_user: vagrant
+       ansible_password: vagrant
+       ansible_host: 127.0.0.1
+#       ansible-role-example-role-centos-83:
+#        ansible_connection: ssh
+#        ansible_port: 3221
+#        ansible_user: vagrant
+#        ansible_password: vagrant
+#        ansible_host: 127.0.0.1
+#      ansible-role-example-role-centos-77:
+#        ansible_connection: ssh
+#        ansible_port: 3222
+#        ansible_user: vagrant
+#        ansible_password: vagrant
+#        ansible_host: 127.0.0.1
+#      ansible-role-example-role-debian-10:
+#        ansible_connection: ssh
+#        ansible_port: 3223
+#        ansible_user: vagrant
+#        ansible_password: vagrant
+#        ansible_host: 127.0.0.1
+#      ansible-role-example-role-debian-9:
+#        ansible_connection: ssh
+#        ansible_port: 3224
+#        ansible_user: vagrant
+#        ansible_password: vagrant
+#        ansible_host: 127.0.0.1
+#      ansible-role-example-role-ubuntu-2004:
+#        ansible_connection: ssh
+#        ansible_port: 3225
+#        ansible_user: vagrant
+#        ansible_password: vagrant
+#        ansible_host: 127.0.0.1
+#      ansible-role-example-role-ubuntu-1804:
+#        ansible_connection: ssh
+#        ansible_port: 3226
+#        ansible_user: vagrant
+#        ansible_password: vagrant
+#        ansible_host: 127.0.0.1
+#      ansible-role-example-role-redhat-83:
+#        ansible_connection: ssh
+#        ansible_port: 3227
+#        ansible_user: vagrant
+#        ansible_password: vagrant
+#        ansible_host: 127.0.0.1
+#      ansible-role-example-role-redhat-79:
+#        ansible_connection: ssh
+#        ansible_port: 3228
+#        ansible_user: vagrant
+#        ansible_password: vagrant
+#        ansible_host: 127.0.0.1
+#      ansible-role-example-role-windows-2016:
+#        ansible_become: false
+#        ansible_user: vagrant
+#        ansible_password: vagrant
+#        ansible_port: 59967
+#        ansible_host: 127.0.0.1
+#        ansible_connection: winrm
+#        ansible_winrm_scheme: https
+#        ansible_winrm_server_cert_validation: ignore
+    group_vars:
+      linux:
+        ansible_become: true
+      windows:
+        ansible_become_user: Administrator
+        ansible_become_method: runas
+  lint:
+    name: ansible-lint
+
+scenario:
+  name: default
+  converge_sequence:
+    - create
+    - converge
+
+verifier:
+  name: ansible

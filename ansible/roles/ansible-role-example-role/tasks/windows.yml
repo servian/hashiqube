@@ -1,0 +1,163 @@
+---
+
+#- name: "Ansible | List all known variables and facts"
+#  debug:
+#    var: hostvars[inventory_hostname]
+#    verbosity: 1
+
+- name: OS
+  debug:
+    msg: "{{ ansible_distribution }}  on {{ ansible_facts['system_vendor'] }}"
+
+- set_fact:
+    cloud: "google"
+  when:
+    ansible_facts['system_vendor'] == 'Google'
+
+- set_fact:
+    cloud: "azure"
+  when:
+    ansible_facts['system_vendor'] == 'Microsoft Corporation'
+
+- set_fact:
+    cloud: "amazon"
+  when:
+    ansible_facts['system_vendor'] == 'Xen'
+
+- set_fact:
+    cloud: "vagrant"
+  when:
+    ansible_facts['system_vendor'] == 'innotek GmbH'
+
+- name: Get OS System Info
+  ansible.windows.win_shell: "systeminfo | findstr /B 'OS'"
+  register: windows_systeminfo
+
+- debug: var=windows_systeminfo.stdout_lines
+
+- name: Write Ansible hostvars to file
+  copy:
+    content: "{{ hostvars[inventory_hostname] }}"
+    dest: C:/soe-{{ version_number }}.json
+    mode: "0644"
+#
+- name: DEBUG - print hostvars
+  ansible.windows.win_shell: type C:/soe-{{ version_number }}.json
+  register: hostvarsPrinter
+
+- debug: var=hostvarsPrinter.stdout_lines
+
+# Create Ansible user for Tower
+- name: Ensure user ansible is present
+  ansible.windows.win_user:
+    name: ansible
+    password: "aix1rii3Bahshuleikei5y"
+    update_password: always
+    state: present
+    groups:
+      - Users
+      - Administrators
+
+#- name: Create win_update log folder
+#  ansible.windows.win_file:
+#    path: C:\ansible_win_update_logs
+#    state: directory
+#
+#- name: Windows Update
+#  ansible.windows.win_updates:
+#    category_names:
+#      - Application
+#      - Connectors
+#      - CriticalUpdates
+#      - DefinitionUpdates
+#      - DeveloperKits
+#      - FeaturePacks
+#      - Guidance
+#      - SecurityUpdates
+#      - ServicePacks
+#      - Tools
+#      - UpdateRollups
+#      - Updates
+#      - Upgrades
+#    reboot: yes
+#    log_path: C:\ansible_win_update_logs\ansible_win_update.txt
+
+#- name: DEBUG - print win_update log
+#  ansible.windows.win_shell: type C:\ansible_win_update_logs\ansible_win_update.txt
+#  register: winUpdatePrinter
+
+#- debug: var=winUpdatePrinter.stdout_lines
+
+#- name: OS_disk
+#  win_shell: Get-PSDrive
+#  register: os_disk
+#
+#- debug: var=os_disk.stdout_lines
+#
+#- name: OS_memory
+#  debug:
+#    msg: "{{ ansible_memtotal_mb }}"
+#
+#- name: OS_service
+#  win_shell: Get-Service | Where-Object {$_.Status -EQ "Running"}
+#  register: os_services
+#  ignore_errors: true
+#
+#- debug: var=os_services.stdout_lines
+#
+#- name: OS_server_DNS
+#  win_shell: Get-DnsClientServerAddress
+#  register: server_DNS
+#  ignore_errors: true
+#
+#- debug: var=server_DNS.stdout_lines
+#
+#- name: Check if Windows Defendender is running
+#  win_shell: Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender"
+#  register: WindowsDefenderStatus
+#  ignore_errors: true
+#
+#- debug: var=WindowsDefenderStatus.stdout_lines
+#
+#- name: OS_Domain
+#  win_shell: Get-WmiObject Win32_ComputerSystem
+#  register: os_domain
+#  ignore_errors: true
+#
+#- debug: var=os_domain.stdout_lines
+#
+#- name: Run net localgroup Administrators
+#  win_shell: net localgroup Administrators
+#  register: net_localgroup_Administrators
+#  ignore_errors: true
+#
+#- debug: var=net_localgroup_Administrators.stdout_lines
+#
+#- name: "Allow Remote Desktop Protocol (rdp) connections"
+#  win_shell: "New-NetFirewallRule -Name rdp -DisplayName 'Remote Desktop Protocol (rdp)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 3389"
+#  ignore_errors: true
+#
+#- name: "Run netstat /p tcp /a | findstr 3389"
+#  win_shell: "netstat /p tcp /a | findstr 3389"
+#  register: netstat_findstr_3389
+#  ignore_errors: true
+#
+#- debug: var=netstat_findstr_3389.stdout_lines
+#
+#- name: "Allow OpenSSH Server (sshd) connections"
+#  win_shell: "New-NetFirewallRule -Name sshd -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22"
+#  ignore_errors: true
+#
+#- name: "Run netstat /p tcp /a | findstr 22"
+#  win_shell: "netstat /p tcp /a | findstr 22"
+#  register: netstat_findstr_22
+#  ignore_errors: true
+#
+#- debug: var=netstat_findstr_22.stdout_lines
+
+- name: "Run Get-LocalUser | Select *"
+  win_shell: "Get-LocalUser | Select *"
+  register: get_local_user
+  ignore_errors: true
+
+- debug: var=get_local_user.stdout_lines

@@ -128,15 +128,6 @@ For Documentation please open http://localhost:3333 in your browser
 
 ![Hashiqube Integrations](images/logo-qube.png?raw=true "Hashiqube Integrations")
 
-## Hashiqube basic usage
-* Vault http://localhost:8200
-* Nomad http://localhost:4646
-* Consul http://localhost:8500
-* Waypoint on Nomad https://localhost:9702
-* Waypoint on Minikube https://localhost:19702
-* Boundary http://localhost:19200
-* Docsify http://localhost:3333
-
 ## Other
 * LDAP can be accessed on ldap://localhost:389
 * Localstack web http://localhost:8080
@@ -239,12 +230,32 @@ For suggestions, feedback and queries please branch or and submit a Pull Request
 Lead Automation Architect [riaan.nolan@servian.com](mailto:riaan.nolan@servian.com)
 https://www.linkedin.com/in/riaannolan/
 
-## About me
+## About
+Hashiqube has been created to help Engineers, Developers and anyone who wants to practise, learn or demo Hashicorp products to get started quickly with a local lab. 
+
+### About Hashiqube
+Hashiqube runs all the Hashicorp products and a host of other popular Open Source software taht is heavily used in the industry. 
+
+Once you have done `vagrant up --provision` you will have access to Vault, Nomad, Consul, Boundary, Waypoint and this documnetation page on your local computer.
+
+* Vault http://localhost:8200 `vagrant up --provision-with basetools,vault`
+* Nomad http://localhost:4646 `vagrant up --provision-with basetools,docker,nomad`
+* Consul http://localhost:8500 `vagrant up --provision-with basetools,consul`
+* Waypoint on Nomad https://localhost:9702 `vagrant up --provision-with basetools,docker,waypoint`
+* Waypoint on Minikube https://localhost:19702 `vagrant up --provision-with basetools,docker,waypoint-kubernetes-minikube`
+* Boundary http://localhost:19200 `vagrant up --provision-with basetools,boundary`
+* Docsify http://localhost:3333 `vagrant up --provision-with basetools,docsify`
+
+In addition to the Core Hashicorp products, Hashiqube also runs a host of other popular Open Source integrations that are heavily used within the industry today. 
+
+![Hashiqube Integrations](images/logo-qube.png?raw=true "Hashiqube Integrations")
+
+### About Me
 My name is Riaan Nolan and I was born in South Africa. I started out as a Web Developer in 2000 and from there progressed into Systems Administration, with a strong focus on Automation, Infrastrtucture and Configuration as Code.
 
 I have worked for Multi-National companies in Portugal, Germany, China, South Africa, United States and Australia. 
 
-You are welcome to connect with me on Linkedin https://www.linkedin.com/in/riaannolan/
+You are welcome to connect with me on Linkedin https://www.linkedin.com/in/riaannolan/ <br />
 Credly profile: https://www.credly.com/users/riaan-nolan.e657145c
 
 ![My Hashicorp Badges](images/hashicorp-badges.png?raw=true "My Hashicorp Badges")

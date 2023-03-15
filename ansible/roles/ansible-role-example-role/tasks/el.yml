@@ -1,0 +1,126 @@
+---
+# if you want to list all variables for this host, uncomment this
+#- name: "Ansible | List all known variables and facts"
+#  debug:
+#    var: hostvars[inventory_hostname]
+#    verbosity: 1
+
+# set custom facts which we can use later on
+- set_fact:
+    cloud: "google"
+  when:
+    ansible_facts['system_vendor'] == 'Google'
+
+- set_fact:
+    cloud: "azure"
+  when:
+    ansible_facts['system_vendor'] == 'Microsoft Corporation'
+
+- set_fact:
+    cloud: "amazon"
+  when:
+    ansible_facts['system_vendor'] == 'Xen'
+
+- set_fact:
+    cloud: "vagrant"
+  when:
+    ansible_facts['system_vendor'] == 'innotek GmbH'
+
+- name: "Cloud"
+  debug:
+    msg: "Cloud: {{ cloud }}"
+
+- name: "OS"
+  debug:
+    msg: "{{ ansible_distribution }} {{ ansible_distribution_version }} {{ ansible_distribution_release }} on {{ cloud }}"
+
+- name: "Write Ansible hostvars to file"
+  copy:
+    content: "{{ hostvars[inventory_hostname] }}"
+    dest: /soe-{{ version_number }}.json
+    mode: "0644"
+
+# https://fedoraproject.org/wiki/EPEL#Quickstart
+# we dont have a Redhat Subscription Manager or Satelite Server so we use EPEL
+# we use the URL to the RPM, because dnf and yum cannot find the epel repo
+- name: "Enable EPEL Repository"
+  yum:
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_facts['distribution_major_version'] }}.noarch.rpm"
+    state: present
+    disable_gpg_check: yes
+  ignore_errors: true
+
+# rpm -ql epel-release
+# dnf repository-packages epel list
+# dnf repolist -v
+- name: "Ensure package manager repositories are configured | Get repo list"
+  command: dnf repolist
+  changed_when: false
+  failed_when: false
+  register: dnf_configured
+  check_mode: no
+  args:
+    warn: false
+
+- name: "Ensure package manager repositories are configured | Display repo list"
+  debug:
+    msg:
+      - "Alert! Below are the configured repos. Please review and make sure all allign with site policy"
+      - "{{ dnf_configured.stdout_lines }}"
+
+- name: "Get repo files list "
+  command: ls -l /etc/yum.repos.d/
+  register: ls_l_etc_yum_dot_repos_dot_d
+
+- name: "Ensure package manager repositories are configured | Display repo list"
+  debug:
+    msg:
+      - "Alert! Below are the configured repos. Please review and make sure all allign with site policy"
+      - "{{ ls_l_etc_yum_dot_repos_dot_d.stdout_lines }}"
+
+- name: "Install Package dependencies"
+  dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - aide
+    - ipset
+    - firewalld
+  ignore_errors: true
+  when:
+    (ansible_facts['system_vendor'] == 'Xen'
+    and ansible_facts['distribution'] == "RedHat"
+    and ansible_facts['distribution_major_version'] == "8")
+
+# amazon-ebs.redhat-83: TASK [/Users/riaannolan/workspace/servian.com/soe-image-factory/ansible/RHEL8-CIS : SCORED | 1.4.1 | PATCH | Ensure AIDE is installed | Install AIDE] ***
+# amazon-ebs.redhat-83: fatal: [none]: FAILED! => {"changed": false, "failures": ["No package aide available."], "msg": "Failed to install some of the specified packages", "rc": 1, "results": []}
+# amazon-ebs.redhat-83: failed: [none] (item=firewalld) => {"ansible_loop_var": "item", "changed": false, "failures": ["No package firewalld available."], "item": "firewalld", "msg": "Failed to install some of the specified packages", "rc": 1, "results": []}
+# amazon-ebs.redhat-83: TASK [/Users/riaannolan/workspace/servian.com/soe-image-factory/ansible/RHEL8-CIS : SCORED | 3.4.1.1 | PATCH | Ensure a Firewall package is installed] ***
+# amazon-ebs.redhat-83: fatal: [none]: FAILED! => {"changed": false, "failures": ["No package firewalld available."], "msg": "Failed to install some of the specified packages", "rc": 1, "results": []}
+# FIX RHEL8-CIS SCORED | 1.4.1 | PATCH | Ensure AIDE is installed
+# FIX RHEL8-CIS SCORED | 3.4.1.1 | PATCH | Ensure a Firewall package is installed
+- name: "FIX RHEL8-CIS SCORED | 1.4.1 | PATCH | Ensure X is installed"
+  yum:
+    name: "{{ item }}"
+    state: present
+    disable_gpg_check: yes
+  with_items:
+    - http://mirror.centos.org/centos/8/AppStream/x86_64/os/Packages/aide-0.16-14.el8.x86_64.rpm
+  when:
+    (ansible_facts['system_vendor'] == 'innotek GmbH'
+    and ansible_facts['distribution'] == "RedHat"
+    and ansible_facts['distribution_major_version'] == "8")
+  ignore_errors: true
+
+- name: "FIX RHEL7-CIS AUTOMATED | 1.4.1 | PATCH | Ensure X is installed"
+  yum:
+    name: "{{ item }}"
+    state: present
+    disable_gpg_check: yes
+  with_items:
+    - http://mirror.centos.org/centos/7/os/x86_64/Packages/aide-0.15.1-13.el7.x86_64.rpm
+  when:
+    (ansible_facts['system_vendor'] == 'innotek GmbH'
+    and ansible_facts['distribution'] == "RedHat"
+    and ansible_facts['distribution_major_version'] == "7")
+  ignore_errors: true
