@@ -231,7 +231,7 @@ Vagrant::configure("2") do |config|
 
       # install waypoint on nomad
       # vagrant up --provision-with waypoint to only run this on vagrant up
-      config.vm.provision "waypoint", run: "never", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/waypoint.sh", args: "waypoint-nomad"
+      config.vm.provision "waypoint", type: "shell", preserve_order: true, privileged: true, path: "hashicorp/waypoint.sh", args: "waypoint-nomad"
 
       # install boundary
       # vagrant up --provision-with boundary to only run this on vagrant up
