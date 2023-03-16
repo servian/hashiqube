@@ -18,4 +18,4 @@ scripts/install-ansible.sh
 echo -e "++++ "
 echo -e "++++ Run Packer"
 echo -e "++++ "
-packer build -force -only='vagrant.ubuntu-2204' all
+# packer build -force -only='docker.ubuntu-2204' all

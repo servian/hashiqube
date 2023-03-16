@@ -78,11 +78,17 @@ source "vagrant" "ubuntu-2004" {
   output_dir      = "${var.build_directory}/ubuntu-2004/vagrant"
 }
 
+source "docker" "ubuntu-2004" {
+  image   = "ubuntu:20.04"
+  commit  = false
+  discard = true
+}
+
 # a build block invokes sources and runs provisioning steps on them. The
 # documentation for build blocks can be found here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/build
 build {
-  sources = ["source.vagrant.ubuntu-2004", "source.azure-arm.ubuntu-2004", "source.amazon-ebs.ubuntu-2004", "source.googlecompute.ubuntu-2004"]
+  sources = ["source.docker.ubuntu-2004", "source.vagrant.ubuntu-2004", "source.azure-arm.ubuntu-2004", "source.amazon-ebs.ubuntu-2004", "source.googlecompute.ubuntu-2004"]
 
   provisioner "shell" {
     inline = ["cat /etc/os-release"]

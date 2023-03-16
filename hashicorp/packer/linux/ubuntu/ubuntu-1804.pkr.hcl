@@ -78,11 +78,17 @@ source "vagrant" "ubuntu-1804" {
   output_dir      = "${var.build_directory}/ubuntu-1804/vagrant"
 }
 
+source "docker" "ubuntu-1804" {
+  image   = "ubuntu:18.04"
+  commit  = false
+  discard = true
+}
+
 # a build block invokes sources and runs provisioning steps on them. The
 # documentation for build blocks can be found here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/build
 build {
-  sources = ["source.vagrant.ubuntu-1804", "source.azure-arm.ubuntu-1804", "source.amazon-ebs.ubuntu-1804", "source.googlecompute.ubuntu-1804"]
+  sources = ["source.docker.ubuntu-1804", "source.vagrant.ubuntu-1804", "source.azure-arm.ubuntu-1804", "source.amazon-ebs.ubuntu-1804", "source.googlecompute.ubuntu-1804"]
 
   provisioner "shell" {
     inline = [
@@ -94,7 +100,7 @@ build {
     command = "./scripts/ansible.sh"
     extra_arguments = [
       #"-v",
-      "--extra-vars", "ansible_become=true version_number=${local.version_number}"
+      "--extra-vars", "ansible_python_interpreter=/usr/bin/python3 ansible_become=true version_number=${local.version_number}"
     ]
     ansible_ssh_extra_args = [
       "-o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa"

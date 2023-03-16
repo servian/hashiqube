@@ -95,7 +95,7 @@ EOF
   vault kv put kv/ansible devops="all the things"
   ANSIBLE_TOKEN=$(vault write auth/approle/login role_id="${ANSIBLE_ROLE_ID}" secret_id="${ANSIBLE_ROLE_SECRET_ID}" | grep token | head -n1 | tr -s ' ' | cut -d ' ' -f2)
   echo -e '\e[38;5;198m'"++++ ANSIBLE_TOKEN: ${ANSIBLE_TOKEN}"
-  sed -i "s:token=[^ ]*:token=${ANSIBLE_TOKEN}:" /vagrant/hashicorp/packer/linux/ubuntu/playbook.yml
+  # sed -i "s:token=[^ ]*:token=${ANSIBLE_TOKEN}:" /vagrant/hashicorp/packer/linux/ubuntu/playbook.yml
   echo -e '\e[38;5;198m'"++++ Install Ansible to configure Containers/VMs/AMIs/Whatever"
   sudo DEBIAN_FRONTEND=noninteractive apt-get update
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip
@@ -115,7 +115,9 @@ EOF
     sudo bash /vagrant/docker/docker.sh
   fi
   echo -e '\e[38;5;198m'"++++ Packer build Linux Docker container configured with Ansible"
-  packer build /vagrant/hashicorp/packer/linux/ubuntu/ubuntu20.04.json
+  # packer build /vagrant/hashicorp/packer/linux/ubuntu/ubuntu-2204.hcl
+  cd /vagrant/hashicorp/packer/
+  ./run.sh
 }
 
 packer-install

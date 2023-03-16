@@ -78,11 +78,17 @@ source "vagrant" "ubuntu-2204" {
   output_dir      = "${var.build_directory}/ubuntu-2204/vagrant"
 }
 
+source "docker" "ubuntu-2204" {
+  image   = "ubuntu:22.04"
+  commit  = false
+  discard = true
+}
+
 # a build block invokes sources and runs provisioning steps on them. The
 # documentation for build blocks can be found here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/build
 build {
-  sources = ["source.vagrant.ubuntu-2204", "source.azure-arm.ubuntu-2204", "source.amazon-ebs.ubuntu-2204", "source.googlecompute.ubuntu-2204"]
+  sources = ["source.docker.ubuntu-2204", "source.vagrant.ubuntu-2204", "source.azure-arm.ubuntu-2204", "source.amazon-ebs.ubuntu-2204", "source.googlecompute.ubuntu-2204"]
 
   provisioner "shell" {
     inline = ["cat /etc/os-release"]
@@ -92,9 +98,9 @@ build {
     command = "./scripts/ansible.sh"
     user    = "${build.User}"
     extra_arguments = [
-      #"-v",
+      "-vvv",
       "--tags", "always,day0",
-      "--extra-vars", "ansible_become=true version_number=${local.version_number}"
+      "--extra-vars", "ansible_python_interpreter=/vagrant/ansible/ansible-venv/bin/python ansible_become=true version_number=${local.version_number}"
     ]
     ansible_ssh_extra_args = [
       "-o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa"
@@ -108,7 +114,7 @@ build {
     user    = "${build.User}"
     extra_arguments = [
       #"-v",
-      "--extra-vars", "foo=bar"
+      "--extra-vars", "ansible_python_interpreter=/vagrant/ansible/ansible-venv/bin/python foo=bar"
     ]
     ansible_ssh_extra_args = [
       "-o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa"
@@ -123,7 +129,7 @@ build {
     user    = "${build.User}"
     extra_arguments = [
       #"-v",
-      "--extra-vars", "foo=bar"
+      "--extra-vars", "ansible_python_interpreter=/vagrant/ansible/ansible-venv/bin/python foo=bar"
     ]
     ansible_ssh_extra_args = [
       "-o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa"

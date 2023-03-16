@@ -50,10 +50,10 @@ requests==2.25.1
 requests-ntlm==1.1.0
 resolvelib==0.5.4
 rich==10.4.0
-ruamel.yaml==0.17.10
-ruamel.yaml.clib==0.2.4
+ruamel.yaml
+ruamel.yaml.clib
 selinux==0.2.1
-setuptools==51.1.1
+setuptools
 six==1.16.0
 subprocess-tee==0.3.2
 tenacity==7.0.0
@@ -61,7 +61,7 @@ text-unidecode==1.3
 urllib3==1.26.6
 wcmatch==8.2
 websocket-client==1.1.0
-wheel==0.36.2
+wheel
 xmltodict==0.12.0
 yamllint
 ansible-tower-cli

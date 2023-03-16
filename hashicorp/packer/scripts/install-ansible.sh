@@ -24,7 +24,7 @@ python3 -V
 pip3 -V
 
 echo -e "++++ "
-echo -e "++++ Install Python Pip Packages"
+echo -e "++++ Install Python Pip Packages (Will take ~5 minutes)"
 echo -e "++++ "
 pip3 install -r ../../ansible/requirements.txt --no-cache-dir --quiet
 
