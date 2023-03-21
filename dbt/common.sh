@@ -16,7 +16,7 @@ DBT_WITH=postgres
 # ^^ will install all adapters excluding mssql 
 ########################################
 
-dbt_postgres_ref=dbt-core@v1.2.1 # postgres adapter is part of core now
+dbt_postgres_ref=dbt-core@v1.2.5 # postgres adapter is part of core now
 dbt_redshift_ref=dbt-redshift@v1.2.1
 dbt_bigquery_ref=dbt-bigquery@v1.2.0
 dbt_snowflake_ref=dbt-snowflake@v1.2.0
