@@ -1,5 +1,5 @@
 wheel==0.36.2
-ansible==4.1.0
+ansible==7.0.0
 ansible-core==2.11.2
 ansible-lint==5.0.12
 arrow==1.1.1
