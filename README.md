@@ -9,7 +9,7 @@ Once the Qube is up an internet connection is no longer needed meaning sales pit
 ## Links
 HashiCorp blog post: https://www.hashicorp.com/resources/hashiqube-a-development-lab-using-all-the-hashicorp-products <br />
 HashiQube website: https://hashiqube.com <br />
-HashiQube github: https://github.com/servian/hashiqube <br />
+HashiQube github: https://github.com/star3am/hashiqube <br />
 HashiQube youtube: https://www.youtube.com/watch?v=6jGDAGWaFiw <br />
 HashiQube medium: https://medium.com/search?q=hashiqube
 
