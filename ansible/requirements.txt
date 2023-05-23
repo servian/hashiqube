@@ -46,7 +46,7 @@ python-slugify==5.0.2
 python-vagrant==0.5.15
 pywinrm==0.4.2
 PyYAML==5.4.1
-requests==2.25.1
+requests==2.31.0
 requests-ntlm==1.1.0
 resolvelib==0.5.4
 rich==10.4.0
